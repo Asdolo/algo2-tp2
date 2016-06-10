@@ -1,0 +1,296 @@
+\section{Módulo Dato}
+
+\begin{Interfaz}
+  
+  \textbf{se explica con}: \tadNombre{Dato}.
+
+  \textbf{géneros}: \TipoVariable{dato}.
+
+  \Titulo{Operaciones básicas de dato}
+
+  \InterfazFuncion{DatoString}{\In{s}{string}}{dato}
+  [true]  
+  {$res$ \igobs datoString($s$)}
+  [$O\big(long(s)\big)$]
+  [genera un dato con el string $s$.]
+  
+  \InterfazFuncion{DatoNat}{\In{n}{nat}}{dato}
+  [true]
+  {$res$ $\igobs$ datoNat($n$)}
+  [$O(1)$]
+  [genera un dato con el nat $n$.]
+
+  \InterfazFuncion{Nat?}{\In{d}{dato}}{bool}
+  [true]
+  {$res$ $\igobs$ nat?($d$)}
+  [$O(1)$]
+  [devuelve \texttt{true} si el dato ingresado es del tipo nat.]
+  
+  \InterfazFuncion{ValorNat}{\In{d}{dato}}{nat}
+  [nat?($d$)]
+  {$res$ $\igobs$ valorNat($d$)}
+  [$O(1)$]
+  [devuelve el valor del nat del dato $d$.]
+    
+  \InterfazFuncion{ValorStr}{\In{d}{dato}}{string}
+  [$\neg$nat?($d$)]
+  {alias$\big(res$ $\igobs$ valorStr($d$)$\big)$}
+  [$O(1)$]
+  [devuelve el valor del string del dato $d$.]
+  [devuelve el string por referencia. $res$ no es modificable.]
+  
+  \InterfazFuncion{MismoTipo?}{\In{d_1}{dato}, \In{d_2}{dato}}{bool}
+  [true]
+  {$res \igobs$ \big(nat?($d_1$) $\igobs$ nat?($d_2$)\big)}
+  [$O(1)$]
+  [devuelve \texttt{true} si $d_1$ y $d_2$ son del mismo tipo.]
+  
+  \InterfazFuncion{String?}{\In{d}{dato}}{bool}
+  [true]
+  {$res \igobs$ $\neg$nat?($d$)}
+  [$O(1)$]
+  [devuelve \texttt{true} si el dato ingresado es del tipo string.]
+  
+  \InterfazFuncion{Min}{\In{cs}{conj(dato)}}{dato}
+  [$\neg$vacía?($s$) $\land$ ($\forall$ $d_1$, $d_2$ : dato) $\Big(\big($está?($d_1$, $s$) \ $\land$ está?($d_2$, $s$)$\big)$ $\implies$ mismoTipo?($d_1$, $d_2$)$\Big)$]
+  {$res$ \igobs min($cs$)}
+  [$O(\#cs * L)$, donde $L$ es la longitud del string más largo.]
+  [devuelve el mínimo del conjunto de datos.]
+  [$res$ no es modificable]
+  
+  \InterfazFuncion{Max}{\In{cs}{conj(dato)}}{dato}
+  [$\neg$vacía?($s$) $\land$ ($\forall$ $d_1$, $d_2$ : dato) $\Big(\big($está?($d_1$, $s$) \ $\land$ está?($d_2$, $s$)$\big)$ $\implies$ mismoTipo?($d_1$, $d_2$)$\Big)$]
+  {$res$ \igobs max($cs$)}
+  [$O(\#cs * L)$, donde $L$ es la longitud del string más largo.]
+  [devuelve el máximo del conjunto de datos.]
+  [$res$ no es modificable]
+  
+  \InterfazFuncion{$\argumento$ $\le$ $\argumento \ $}{\In{d_1}{dato}, \In{d_2}{dato}}{bool}
+  [mismoTipo?($d_1$, $d_2$)]
+  {$\Big($nat?($d_1$) $\implies$ $\big(res$ $\igobs$ (valorNat($d_1$) $\le_{nat}$ valorNat($d_2$))$\big)\Big)$ $\yluego$ \\
+  $\Big($string?($d_1$) $\implies$ $\big(res$ $\igobs$ (valorStr($d_1$) $\le_{string}$ valorStr($d_2$))$\big)\Big)$}
+  [$O\big(min\{|valorStr(d_1)|, |valorStr(d_2)|\}\big)$]
+  [devuelve \texttt{true} si $d_1$ $\le$ $d_2$.]
+  
+  \InterfazFuncion{$\argumento$ = $\argumento \ $}{\In{d_1}{dato}, \In{d_2}{dato}}{bool}
+  [true]
+  {$\Big($nat?($d_1$) $\implies$ $\big(res$ $\igobs$ (valorNat($d_1$) $\igobs$ valorNat($d_2$))$\big)\Big)$ $\yluego$ \\
+  $\Big($string?($d_1$) $\implies$ $\big(res$ $\igobs$ (valorStr($d_1$) $\igobs$ valorStr($d_2$)$)\big)\Big)$}
+  [$O\big(min\{|valorStr(d_1)|, |valorStr(d_2)|\}\big)$]
+  [devuelve \texttt{true} si $d_1$ = $d_2$.]
+
+  \InterfazFuncion{Copiar}{\In{d}{dato}}{dato}
+  [true]
+  {$res$ $\igobs$ $d$}
+  [nat?($d$) $\implies$ $O(1)$ \\
+  $\neg$nat?($d$) $\implies$ $O(|valorStr(d)|)$]
+  [devuelve una copia del elemento $d$.]
+  
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representación de dato}
+
+  \begin{Estructura}{dato}[estrDato]
+    \begin{Tupla}[estrDato]
+      \tupItem{nat?}{bool}%
+      \tupItem{valorSrt}{string}%
+      \tupItem{valorNat}{nat}%
+    \end{Tupla}
+  \end{Estructura}
+
+  \Rep[estrDato][e]{$\Big(\big(e$.nat? $\implies$ ($e$.valorStr $\igobs$ "vacio")$\big)$ $\land$ $\big(\neg e$.nat? $\implies$ ($e$.valorNat $\igobs$ 0)$\big)\Big)$}
+
+  \Statex \underline{Justificación:} {Si bien podríamos ser menos restrictivos, esto nos va a permitir considerar el costo de copiar datos nat como $O(1)$}
+	
+  ~
+ 
+  \Abs[estrDato]{dato}[e]{d}{Nat?($d$) $\igobs$ $e$.nat? $\yluego$ $\big(e$.nat? $\implies$ (valorNat($d$) $\igobs$ $e$.valorNat) $\land$ \\ $\neg$($e$.nat?) $\implies$ (valorStr($d$) $\igobs$ $e$.valorStr)$\big)$}
+
+  ~
+
+\end{Representacion}
+
+\bigskip
+
+\begin{Algoritmos}
+
+\medskip
+	
+ \Titulo{Algoritmos de dato}
+  	\medskip
+  
+\begin{algorithm}[H]{\textbf{iDatoString}(\In{s}{string}) $\to$ $res$ : estrDato}
+    	\begin{algorithmic}
+       \State $res.nat? \gets false$         \Comment $O(1)$
+       \State $res.valorStr \gets copiar(s)$ \comentariocompl{complejidad heredada de Copiar de Vector($\alpha$)}{$\displaystyle O\left(\sum_{i=1}^{long(s)}copy({s[i]})\right)$}
+       \State $res.valorNat \gets 0$         \Comment $O(1)$
+
+      \medskip
+      \Statex \underline{Complejidad:} {$O\big(long(s)\big)$}
+    \Statex \underline{Justificación:} {$O(1)$ + $\displaystyle O\left(\sum_{i=1}^{long(s)}copy({s[i]})\right)$ + $O(1)$ = $\displaystyle O\left(\sum_{i=1}^{long(s)}copy({s[i]})\right)$ = $\displaystyle\sum_{i=1}^{long(s)}O\big(copy({s[i]})\big)$ \\
+    \somequad = $\displaystyle\sum_{i=1}^{long(s)}O(1)$ = long($s$) * $O(1)$ = $O\big(long(s)\big)$}
+
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iDatoNat}(\In{n}{nat}) $\to$ $res$ : estrDato}
+  \begin{algorithmic}
+    \State $res.nat? \gets true$           \Comment $O(1)$
+    \State $res.valorStr \gets "vacio"$  \Comment $O\big(long("vacio")\big) = O(1)$
+    \State $res.valorNat \gets n$          \Comment $O(1)$
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iNat?}(\In{e}{estrDato}) $\to$ $res$ : bool}
+  \begin{algorithmic}
+    \State $res \gets e.nat?$           \Comment $O(1)$
+       
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iValorNat}(\In{e}{estrDato}) $\to$ $res$ : nat}
+  \begin{algorithmic}
+    \State $res \gets e.valorNat$           \Comment $O(1)$
+       
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iValorStr}(\In{e}{estrDato}) $\to$ $res$ : string}
+      \begin{algorithmic}
+       \State $res \gets e.valorStr$           \Comment $O(1)$
+       
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iMismoTipo?}(\In{e_1}{estrDato}, \In{e_2}{estrDato}) $\to$ $res$ : bool}
+      \begin{algorithmic}
+       \State $res \gets (e_1.nat? = e_2.nat?)$           \Comment $O(1)$
+       
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iString?}(\In{e}{estrDato}) $\to$ $res$ : bool}
+      \begin{algorithmic}
+       \State $res \gets \NOT e.nat?$          \Comment $O(1)$
+       
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iMin}(\In{cs}{conj(estrDato)}) $\to$ $res$ : estrDato}
+  \begin{algorithmic}
+    \State $it \gets CrearIt(cs)$           \Comment $O(1)$
+    \State $res \gets Siguiente(it)$        \Comment $O(1)$
+    \While{$HaySiguiente(it)$}              \Comment $O(\#cs * ...)$
+      \State{\comentarioder{complejidad heredada de $\argumento$ $\le_{i}$ $\argumento$}}
+      \If{$\NOT res \le_{i} Siguiente(it)$} \Comment $O\big(min\{|res.valorStr|, |Siguiente(it).valorStr|\}\big)$
+
+
+        \State $res \gets Siguiente(it)$    \Comment $O(1)$
+      \EndIf
+      \State $Avanzar(it)$                  \Comment $O(1)$
+    \EndWhile
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(\#cs * L)$, donde $L$ es la longitud del string más largo}
+    \Statex \underline{Justificación:} {Se recorre toda la lista $\big(O(\#cs)\big)$ y cada elemento se compara con el auxiliar $res$. En algún momento, $res$ se va a comparar con el string de longitud $L$. }
+      \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iMax}(\In{cs}{conj(estrDato)}) $\to$ $res$ : estrDato}
+  \begin{algorithmic}
+    \State $it \gets CrearIt(cs)$           \Comment $O(1)$
+    \State $res \gets Siguiente(it)$        \Comment $O(1)$
+    \While{$HaySiguiente(it)$}              \Comment $O(\#cs * ...)$
+      \State{\comentarioder{complejidad heredada de $\argumento$ $\le_{i}$ $\argumento$}}
+      \If{$res \le_{i} Siguiente(it)$} \Comment $O\big(min\{|res.valorStr|, |Siguiente(it).valorStr|\}\big)$
+        \State $res \gets Siguiente(it)$    \Comment $O(1)$
+      \EndIf
+      \State $Avanzar(it)$                  \Comment $O(1)$
+    \EndWhile
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(\#cs * L)$, donde $L$ es la longitud del string más largo}
+    \Statex \underline{Justificación:} {Se recorre toda la lista $\big(O(\#cs)\big)$ y cada elemento se compara con el auxiliar $res$. En algún momento, $res$ se va a comparar con el string de longitud $L$. }
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{$\argumento$ $\le_i$ $\argumento$\ }(\In{e_1}{estrDato}, \In{e_2}{estrDato}) $\to$ $res$ : bool}
+  \begin{algorithmic}
+    \If{$e_1.nat?$} \Comment $O(1)$
+      \State $res \gets (e_1.valorNat \le e_2.valorNat)$ \Comment $O(1)$
+    \Else
+      \State $res \gets true$ \Comment $O(1)$
+      \While{$res \ \AND i < min\big(longitud(e_1.valorStr), longitud(e_2.valorStr)\big)$} \Comment $O(1)$
+        \If{$e_1.valorStr[i] > e_2.valorStr[i]$} \Comment $O(1)$
+          \State $res \gets false$ \Comment $O(1)$
+        \EndIf
+      \EndWhile
+      \State $res \gets (e_1.valorStr \le e_2.valorStr)$ \Comment $O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$}
+    \Statex \underline{Justificación:} {Para determinar la desigualdad entre ambos vectores de strings realiza comparaciones entre chars $O(1)$ hasta el mínimo de las longitudes }
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{$\argumento$ = $\argumento$\ }(\In{e_1}{estrDato}, \In{e_2}{estrDato}) $\to$ $res$ : bool}
+  \begin{algorithmic}
+    \If{$MismoTipo?(e_1, e_2)$}         \Comment $O(1)$
+      \If{$e_1.nat?$}                   \Comment $O(1)$
+        \State $res \gets (e_1.valorNat = e_2.valorNat)$ \Comment $O(1)$
+      \Else
+        \State $res \gets (e_1.valorStr = e_2.valorStr)$ \Comment $O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$
+      \EndIf
+    \Else
+      \State $res \gets false$ \Comment $O(1)$
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$}
+    \Statex \underline{Justificación:} {$O(1)$ + $O(1)$ + $O(1)$ + $O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$ = $O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCopiar}(\In{e}{estrDato}) $\to$ $res$ : estrDato}
+      \begin{algorithmic}
+        \State $res \gets \big\langle e.nat?, e.valorStr, e.valorNat \big\rangle$         \Comment $O(1) + O(|e.valorStr|) + O(1)$
+      \medskip
+      \Statex \underline{Complejidad:} {$O(|e.valorStr|)$}
+      \Statex \underline{Justificación:} {La complejidad del algoritmo es la complejidad de copiar un string. La complejidad de copiar un string es $O\big(long(string)\big)$. Si esNat? es true, por invariante, el largo de valorStr está acotado (valorStr = "vacio") y la complejidad es $O(1)$}
+
+      \end{algorithmic}
+\end{algorithm}
+
+
+
+\end{Algoritmos}

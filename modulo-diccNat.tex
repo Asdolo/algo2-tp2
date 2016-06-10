@@ -1,0 +1,550 @@
+\section{Módulo DiccionarioNat(significado)}
+
+\begin{Interfaz}
+
+  \textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}} significado\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{sig}{significado}}{significado}
+    [true]
+    {$res$ $\igobs$ $sig$}
+    [$O\big(copy(sig)\big)$]
+    [vuelve una copia del parámetro.]
+  }
+  \textbf{se explica con}: \tadNombre{Diccionario Extendido(Nat, Significado)},\\ \tadNombre{Iterador Unidireccional\big(Tupla(Nat, Significado)\big)}.
+
+  \textbf{géneros}: \TipoVariable{diccNat(significado)}, \TipoVariable{itDiccNat(significado)}.
+
+  \Titulo{Operaciones básicas de diccNat}
+
+  \InterfazFuncion{Vacío}{}{diccNat(significado)}
+  [true]  
+  {$res$ $\igobs$ vacio}
+  [$O(1)$]
+  [genera un DiccionarioNat vacío.]
+  
+  \InterfazFuncion{Definir}{\In{clave}{nat}, \In{significado}{significado}, \Inout{dicc}{diccNat(significado)}}{}
+  [$\neg$def?($clave$,$dicc$) $\land$ $dicc_0$ = $dicc$]
+  {$dicc$ $\igobs$ definir($clave$, $significado$, $dicc_0$)}
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [define la clave ingresada en el diccionario.]
+  
+  \InterfazFuncion{Def?}{\In{clave}{nat}, \In{dicc}{diccNat(significado)}}{bool}
+  [true]
+  {$res$ $\igobs$ def?($clave$, $dicc$)}
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [devuelve \texttt{true} si la clave está definida en el diccionario.]
+
+  \InterfazFuncion{Obtener}{\In{clave}{nat}, \In{dicc}{diccNat(significado)}}{significado}
+  [def?($clave$, $dicc$)]
+  {alias\big($res$ $\igobs$ obtener($clave$, $dicc$)\big)}
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [devuelve el significado correspondiente a la clave ingresada.]
+  [se genera alias entre $res$ y el significado en el diccionario si el tipo significado no es primitivo. $res$ no es modificable.]
+
+  \InterfazFuncion{Borrar}{\In{clave}{nat}, \Inout{dicc}{diccNat(significado)}}{}
+  [def?($clave$, $dicc$) $\land$ $dicc_0$ = $dicc$]
+  {$dicc$ $\igobs$ borrar($clave$, $dicc_0$)}
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [borra la clave del diccionario.]
+
+  \InterfazFuncion{Min}{\In{dicc}{diccNat(significado)}}{tupla(nat, significado)}
+  [\#claves($dicc$) > 0]
+  {alias$\big(\Pi_1$($res$) $\igobs$ min$\big($claves($dicc$)$\big)\big)$ $\yluego$ alias$\big(\Pi_2$($res$) $\igobs$ obtener$\big(\Pi_1$($res$), $dicc\big)\big)$}
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [devuelve una tupla con la clave mínima y su significado.]
+  [$res$ no es modificable.]
+
+  \InterfazFuncion{Max}{\In{dicc}{diccNat(significado)}}{tupla(nat, significado)}
+  [\#claves($dicc$) > 0]
+  {alias$\big(\Pi_1$($res$) $\igobs$ max$\big($claves($dicc$)$\big)\big)$ $\yluego$ alias$\big(\Pi_2$($res$) $\igobs$ obtener$\big(\Pi_1$($res$), $dicc\big)\big)$}
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [devuelve una tupla con la clave máxima y su significado.]
+  [$res$ no es modificable.]
+
+  \Titulo{Operaciones básicas del iterador}
+
+  \InterfazFuncion{CrearIt}{\In{dicc}{diccNat(significado)}}{itDiccNat(significado)}
+  [true]
+  {alias$\big($secuADicc$\big($Siguientes($res$)$\big)$ $\igobs$ $dicc\big)$}
+  [$O(1)$]
+  [crea un iterador del conjunto.]
+  [el iterador no puede realizar modificaciones y se indefine con la inserción y eliminación de elementos en el diccionario.]
+
+  \InterfazFuncion{Siguientes}{\In{it}{itDiccNat(significado)}}{lista\big(tupla(nat, significado)\big)}
+  [true]
+  {$res$ $\igobs$ siguientes($it$)}
+  [$O\big(n*copy(x)\big)$, siendo $n$ la cantidad de claves del diccionario y $x$ el significado mas costoso de copiar.]
+  [devuelve una lista con las claves siguientes y sus significados.]
+  [no hay ya que se copian los elementos.]
+
+  \InterfazFuncion{Avanzar}{\Inout{it}{itDiccNat(significado)}}{}
+  [HayMas?($it$) $\land$ $it_0$ = $it$]
+  {$it$ $\igobs$ Avanzar($it_0$)}
+  [$O(1)$]
+  [avanza a la posición siguiente del iterador.]
+
+  \InterfazFuncion{HayMas?}{\In{it}{itDiccNat(significado)}}{bool}
+  [true]
+  {$res$ $\igobs$ HayMas?($it$)}
+  [$O(1)$]
+  [devuelve \texttt{true} si y sólo si el en el iterador todavía quedan elementos para avanzar.]
+
+  \InterfazFuncion{Actual}{\In{it}{itDiccNat(significado)}}{tupla(nat, significado)}
+  [HayMas?($it$)]
+  {alias$\big(res$ $\igobs$ Actual($it$)$\big)$}
+  [$O(1)$]
+  [devuelve el elemento correspondiente a la posición actual del iterador.]
+  [Genera aliasing. $res$ no es modificable.]
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representación de diccNat}
+
+  \begin{Estructura}{diccNat(significado)}[estrDiccNat]
+
+      \dondees{estrDiccNat}{puntero\big(nodoDiccNat(significado)\big)}\
+
+      \begin{Tupla}[nodoDiccNat(significado)]
+        \tupItem{clave}{nat}%
+        \tupItem{significado}{puntero(significado)}%
+        \tupItem{\\izq}{puntero(nodoDiccNat)}%
+        \tupItem{der}{puntero(nodoDiccNat)}%
+      \end{Tupla}
+
+  \end{Estructura}
+
+  \noindent\textbf{Invariante de representación}
+  
+  \noindent\tab 1) Hijo izq menor estricto e hijo derecho mayor estricto. \\
+\noindent\tab 2) Rep recursivo en sus hijos. \\
+\noindent\tab 3) El significado no es nulo. \\
+\noindent\tab 4) No hay repetidos. \\
+
+  \Rep[estrDiccNat][e]{($e$ $\igobs$ NULL) $\oluego$ $\big($($e$ $\to$ izq $\nigobs$ NULL) $\implies$ ($e$ $\to$ izq $\to$ clave) <\ $e$ $\to$ clave$\big)$\\
+    $\land$ $\big($($e$ $\to$ der $\nigobs$ NULL) $\implies$ ($e$ $\to$ der $\to$ clave) >\ $e$ $\to$ clave$\big)$\\
+    $\land$ Rep($e$ $\to$ izq) $\land$ Rep($e$ $\to$ der) $\land$ ($e$ $\to$ significado $\nigobs$ NULL) $\land$ $\big(\forall$ $n$ : nat, esClave?($n$, $e$)$\big)$ ($n$ $\igobs$ $e$ $\to$ clave) $\implies$ $\big(\neg$esClave?($n$, $e$ $\to$ izq) $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ izq)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ der)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ izq)$\big)$}
+	
+  ~
+ 
+  \Abs[estrDiccNat]{diccNat(significado)}[e]{d}{($\forall$ $c$ : nat) $\big($def?($c$, $d$) $\igobs$ esClave?($c$, $e$)$\big)$ $\land$ $\big($def?($c$, $d$) $\impluego$ obtener($c$, $d$) $\igobs$ suSignificado($c$, $d$)$\big)$}
+
+  ~
+
+  \tadOperacion{esClave?}{nat/n, estrDiccNat/e}{bool}{Rep($e$)}
+  \tadAxioma{esClave?($n$, $e$)}{($e$ $\nigobs$ NULL) $\yluego$ $\big($($e$ $\to$ clave $\igobs$ $n$) $\lor$ (esClave?($n$, $e$ $\to$ der)) $\lor$ (esClave?($n$, $e$ $\to$ izq))$\big)$}
+
+  ~
+
+  \tadOperacion{suSignificado}{nat/n, estrDiccNat/e}{significado}{Rep($e$) $\yluego$ esClave?($n$, $e$)}
+  \tadAxioma{suSignificado($n$, $e$)}
+{\IF ($e$ $\to$ clave) $\igobs$ $c$ THEN
+  *($e$ $\to$ significado) 
+ELSE
+  {\IF ($e$ $\to$ clave) <\ $c$ THEN
+    suSignificado($c$, $e$ $\to$ izq) 
+  ELSE
+    suSignificado($c$, $e$ $\to$ der)
+  FI}
+FI}
+
+\medskip
+
+  \Titulo{Representación del iterador}
+
+  \begin{Estructura}{itDiccNat(significado)}[iter]
+
+      \dondees{iter}{pila(estrDiccNat)}\
+
+  \end{Estructura}
+
+  \noindent\textbf{Invariante de representación}
+  
+  \noindent\tab 1) Vale rep para cada elemento de la pila. \\
+  \noindent\tab 2) No hay punteros nulos en la pila. \\
+  \noindent\tab 3 La pila está ordenada decrecientemente. \\
+  \noindent\tab 4) No puede haber dos punteros apilados que compartan algún hijo (por lo tanto nunca va a haber hijos apilados para ningún nodo). Tampoco por rep puede pasar que haya loops, por ejemplo: El nodo con clave 15 apunte a su izq al nodo con clave 9 y este a su der al nodo con clave 15 nuevamente. \\
+
+
+  \Rep[iter][i]{$\big(\forall$ $n$ : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ Rep($n$) $\yluego$ \\
+  $\Big($noApilaNulos($i$) $\land$ ordenadaDec($i$) $\land$ $\big(\forall$ $n$ : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ $\neg\big(\exists$ $n'$ : estrDiccNat, $n$ $\nigobs$ $n'$ $\land$ estaEnPila?($n'$, $i$)$\big)$ $\big(\exists$ $x$ : nat, esta?($x$, clavesDe($n$)) $\land$ esta?($x$, clavesDe($n'$))$\big)\Big)$}
+  
+  ~
+
+\tadOperacion{noApilaNulos}{iter}{bool}{}
+  \tadAxioma{noApilaNulos($i$)}
+{\IF vacia?($i$) THEN
+  true 
+ELSE
+  tope($i$) $\nigobs$ NULL $\land$ noApilaNulos$\big($desapilar($i$)$\big)$
+FI}
+
+ ~
+
+
+\tadOperacion{clavesDe}{estrDiccNat}{secu(nat)}{}
+  \tadAxioma{clavesDe($e$)}
+{\IF $e$ $\nigobs$ NULL THEN
+  clavesDe($e$ $\to$ izq) $\&$ $\big($($e$ $\to$ clave) $\argumento$ clavesDe($e$ $\to$ der)$\big)$ 
+ELSE
+  <>
+FI}
+
+ ~
+
+\tadOperacion{ordenadaDec}{estrDiccNat}{bool}{}
+  \tadAxioma{ordenadaDec($e$)}{$\big($tamaño($e$) <\ 2$\big)$ $\oluego$ $\big($(tope($e$) $\to$ clave) <\ tope$\big($desapilar($e$) $\to$ clave$\big)$ $\land$ ordenada$\big($desapilar($e$)$\big)\big)$}
+
+ ~
+
+\tadOperacion{estaEnPila?}{$\alpha$, pila($\alpha$)}{bool}{}
+  \tadAxioma{estaEnPila?($e$, $s$)}
+{\IF vacia?($s$) THEN
+  false 
+ELSE
+  tope($s$) $\igobs$ $e$ $\lor$ estaEnPila?$\big(e$, desapilar($s$)$\big)$
+FI}
+ ~
+ 
+  \Abs[iter]{itDiccNat(significado)}[i]{it}{Siguientes($it$) $\igobs$ secuDFS($i$)}
+
+  ~
+
+  \tadOperacion{secuDFS}{iter/i}{secu$\big($tupla(nat, significado)$\big)$}{Rep($i$)}
+  \tadAxioma{secuDFS($i$)}
+{\IF vacía?($i$) THEN
+  <> 
+ELSE
+  {\IF tope($i$) $\to$ der $\nigobs$ NULL $\land$ tope($i$) $\to$ izq $\nigobs$ NULL THEN
+    secuDFS$\Big($apilar$\big($tope($i$) $\to$ izq, apilar$\big($tope($i$) $\to$ der, desapilar($i$)$\big)\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$ 
+  ELSE
+    {\IF tope($i$) $\to$ der $\nigobs$ NULL THEN
+      secuDFS$\Big($apilar$\big($tope($i$) $\to$ der, desapilar($i$)$\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$ 
+    ELSE
+      {\IF tope($i$) $\to$ izq $\nigobs$ NULL THEN
+        secuDFS$\Big($apilar$\big($tope($i$) $\to$ izq, desapilar($i$)$\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$> 
+      ELSE
+        secuDFS$\big($desapilar($i$)$\big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$>
+      FI}
+    FI}
+  FI}
+FI}
+
+  ~
+
+
+\end{Representacion}
+
+\bigskip
+
+\begin{Algoritmos}
+
+\medskip
+	
+ \Titulo{Algoritmos de diccNat}
+  	\medskip
+  
+\begin{algorithm}[H]{\textbf{iVacio}() $\to$ $res$ : estrDiccNat}
+      \begin{algorithmic}
+       \State $res \gets NULL$         \Comment $O(1)$
+
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+      \Statex \underline{Justificación:} {Apuntar a $\texttt{NULL}$ un puntero es $O(1)$}
+
+      \end{algorithmic}
+\end{algorithm}
+
+  
+\begin{algorithm}[H]{\textbf{iDefinir}(\In{n}{nat}, \In{s}{significado}, \Inout{dicc}{estrDiccNat})}
+  \begin{algorithmic}
+    \State $diccAux \gets dicc$         \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+    \State $termine \gets false$ \Comment $O(1)$
+    \While{$\NOT termine$} \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \If{$diccAux = NULL$} \Comment $O(1)$
+        \State $dicc \gets \&\big\langle n, \&s, NULL, NULL\big\rangle$ \Comment $O(1)$
+        \State $termine \gets true$ \Comment $O(1)$
+      \Else
+        \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+          \If{$\NOT diccAux \to izq = NULL$} \Comment $O(1)$
+            \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+          \Else
+            \State $(diccAux \to izq) \gets \&\big\langle n, \&s, NULL, NULL\big\rangle$ \Comment $O(1)$
+             \State $termine \gets true$ \Comment $O(1)$
+          \EndIf
+        \Else
+          \If{$\NOT diccAux \to der = NULL$} \Comment $O(1)$
+            \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+          \Else
+            \State $(diccAux \to der) \gets \&\big\langle n, \&s, NULL, NULL\big\rangle$ \Comment $O(1)$
+            \State $termine \gets true$ \Comment $O(1)$
+          \EndIf
+        \EndIf
+      \EndIf
+
+    \EndWhile
+
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
+\quad\quad En promedio: $O\big(log\ \#claves(dicc)\big)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se definen todas las claves ordenadas y queda un árbol derechista o izquierdista, por eso para definir tenemos que recorrer todas las claves y tenemos $O(n)$, donde $n$ es la cantidad de claves del diccionario.\\
+\quad\quad Pero como el enunciado del trabajo práctico dice que los valores nat se insertan con probabilidad uniforme, cada vez que bajemos un nivel en la altura del árbol nos vamos a quedar con la mitad de claves, por lo tanto tenemos una complejidad de $O(log\ n)$ en promedio, donde $n$ es la cantidad de claves del diccionario.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iDef?}(\In{n}{nat}, \In{dicc}{estrDiccNat}) $\to$ $res$ : bool}
+  \begin{algorithmic}
+    \State $diccAux \gets dicc$         \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+    \State $termine \gets false$ \Comment $O(1)$
+    \While{$\NOT termine$} \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \If{$diccAux = NULL$} \Comment $O(1)$
+        \State $res \gets false$ \Comment $O(1)$
+        \State $termine \gets true$ \Comment $O(1)$
+      \Else
+        \If{$(diccAux \to clave) = n$} \Comment $O(1)$
+          \State $termine \gets true$ \Comment $O(1)$
+          \State $res \gets true$ \Comment $O(1)$
+        \Else
+          \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+            \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+          \Else
+            \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+          \EndIf
+        \EndIf
+      \EndIf
+
+    \EndWhile
+
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
+\quad\quad En promedio: $O\big(log\ \#claves(dicc)\big)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se definen todas las claves ordenadas y queda un árbol derechista o izquierdista, por eso para buscar si está definido, tenemos que recorrer todas las claves y tenemos $O(n)$, donde $n$ es la cantidad de claves del diccionario.\\
+\quad\quad Pero como el enunciado del trabajo práctico dice que los valores nat se insertan con probabilidad uniforme, cada vez que bajemos un nivel en la altura del árbol nos vamos a quedar con la mitad de claves, por lo tanto tenemos una complejidad de $O(log\ n)$ en promedio, donde $n$ es la cantidad de claves del diccionario.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iObtener}(\In{n}{nat}, \In{dicc}{estrDiccNat}) $\to$ $res$ : significado}
+  \begin{algorithmic}
+    \State $diccAux \gets dicc$         \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+    \State $termine \gets false$ \Comment $O(1)$
+    \While{$\NOT termine$} \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+        \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+      \Else
+        \If{$(diccAux \to clave) = n$} \Comment $O(1)$
+          \State $res \gets (diccAux \to significado)$ \comentariocompl{lo pasamos por referencia}{$O(1)$}
+        \Else
+          \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+        \EndIf
+      \EndIf
+    \EndWhile
+
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
+\quad\quad En promedio: $O\big(log\ \#claves(dicc)\big)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se definen todas las claves ordenadas y queda un árbol derechista o izquierdista, por eso para obtener el significado, tenemos que recorrer todas las claves y tenemos $O(n)$, donde $n$ es la cantidad de claves del diccionario.\\
+\quad\quad Pero como el enunciado del trabajo práctico dice que los valores nat se insertan con probabilidad uniforme, cada vez que bajemos un nivel en la altura del árbol nos vamos a quedar con la mitad de claves, por lo tanto tenemos una complejidad de $O(log\ n)$ en promedio, donde $n$ es la cantidad de claves del diccionario.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iBorrar}(\In{n}{nat}, \Inout{dicc}{estrDiccNat})}
+  \begin{algorithmic}
+    \State $diccAux \gets dicc$         \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+    \State $termine \gets false$ \Comment $O(1)$
+    \State $padre \gets NULL$ \Comment $O(1)$
+    \While{$\NOT termine$} \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+        \State $padre \gets diccAux$ \Comment $O(1)$
+        \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+      \Else
+        \If{$(diccAux \to clave) = n$} \Comment $O(1)$
+          \State $termine \gets true$ \Comment $O(1)$
+        \Else
+          \State $padre \gets diccAux$ \Comment $O(1)$
+          \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
+        \EndIf
+      \EndIf
+    \EndWhile
+    \BState
+
+    \comentario{Caso hoja}
+    \If{$(diccAux \to izq) = NULL\ \AND (diccAux \to der) = NULL$} \Comment $O(1)$
+      \If{(padre \to izq) = diccAux} \Comment $O(1)$
+        \State $(padre \to izq) \gets NULL$ \Comment $O(1)$
+      \Else
+        \State $(padre \to der) \gets NULL$ \Comment $O(1)$
+      \EndIf
+
+    \comentario{Caso un sólo hijo (derecho)}
+    \ElsIf{$(diccAux \to izq) = NULL\ \AND \NOT (diccAux \to der) = NULL$} \Comment $O(1)$
+      \If{(padre \to izq) = diccAux} \Comment $O(1)$
+        \State $(padre \to izq) \gets (diccAux \to der)$ \Comment $O(1)$
+      \Else
+        \State $(padre \to der) \gets (diccAux \to der)$ \Comment $O(1)$
+      \EndIf
+
+    \comentario{Caso un sólo hijo (izquierdo)}
+    \ElsIf{$\NOT (diccAux \to izq) = NULL\ \AND (diccAux \to der) = NULL$} \Comment $O(1)$
+      \If{(padre \to izq) = diccAux} \Comment $O(1)$
+        \State $(padre \to izq) \gets (diccAux \to izq)$ \Comment $O(1)$
+      \Else
+        \State $(padre \to der) \gets (diccAux \to izq)$ \Comment $O(1)$
+      \EndIf
+
+    \comentario{Caso dos hijos}
+    \ElsIf{$\NOT (diccAux \to izq) = NULL\ \AND \NOT (diccAux \to der) = NULL$} \Comment $2*O\big(log\ \#claves(dicc)\big)$
+      \State $temp \gets Min(diccAux \to der)$\\ \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \State $Borrar(temp.clave, dicc)$ \comentariorandom{entra en caso hoja o caso un sólo hijo por características de mínimo}
+      \BState
+
+      \State $(diccAux \to clave) \gets temp.clave$ \Comment $O(1)$
+      \State $(diccAux \to significado) \gets temp.significado$ \Comment $O(1)$
+      
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
+\quad\quad En promedio: $O\big(log\ \#claves(dicc)\big)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se definen todas las claves ordenadas y queda un árbol derechista o izquierdista, por eso para borrar la clave, tenemos que recorrer todas las claves y tenemos $O(n)$, donde $n$ es la cantidad de claves del diccionario.\\
+\quad\quad Pero como el enunciado del trabajo práctico dice que los valores nat se insertan con probabilidad uniforme, cada vez que bajemos un nivel en la altura del árbol nos vamos a quedar con la mitad de claves, por lo tanto tenemos una complejidad de $O(log\ n)$ en promedio, donde $n$ es la cantidad de claves del diccionario.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iMin}(\In{dicc}{estrDiccNat}) $\to$ $res$ : tupla\big\langle nat, significado\big\rangle}
+  \begin{algorithmic}
+    \State $diccAux \gets dicc$ \Comment $O(1)$
+    \While{$\NOT (diccAux \to izq) = NULL$}\\ \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \State $diccAux \gets (diccAux \to izq)$ \Comment $O(1)$
+    \EndWhile
+    \State $res \gets \big\langle diccAux \to clave, diccAux \to significado\big\rangle$ \Comment $O(1)$
+     
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
+\quad\quad En promedio: $O\big(log\ \#claves(dicc)\big)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se definen todas las claves ordenadas y queda un árbol derechista o izquierdista, por eso para encontrar la clave mínima, tenemos que recorrer todas las claves y tenemos $O(n)$, donde $n$ es la cantidad de claves del diccionario.\\
+\quad\quad Pero como el enunciado del trabajo práctico dice que los valores nat se insertan con probabilidad uniforme, cada vez que bajemos un nivel en la altura del árbol nos vamos a quedar con la mitad de claves, por lo tanto tenemos una complejidad de $O(log\ n)$ en promedio, donde $n$ es la cantidad de claves del diccionario.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iMax}(\In{dicc}{estrDiccNat}) $\to$ $res$ : tupla\big\langle nat, significado\big\rangle}
+  \begin{algorithmic}
+    \State $diccAux \gets dicc$ \Comment $O(1)$
+    \While{$\NOT (diccAux \to der) = NULL$}\\ \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
+      \State $diccAux \gets (diccAux \to der)$ \Comment $O(1)$
+    \EndWhile
+    \State $res \gets \big\langle diccAux \to clave, diccAux \to significado\big\rangle$ \Comment $O(1)$
+     
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
+\quad\quad En promedio: $O\big(log\ \#claves(dicc)\big)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se definen todas las claves ordenadas y queda un árbol derechista o izquierdista, por eso para encontrar la clave máxima, tenemos que recorrer todas las claves y tenemos $O(n)$, donde $n$ es la cantidad de claves del diccionario.\\
+\quad\quad Pero como el enunciado del trabajo práctico dice que los valores nat se insertan con probabilidad uniforme, cada vez que bajemos un nivel en la altura del árbol nos vamos a quedar con la mitad de claves, por lo tanto tenemos una complejidad de $O(log\ n)$ en promedio, donde $n$ es la cantidad de claves del diccionario.}
+
+  \end{algorithmic}
+\end{algorithm}
+
+
+\Titulo{Algoritmos del iterador}
+    \medskip
+  
+\begin{algorithm}[H]{\textbf{iCrearIt}(\In{dicc}{estrDiccNat}) $\to$ $res$ : itDiccNat}
+  \begin{algorithmic}
+    \State $res \gets Vacia()$ \Comment $O(1)$
+    \If{$\NOT dicc = NULL$} \Comment $O(1)$
+      \State $Apilar(res, *dicc)$ \Comment $O\big(copy(*dicc)\big) = O(1)$
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Se llama únicamente a la función apilar del módulo pila del apunte de módulos básicos. Como se copia un nat la complejidad es $O(1)$.}
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iSiguientes}(\In{it}{iter}) $\to$ $res$ : lista\big(tupla\big\langle nat, significado\big\rangle\big)}
+  \begin{algorithmic}
+    \comentario{DFS}
+    \State $res \gets Vacia()$ \Comment $O(1)$
+    \State $iterador \gets Copiar(it)$
+    \While{$\NOT EsVacia?(iterador)$} \Comment $O\big(n * copy(significado\ mas\ costoso))$
+      \State $prox \gets Desapilar(iterador)$ \Comment $O(1)$
+      \State $AgregarAtras\big(res, \big\langle prox \to clave, prox \to significado\big\rangle\big)$ \Comment $O\big(copy(tupla\langle nat, significado\big\rangle)\big)$
+      \If{$\NOT prox \to der = NULL$} \Comment $O(1)$
+        \State $Apilar(iterador, prox \to der)$ \Comment $O(1)$
+      \EndIf
+
+      \If{$\NOT prox \to izq = NULL$} \Comment $O(1)$
+        \State $Apilar(iterador, prox \to izq)$ \Comment $O(1)$
+      \EndIf
+
+    \EndWhile
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(n*copy(x))$ con $n$ siendo la cantidad de claves del diccionario y $x$ siendo el significado más costoso de copiar.
+    }
+    \Statex \underline{Justificación:} {Tiene un ciclo principal y todas las demás operaciones $O(1)$. En el ciclo principal se itera $n$ veces y se copia en cada iteración una tupla<nat, significado>. Como copiar un nat es $O(1)$, nos queda una complejidad de $O\big(n * copy(significado\ mas\ costoso)\big)$}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iAvanzar}(\Inout{it}{iter})}
+  \begin{algorithmic}
+    \State $prox \gets Desapilar(it)$ \Comment $O(1)$
+   
+    \If{$\NOT prox \to der = NULL$} \Comment $O(1)$
+      \State $Apilar(it, prox \to der)$ \Comment $O(copy(puntero)) = O(1)\ (al\ menos\ una\ sola\ vez)$
+    \EndIf
+
+    \If{$\NOT prox \to izq = NULL$} \Comment $O(1)$
+      \State $Apilar(it, prox \to izq)$ \Comment $O(1)$
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {La funcion desapilar es $O(1)$, luego se llama dos veces a la función apilar del modulo basico pila que tiene una complejidad de $O\big(copy(\alpha)\big)$, pero como $\alpha$ en este algoritmo es un puntero, y copiar un puntero es $O(1)$, entonces la complejidad del algoritmo es $O(1)$.}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iHayMas?}(\In{it}{iter}) $\to$ $res$ : bool}
+  \begin{algorithmic}
+    \State $res \gets \big(\NOT EsVacia?(it)\big)$ \Comment $O(1)$
+    
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {Se llama únicamente a la función EsVacia del módulo Pila del apunte de módulos básicos, que tiene complejidad $O(1)$.}
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iActual}(\In{it}{iter}) $\to$ $res$ : tupla\big\langle nat, significado\big\rangle}
+  \begin{algorithmic}
+    \State $res \gets \big\langle Tope(it) \to clave, Tope(it) \to significado\big\rangle)$
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {No se copia la tupla actual del iterador, si no que se pasa por referencia. Por lo tanto es $O(1)$.}
+  \end{algorithmic}
+\end{algorithm}
+
+\end{Algoritmos}
+
+

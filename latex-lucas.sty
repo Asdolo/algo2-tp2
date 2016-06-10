@@ -1,0 +1,97 @@
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{aed2-symb}
+
+% Algunas traducciones
+\newcommand{\incluido}{\subseteq}
+
+%Desigualdad observacional(?)
+\newcommand\dissub[1]{\opsub{\ne}{#1}}
+\newcommand\disobs{\dissub{obs}\xspace}
+\newcommand{\nigobs}{\disobs}
+
+% donde #1 es #2
+% ej: donde registro es diccString(dato)
+\newcommand{\dondees}[2]{
+    \hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{#2}
+}
+\newcommand{\somequad}{\quad \quad \quad \quad \quad}
+\newcommand{\veryquad}{\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad}
+\definecolor{commentColorVB}{RGB}{0,128,0}
+
+%\newcommand{\comentario}[1]{\hspace*{0em}{\color{commentColorVB}$//$ #1}}
+
+\newcommand{\comentariocompl}[2]{\hfill{\color{commentColorVB}$/*$ #1 $*/$} \Commentnoindent #2}
+
+\newcommand{\comentario}[1]{\State{{\color{commentColorVB}$//$ #1}}}
+
+\newcommand{\comentarioder}[1]{\hfill{\color{commentColorVB}$//$ #1}}
+
+\newcommand{\comentariorandom}[1]{{\color{commentColorVB}$//$ #1}}
+\newcommand{\bigpar}[1]{$\left(\pbox[c][\igualobs@max]{#1}\right)%
+    $%
+}
+
+\newcommand*{\myquotingsource}{}
+\newenvironment{myquoting}[1]{%
+  \renewcommand*{\myquotingsource}{#1}
+  \begin{quoting}[font={itshape,raggedleft},leftmargin=0.5\linewidth,rightmargin=2em]%
+}{%
+  \par\medskip
+  \myquotingsource
+  \end{quoting}%
+}
+
+\newcommand\tab[1][0.50cm]{\hspace*{#1}}
+
+
+\renewcommand{\TRUE}{\textbf{true}}
+\renewcommand{\FALSE}{\textbf{false}}
+\renewcommand{\AND}{\textbf{and}\ }
+\renewcommand{\OR}{\textbf{or}\ }
+\renewcommand{\XOR}{\textbf{xor}\ }
+\renewcommand{\NOT}{\textbf{not}\ }
+\renewcommand{\NULL}{\textbf{NULL}}
+\renewcommand{\TO}{\textbf{to}\ }
+\renewcommand{\FROM}{\textbf{from}\ }
+
+
+
+\newlength{\tadAuxiliar@lenEquiv}%espacio que ocupa el equivalente.
+\newlength{\tadAuxiliar@lenDerecha}%espacio para el parbox de #2
+\newcommand{\tadAuxiliar}[2]{%
+    \par%
+    %ocupacion del Auxiliar y del equivalente.
+    \settowidth{\tadAuxiliar@lenEquiv}{\ensuremath{=}}%
+    %indentacion en los reglones sucesivos.
+    \ifthenelse{\lengthtest{\tadAnchoIzquierdaAuxiliar>0pt}}{%
+        \setlength{\tadAuxiliar@lenDerecha}{\tadAnchoIzquierdaAuxiliar}%
+    }{%
+        \settominwidth{\tadAuxiliar@lenDerecha}{#1}%
+    }%
+    \ifthenelse{\boolean{tad@TADenvironment}}{%
+        \setlength{\tadAuxiliar@lenDerecha}{\linewidth - \tadMargen - \tadSubMargen - \tadAuxiliar@lenEquiv - 2\tadSeparacionAxiomas - \tadAuxiliar@lenDerecha}%
+        %\setlength{\tadAuxiliar@lenDerecha}{\textwidth - \tadMargen - \tadSubMargen - \tadAuxiliar@lenEquiv - 2\tadSeparacionAxiomas - \tadAuxiliar@lenDerecha}%
+    }{%
+        \setlength{\tadAuxiliar@lenDerecha}{\linewidth - \tadAuxiliar@lenEquiv - 2\tadSeparacionAxiomas - \tadAuxiliar@lenDerecha}%
+    }%
+    % escritura del Auxiliar. Sea i = \tadAuxiliar@lenIzquierdo y m = \tadAnchoIzquierdaAuxiliar.
+    % hay tres posibilidades: m = 0, 0 < i <= m, 0 < m < i.
+    \ifthen{\boolean{tad@TADenvironment}}{%
+        \hspace*{\tadSubMargen}%
+    }%        
+    \ifthenelse{\lengthtest{\tadAnchoIzquierdaAuxiliar=0pt}}{%
+        #1%
+        \tad@axiskip\ensuremath{=}\tad@axiskip%
+    }{%
+        \tad@ifFitsElse{#1}{\tadAnchoIzquierdaAuxiliar}{%
+            \parbox[t]{\tadAnchoIzquierdaAuxiliar}{#1}%
+            \tad@axiskip\ensuremath{=}\tad@axiskip%
+        }{%
+            #1%
+            \tad@axiskip\ensuremath{=}\tad@axiskip%
+            \\%
+        }%
+    }%
+    \parbox[t]{\tadAuxiliar@lenDerecha}{#2}%
+    \par%
+}

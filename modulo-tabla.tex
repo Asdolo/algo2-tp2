@@ -1,0 +1,715 @@
+\section{Módulo Tabla}
+
+\begin{Interfaz}
+  
+  \textbf{se explica con}: \tadNombre{Tabla}.
+
+  \textbf{géneros}: \TipoVariable{tabla}.
+
+  \Titulo{Operaciones básicas de tabla}
+
+  \InterfazFuncion{Nombre}{\In{t}{tabla}}{string}
+  [true]  
+  {alias$\big(res$ $\igobs$ nombre($t$)$\big)$}
+  [$O(1)$]
+  [devuelve el nombre de la tabla indicada.]
+  [se pasa por referencia. No es modificable (const).]
+  
+  \InterfazFuncion{Claves}{\In{t}{tabla}}{itBi(campo)}
+  [true]
+  {alias$\big(res$ $\igobs$ crearIt(claves($t$))$\big)$}
+  [O(1)]
+  [devuelve un iterador al conjunto de campos claves de la tabla indicada.]
+  [se pasa por referencia. No es modificable (const)]
+  
+  \InterfazFuncion{Buscar}{\In{c}{campo}, \In{d}{dato}, \In{t}{tabla}}{secu(registro)}
+  [$c$ $\in$ campos($t$) $\yluego$ $\big($tipoCampo($c$, $t$) $\igobs$ nat?($d$)$\big)$]
+  {($\forall$ $r$ : registro) def?($c$, $r$) $\implies$ $\big($($r$ $\in$ registros($t$) $\land$ obtener($c$, $r$) $\igobs$ $d$) $\ssi$ esta?($r$, $res$)$\big)$}
+  [\\
+\tab Campo indexado nat y clave $\implies$ $O\big(log\ n\ +\ |L|\big)$ promedio. \\
+\tab Campo indexado nat y no clave $\implies$ $O\big(log\ n\ +\ n * |L|\big)$ promedio. \\
+\\
+\tab Campo indexado String y clave $\implies$ $O(|L|\ +\ |L|)$ = $O(|L|)$. \\ 
+\tab Campo indexado String y no clave $\implies$ $O\big(|L|\ +\ n * |L|\big)$ = $O(n * |L|)$. \\
+\\
+\tab Campo NO indexado $\implies$ $O(n * |L|)$. \\
+\\
+\tab Donde $n$ es la cantidad de registros de la tabla pasada por argumento y |$L$| corresponde a la longitud máxima de cualquier valor string de datos de la tabla.
+]
+  [Busca en todos los registros de la tabla los que tengan el dato $d$ en el campo $c$, esos registros los devuelve en una secuencia.]
+  [no hay ya que se copian los registros.]
+
+  \InterfazFuncion{Indices}{\In{t}{tabla}}{itBi(campo)}
+  [true]
+  {$res$ $\igobs$ crearIt(indices($t$))}
+  [$O(1)$]
+  [devuelve un iterador al conjunto de campos con índice de la tabla indicada.]
+
+  \InterfazFuncion{Campos}{\In{t}{tabla}}{itBi(campo)}
+  [true]
+  {$res$ $\igobs$ crearIt(campos($t$))}
+  [$O(1)$]
+  [devuelve un iterador al conjunto de campos (devuelto por copia) de la tabla indicada.]
+
+
+  \InterfazFuncion{TipoCampo}{\In{c}{campo}, \In{t}{tabla}}{bool}
+  [$c$ $\in$ campos($t$)]
+  {$res$ $\igobs$ tipoCampo($c$, $t$)}
+  [$O(1)$]
+  [devuelve \texttt{true} si el tipo de campo es nat y \texttt{false} si el tipo de campo es string.]
+
+  \InterfazFuncion{Registros}{\In{t}{tabla}}{itBi(registro)}
+  [true]
+  {$res$ $\igobs$ crearIt(registros($t$))}
+  [$O(1)$]
+  [devuelve un iterador al conjunto de registros de la tabla indicada.]
+  [hay aliasing, pero no es modificable.]
+
+  \InterfazFuncion{CantidadDeAccesos}{\In{t}{tabla}}{nat}
+  [true]
+  {$res$ $\igobs$ cantidadDeAccesos($t$)}
+  [$O(1)$]
+  [devuelve la cantidad de accesos de la tabla indicada.]
+
+
+  \InterfazFuncion{NuevaTabla}{\In{nombre}{string}, \In{claves}{conj(campo)}, \In{columnas}{dicc(string, bool)}}{tabla}
+  [$claves$ $\nigobs$ $\emptyset$ $\land$ $claves$ $\incluido$ claves($columnas$)]
+  {$res$ $\igobs$ nuevaTabla($nombre$, $claves$, $columnas$)}
+  [$O(1)$]
+  [genera una tabla con los valores ingresados.]
+
+  \InterfazFuncion{AgregarRegistro}{\In{r}{registro}, \Inout{t}{tabla}}{}
+  [campos($r$) $\igobs$ campos($t$) $\land$ puedoInsertar?($r$, $t$) $\land$ $t_{0}$ = $t$]
+  {$t$ $\igobs$ agregarRegistro($r$, $t_0$)}
+  [\\
+\tab Campo indexado $\implies$ En caso promedio $O(|L| + log\ n)$, donde $n$ es la cantidad de registros($t$) y $L$ es el string más largo de $r$.\\
+\tab Campo no indexado $\implies$ $O(|S|)$, donde $S$ es el string más largo de $r$.]
+  [agrega un registro a la tabla.]
+
+  \InterfazFuncion{BorrarRegistro}{\In{criterio}{registro}, \Inout{t}{tabla}}{}
+  [\#campos($criterio$) $\igobs$ 1 $\yluego$ dameUno$\big($campos($criterio$)$\big)$ $\in$ claves($t$) $\land$ $t_0$ = $t$]
+  {$t$ $\igobs$ borrarRegistro($criterio$, $t_0$)}
+  [\\
+\tab Criterio sobre campo indexado $\implies$ $O(log\ n\ +\ L)$. \\
+\tab Criterio sobre campo no indexado $\implies$ $O(n * |L|)$. \\
+\tab Donde $n$ es la cantidad total de registros de la tabla y $L$ el valor string más largo de todos los datos comparados.]
+  [borra un registro de la tabla.]
+
+  \InterfazFuncion{Indexar}{\In{c}{campo}, \Inout{t}{tabla}}{}
+  [puedeIndexar($c$, $t$)]
+  {$t$ $\igobs$ indexar($c$, $t$)}
+  [$O\big(|registros| * L * (L\ +\ log\ |registros|)\big)$, donde $L$ es el máximo string para el campo $c$ en cualquier registro.]
+  [indexa un campo de la tabla.]
+
+  \InterfazFuncion{Minimo}{\In{c}{campo}, \In{t}{tabla}}{dato}
+  [$\neg$vacio?(registros($t$)) $\land$ $c$ $\in$ indices($t$)]
+  {alias($res$ $\igobs$ $m$) | nat?($m$) $\implies$ valorNat($m$) $\igobs$ valorNat$\big($minimo($c$, $t$)$\big)$ $\land$ $\neg$nat?($m$) $\implies$ valorStr($m$) $\igobs$ valorStr$\big($minimo($c$, $t$)$\big)$}
+  [$O(1)$]
+  [devuelve el minimo de una tabla por referencia de un campo indexado. $res$ no es modificable]
+  [$res$ no es modificable.]
+
+  \InterfazFuncion{Maximo}{\In{c}{campo}, \In{t}{tabla}}{dato}
+  [$\neg$vacio?(registros($t$)) $\land$ $c$ $\in$ indices($t$)]
+  {alias($res$ $\igobs$ $m$) | tipoCampo($c$, $m$) $\implies$ $\Big($nat?($m$) $\land$ $\big($valorNat($m$) $\igobs$ valorNat(maximo$\big(c$, $t$)$\big)\big)\Big)$ $\land$ $\neg$tipoCampo($c$, $m$) $\implies$ $\Big(\neg$nat?($m$) $\land$ $\big($valorStr($m$) $\igobs$ valorStr(maximo$\big(c$, $t$)$\big)\big)\Big)$}
+  [$O(1)$]
+  [devuelve el maximo de una tabla por referencia de un campo indexado. $res$ no es modificable]
+  [$res$ no es modificable.]
+
+
+
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representación de tabla}
+
+  \begin{Estructura}{tabla}[estrTabla]
+    \begin{flushright}
+      \dondees{estrTabla}{tupla}$\Big($
+      \emph{indicesString}: \TipoVariable{diccString\big(conj(itConj(registro))\big)}, \veryquad \\
+        \emph{indicesNat}: \TipoVariable{diccNat\big(conj(itConj(registro))\big)},
+        \emph{registros}: \TipoVariable{conj(registro)}, \veryquad \\
+        \emph{nombre}: \TipoVariable{string},
+        \emph{campos}: \TipoVariable{diccString(bool esNat?)},
+        \emph{claves}: \TipoVariable{conj(campo)}, \veryquad \\
+        \emph{campoIndexadoNat}: \TipoVariable{lista(tupla<}\emph{nombre}: \TipoVariable{campo}, \emph{max}: \TipoVariable{dato}, \emph{min}: \TipoVariable{dato}, \emph{vacio?}: \TipoVariable{bool>)}, \veryquad \\
+        \emph{campoIndexadoString}: \TipoVariable{lista(tupla<}\emph{nombre}: \TipoVariable{campo}, \emph{max}: \TipoVariable{dato}, \emph{min}: \TipoVariable{dato}, \emph{vacio?}: \TipoVariable{bool>)},
+        \emph{cantAccesos}: \TipoVariable{nat}
+        $\Big)$ \veryquad
+      \end{flushright}
+     \dondees{registro}{diccString(dato)}y se explica con \tadNombre{Registro}, y \TipoVariable{conj} corresponde al conjunto lineal de la cátedra.
+  \end{Estructura}
+
+  \noindent\textbf{Invariante de representación}
+  
+  \noindent\tab 1) Las claves de indicesString corresponden al valor del campo indexado para cada registro que esté en sus significados. \\
+  \noindent\tab 2) Las claves de indicesNat corresponden al valor del campo indexado para cada registro que esté en sus significados. \\
+  \noindent\tab 3) Los significados de indicesString e indicesNat pertenecen a registros. \\
+  \noindent\tab 4) Todos los registros estan indexados. \\
+  \noindent\tab 5) Claves esta entre los campos y no es vacio. \\
+  \noindent\tab 6) Todos los valores de los registros son menores o iguales al campo maximo y mayor o iguales al minimo. \\
+  \noindent\tab 7) Para cada campo indexado, hay un registro cuyo valor en ese campo es el maximo y un registro cuyo valor es el minimo. \\
+  \noindent\tab 8) Si un campo es clave no puede haber dos registros con mismo dato en ese campo. \\
+  \noindent\tab 9) El tipo de dato en registro corresponde al tipo de dato en campos y las claves de los registros son los campos de la tabla. \\
+  \noindent\tab 10) El campo indexado pertenece a campos. \\
+  \noindent\tab 11) cantAccesos es menor o igual a la cantidad de registros. \\
+  \noindent\tab 12) Tamaño de las listas 'campoIndexado...' es menor o igual a 1. \\
+  \noindent\tab 13) El bool 'vacio?' de las tuplas de campoIndexado valen true si y solo si sus respectivos diccionarios están vacíos. \\
+  \noindent\tab 14) Si no hay un campoIndexado de cierto tipo, el diccionario correspodiente, esta vacío.\\
+
+  \Rep[estrTabla][e]{}
+    \noindent\tab\tab\textbf{1)} $\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $c$ : string, $c$ $\in$ claves($e$.indicesString)$\big)$
+    $\big(\forall$ $r$ : itConj(registro), $r$ $\in$ obtener($c$, $e$.indicesString)$\big)$\\
+    $\Big($valorStr$\big($obtener$\big($campoIndexString, siguiente($r$)$\big)\big)$ = $c\Big)$
+    }\\
+    \noindent\tab\tab\textbf{2)} $\big(\neg$vacia?($e$.campoIndexadoNat)$\big)$ $\implies$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $c$ : nat, $c$ $\in$ claves($e$.indicesNat)$\big)$
+    $\big(\forall$ $r$ : itConj(registro), $r$ $\in$ obtener($c$, $e$.indicesNat)$\big)$\\
+    $\Big($valorNat$\big($obtener$\big($campoIndexNat, siguiente($r$)$\big)\big)$ = $c\Big)$
+    }\\
+    \noindent\tab\tab\textbf{3)} $\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $c$ : string, $c$ $\in$ claves($e$.indicesString)$\big)$
+    $\big(\forall$ $r$ : itConj(registro), $r$ $\in$ obtener($c$, $e$.indicesString)$\big)$\\
+    $\big($siguiente($r$) $\in$ $e$.registros$\big)$
+    }\\
+    \noindent\tab\tab\textbf{3 bis)} $\big(\neg$vacia?($e$.campoIndexadoNat)$\big)$ $\implies$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $c$ : nat, $c$ $\in$ claves($e$.indicesNat)$\big)$
+    $\big(\forall$ $r$ : itConj(registro), $r$ $\in$ obtener($c$, $e$.indicesNat)$\big)$\\
+    $\big($siguiente($r$) $\in$ $e$.registros$\big)$
+    }\\
+    \noindent\tab\tab\textbf{4)} $\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $r$ : registro, $r$ $\in$ $e$.registros$\big)$
+    $\big(\exists$ $it$ : itConj(registro), siguiente($it$) $\igobs$ $r\big)$\\
+    $it$ $\in$ obtener$\big($valorStr$\big($obtener(campoIndexString, $r$)$\big)$, $e$.indicesString$\big)$
+    }\\
+    \noindent\tab\tab\textbf{4 bis)} $\big(\neg$vacia?($e$.campoIndexadoNat)$\big)$ $\implies$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $r$ : registro, $r$ $\in$ $e$.registros$\big)$
+    $\big(\exists$ $it$ : itConj(registro), siguiente($it$) $\igobs$ $r\big)$\\
+    $it$ $\in$ obtener$\big($valorNat$\big($obtener(campoIndexNat, $r$)$\big)$, $e$.indicesNat$\big)$
+    }\\
+    \noindent\tab\tab\textbf{5)} $\big(\forall$ $c$ : campo, $c$ $\in$ $e$.claves$\big)$ $\big(c$ $\in$ claves($e$.campos) $\land$ \#$e$.claves > 0$\big)$\\
+    \noindent\tab\tab\textbf{6)} $\Big(\big(\neg$vacia?($e$.campoIndexadoNat)$\big)$ $\yluego$ $\neg\big(\big($prim($e$.campoIndexadoNat)$\big)$.vacio?$\big)\Big)$ $\implies$ \\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $r$ : registro, $r$ $\in$ $e$.registros$\big)$ $\big(\forall$ $c$ : campo, $c$ $\in$ claves($e$.campos) $\yluego$ obtener($c$, $e$.campos) $\igobs$ true $\big)$ \\
+    $\Big(\big($prim($e$.campoIndexadoNat)$\big)$.min $\le$ obtener($c$, $r$) $\big($prim($e$.campoIndexadoNat)$\big)$.max$\Big)$
+    }\\
+    \noindent\tab\tab\textbf{6 bis)} $\Big(\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\yluego$ $\neg\big(\big($prim($e$.campoIndexadoString)$\big)$.vacio?$\big)\Big)$ $\implies$ \\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $r$ : registro, $r$ $\in$ $e$.registros$\big)$ $\big(\forall$ $c$ : campo, $c$ $\in$ claves($e$.campos) $\yluego$ obtener($c$, $e$.campos) $\igobs$ false $\big)$ \\
+    $\Big(\big($prim($e$.campoIndexadoString)$\big)$.min $\le$ obtener($c$, $r$) $\big($prim($e$.campoIndexadoString)$\big)$.max$\Big)$
+    }\\
+    \noindent\tab\tab\textbf{7)} $\Big(\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\yluego$ $\neg\big(\big($prim($e$.campoIndexadoString)$\big)$.vacio?$\big)\Big)$ $\implies$ \\
+    \noindent\tab\tab\bigpar{$\big(\exists$ $r$, $r'$ : registro, $r$ $\in$ $e$.registros $\land$ $r'$ $\in$ $e$.registros$\big)$\\
+    $\Big($obtener(campoIndexString, $r$) $\igobs$ $\big($prim($e$.campoIndexadoString)$\big)$.max $\land$ \\
+    obtener(campoIndexString, $r'$) $\igobs$ $\big($prim($e$.campoIndexadoString)$\big)$.min$\Big)$
+    }\\
+    \noindent\tab\tab\textbf{7 bis)} $\Big(\big(\neg$vacia?($e$.campoIndexadoNat)$\big)$ $\yluego$ $\neg\big(\big($prim($e$.campoIndexadoNat)$\big)$.vacio?$\big)\Big)$ $\implies$ \\
+    \noindent\tab\tab\bigpar{$\big(\exists$ $r$, $r'$ : registro, $r$ $\in$ $e$.registros $\land$ $r'$ $\in$ $e$.registros$\big)$\\
+    $\Big($obtener(campoIndexNat, $r$) $\igobs$ $\big($prim($e$.campoIndexadoNat)$\big)$.max $\land$ \\
+    obtener(campoIndexNat, $r'$) $\igobs$ $\big($prim($e$.campoIndexadoNat)$\big)$.min$\Big)$
+    }\\
+    \noindent\tab\tab\textbf{8)} $\big(\forall$ $c$ : campo, $c$ $\in$ $e$.claves$\big)$ $\big(\forall$ $x$, $y$ : registro, $x$ $\in$ $e$.registros $\land$ $y$ $\in$ $e$.registros $\land$ ($x$ $\nigobs$ $y$)$\big)$ \\
+    \noindent\tab\tab obtener($c$, $y$) $\nigobs$ obtener($c$, $x$)
+    \\
+    \noindent\tab\tab\textbf{9)} $\big(\forall$ $r$ : registro, $r$ $\in$ $e$.registros$\big)$ $\big(\forall$ $c$ : campo$\big)$ $\big(c$ $\in$ claves($e$.campos)$\big)$ $\ssi$ \\
+    \noindent\tab\tab $\big(c$ $\in$ claves($r$) $\yluego$ obtener($c$, $e$.campos) $\igobs$ tipo?(obtener($c$,$r$))$\big)$
+    \\
+    \noindent\tab\tab\textbf{10)} $\neg\big($vacia?($e$.campoIndexadoString)$\big)$ $\implies$ $\big($prim($e$.campoIndexadoString)$\big)$.nombre $\in$ claves($e$.campos)\\
+    \noindent\tab\tab\textbf{10 bis)} $\neg\big($vacia?($e$.campoIndexadoNat)$\big)$ $\implies$ $\big($prim($e$.campoIndexadoNat)$\big)$.nombre $\in$ claves($e$.campos)\\
+    \noindent\tab\tab\textbf{11)} $e$.cantAccesos $\ge$ \#$e$.registros\\
+    \noindent\tab\tab\textbf{12)} long($e$.campoIndexadoNat) $\le$ 1 $\land$ long($e$.campoIndexadoNat) $\le$ 1\\
+    \noindent\tab\tab\textbf{13)} $\neg\big($vacia?($e$.campoIndexadoNat)$\big)$ $\implies$\\
+    \noindent\tab\tab$\big($prim($e$.campoIndexadoNat)$\big)$.vacio? $\ssi$ $\big(\#$claves($e$.indicesNat) $\igobs$ 0$\big)$ $\land$ \\
+    \noindent\tab\tab $\neg\big($vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
+    \noindent\tab\tab $\big($prim($e$.campoIndexadoString)$\big)$.vacio? $\ssi$ $\big(\#$claves($e$.indicesString) $\igobs$ 0$\big)$\\
+    \noindent\tab\tab\textbf{14)} $e$.campoIndexadoNat $\igobs$ <> $\implies$ claves($e$.indicesNat) $\igobs$ $\emptyset$ $\land$ \\
+    \noindent\tab\tab $e$.campoIndexadoString $\igobs$ <> $\implies$ claves($e$.indicesString) $\igobs$ $\emptyset$
+
+\medskip
+
+  \noindent\textbf{Auxiliares sintácticos}
+  \tadAuxiliar{campoIndexString}{$\Pi_1\big($prim($e$.campoIndexString)$\big)$}
+  \tadAuxiliar{campoIndexNat}{$\Pi_1\big($prim($e$.campoIndexadoNat)$\big)$}
+
+  ~
+	
+  ~
+ 
+  \Abs[estrTabla]{tabla}[e]{t}{nombre($t$) $\igobs$ $e$.nombre $\land$ claves($t$) $\igobs$ $e$.claves $\land$ campos($t$) $\igobs$ claves($e$.campos) $\yluego$ $\big(\forall$ $c$ : campo, $c$ $\in$ campos($t$)$\big)$ tipoCampo($c$, $t$) $\igobs$ obtener($c$, $e$.campos) $\land$ registros($t$) $\igobs$ $e$.registros $\land$ cantidadDeAccesos($t$) $\igobs$ $e$.cantAccesos $\land$ $\big(\forall$ $i$ : campo, $i$ $\in$ indices($t$)$\big)$ $\Big($tipoCampo($i$, $t$) $\implies$ $\big(i$ $\igobs$ $\big($prim($e$.campoIndexadoNat)$\big)$.nombre$\big)$ $\land$ \\
+  $\neg\big($tipoCampo($i$, $t$)$\big)$ $\implies$ $\big(i$ $\igobs$ $\big($prim($e$.campoIndexadoString)$\big)$.nombre$\big)\Big)$}
+
+  ~
+
+\end{Representacion}
+
+\bigskip
+
+\begin{Algoritmos}
+
+\medskip
+	
+ \Titulo{Algoritmos de tabla}
+  	\medskip
+  
+\begin{algorithm}[H]{\textbf{iNombre}(\In{e}{estrTabla}) $\to$ $res$ : string}
+    	\begin{algorithmic}
+        \State $res \gets e.nombre$         \Comment $O(1)$
+
+        \medskip
+        \Statex \underline{Complejidad:} {$O(1)$}
+        \Statex \underline{Justificación:} {El algoritmo tiene una única llamada a una función con costo $O(1)$.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iClaves}(\In{e}{estrTabla}) $\to$ $res$ : itConj(campo)}
+      \begin{algorithmic}
+        \State $res \gets CrearIt(e.claves)$         \Comment $O(1)$
+
+        \medskip
+        \Statex \underline{Complejidad:} {$O(1)$}
+        \Statex \underline{Justificación:} {El algoritmo tiene una única llamada a una función con costo $O(1)$.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iIndices}(\In{e}{estrTabla}) $\to$ $res$ : itConj(campo)}
+      \begin{algorithmic}
+        \State $aux \gets Vacio()$                                  \Comment $O(1)$
+        \If{$Longitud(e.campoIndexadoNat) > 0$}                     \Comment $O(1)$
+          \State $AgregarRapido\big(Primero((e.campoIndexadoNat).nombre), aux\big)\\$ \Comment $O\big(copy((e.campoIndexadoNat).nombre)\big)$
+        \EndIf
+        \If{$Longitud(e.campoIndexadoString) > 0$}                     \Comment $O(1)$
+          \State $AgregarRapido\big(Primero((e.campoIndexadoString).nombre), aux\big)$\\ \Comment $O\big(copy((e.campoIndexadoString).nombre)\big)$
+        \EndIf
+        \State $res \gets CrearIt(aux)$                                \Comment $O(1)$
+
+        \medskip
+        \Statex \underline{Complejidad:} {$O(1)$}
+        \Statex \underline{Justificación:} {El algoritmo utiliza la función agregarRapido del Módulo Conjunto lineal 2 veces, entonces la complejidad es la de copiar el string del campo más largo de los dos. Como los strings de los campos estan acotados por una constante, entonces la complejidad queda $O(1)$.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCampos}(\In{e}{estrTabla}) $\to$ $res$ : itConj(campo)}
+      \begin{algorithmic}
+        \State $res \gets CrearIt(e.campos)$         \Comment $O\big(\#claves(e.campos) * L\big)$
+
+        \medskip
+        \Statex \underline{Complejidad:} {$O\big(\#claves(e.campos)\big)$}
+        \Statex \underline{Justificación:} {Por módulo diccString, la operación Claves exporta complejidad $O\big(\#claves(e.campos) * L\big)$ siendo $L$ la longitud del mayor string en claves. Dado que los nombres de los campos están acotados, la complejidad final es $O\big(\#claves(e.campos)\big)$.
+}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iTipoCampo}(\In{c}{campo}, \In{e}{estrTabla}) $\to$ $res$ : bool}
+      \begin{algorithmic}
+      \State $res \gets Obtener(c, e.campos)$         \Comment $O(1)$
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+      \Statex \underline{Justificación:} {Como la longitud de los campos es acotada, buscar en un diccString pasa de ser orden de longitud de la clave más larga a $O(1)$.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iRegistros}(\In{e}{estrTabla}) $\to$ $res$ : itConjunto(campo)}
+      \begin{algorithmic}
+      \State $res \gets CrearIt(e.registros)$         \Comment $O(1)$
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+      \Statex \underline{Justificación:} {Crear un iterador del módulo conjunto lineal de la cátedra es $O(1)$.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCantidadDeAccesos}(\In{e}{estrTabla}) $\to$ $res$ : nat}
+      \begin{algorithmic}
+      \State $res \gets e.cantAccesos$         \Comment $O(1)$
+      \medskip
+      \Statex \underline{Complejidad:} {$O(1)$}
+      \Statex \underline{Justificación:} {El algoritmo tiene una única llamada a una función con costo $O(1)$.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iBorrarRegistro}(\In{criterio}{registro}, \Inout{e}{estrTabla})}
+      \begin{algorithmic}
+      \State $it \gets CrearIt\big(VistaDicc(criterio)\big)$    \Comment $O(1)$
+      \State $clave \gets Siguiente(it).clave$                  \Comment $O(1)$
+      \State $dato \gets Siguiente(it).significado$             \Comment $O(1)$
+      \BState
+      \comentario{Si el criterio es un índice tenemos que recorrer el conjunto de iteradores a registros con un iterador borrando todos, si no hay que recorrer registros linealmente}
+
+      \If{$\big(Primero(e.campoIndexadoNat)\big).nombre = clave$} \Comment $O(|L|)$
+        \If{$Def?(ValorNat(dato), e.indicesNat)$}                 \Comment $O(log\ n) \ promedio$
+          \State $iterador \gets CrearIt\big(Obtener(ValorNat(dato), e.indicesNat)\big)$                           \Comment $O(log\ n) \ promedio$
+          \comentario{es clave, por lo tanto es el único en el conjunto, lo borro de e.registros:}
+          \State $EliminarSiguiente\big(Siguiente(iterador)\big)$ \Comment $O(1)$
+          \State $e.cantAccesos++$                                \Comment $O(1)$
+          \State $Borrar\big(ValorNat(dato), e.indicesNat\big)$   \Comment $O(log\ n) \ promedio$
+          \State $temp \gets CrearIt(e.indicesNat)$ \Comment $O(1)$
+          \If{$\NOT HaySiguiente(temp)$} \Comment $O(1)$
+            \State $Primero(e.campoIndexadoNat).vacio? \gets true$ \Comment $O(1)$
+          \Else
+            \comentario{comparamos por valorNat porque es O(1) vs comparar por dato}
+            \If{$ValorNat(dato) = ValorNat\big(Primero(e.campoIndexadoNat).max\big)$} \Comment $O(1)$
+                \State $Primero(e.campoIndexadoNat).max \gets DatoNat\big(\Pi_1\big(Max(e.indicesNat)\big)\big)$ \Comment $O(1)$
+            \EndIf
+            \If{$ValorNat(dato) = ValorNat\big(Primero(e.campoIndexadoNat).min\big)$} \Comment $O(1)$
+                \State $Primero(e.campoIndexadoNat).min \gets DatoNat\big(\Pi_1\big(Min(e.indicesNat)\big)\big)$ \Comment $O(1)$
+            \EndIf
+          \EndIf
+
+        \EndIf
+      \ElsIf{$\big(Primero(e.campoIndexadoString)\big).nombre = clave$}  \Comment $O(|L|)$
+        \If{$Def?\big(ValorString(dato), e.indicesString\big)$}   \Comment $O(|L|)$
+          \State $iterador CrearIt\big(Obtener(ValorStr(dato), e.indicesString)\big)$ \Comment $O(|L|})$
+          \State $EliminarSiguiente\big(Siguiente(iterador)\big)$ \Comment $O(1)$
+          \State $e.cantAccesos++$                                \Comment $O(1)$
+          \State $Borrar\big(ValorStr(dato), e.indicesString\big)$ \Comment $O(|L|)$
+          \State $temp \gets CrearIt(e.indicesString)$ \Comment $O(1)$
+          \If{$\NOT HaySiguiente(temp)$} \Comment $O(1)$
+            \State $Primero(e.campoIndexadoString).vacio? \gets true$ \Comment $O(1)$
+          \Else
+            \If{$dato = Primero(e.campoIndexadoString).max$} \Comment $O(L)$
+                \State $Primero(e.campoIndexadoString).max \gets DatoString\big(\Pi_1\big(Max(e.indicesString)\big)\big)$\\ \Comment $O(L) \ por\ ref$
+            \EndIf
+            \If{$dato = Primero(e.campoIndexadoString).min$} \Comment $O(L)$
+                \State $Primero(e.campoIndexadoString).min \gets DatoString\big(\Pi_1\big(Min(e.indicesString)\big)\big)$ \Comment $O(L)$
+            \EndIf
+          \EndIf
+
+
+
+        \EndIf
+      \Else
+
+\algstore{myalg}
+  \end{algorithmic}
+\end{algorithm}
+
+\clearpage
+
+\begin{algorithm}
+  \ContinuedFloat
+  \begin{algorithmic}
+      \algrestore{myalg}
+
+
+        \State $iter \gets CrearIt(e.registros)$                  \Comment $O(1)$
+        \While{$HaySiguiente(iter)$}                              \Comment $O(n * |L|)$
+          \If{$Obtener\big(clave, Siguiente(iter)\big) = dato$}   \Comment $O(|L|)$
+            \State $EliminarSiguiente(iter)$                      \Comment $O(1)$
+          \EndIf
+          \State $Avanzar(iter)$                                  \Comment $O(1)$
+        \EndWhile
+      \EndIf
+
+
+
+      \medskip
+      \Statex \underline{Complejidad:} {\\
+\quad\quad Criterio sobre campo indexado $\implies$ $O(log n + L)$. \\
+\quad\quad Criterio sobre campo no indexado $\implies$ $O(n*|L|)$. \\
+\quad\quad Siendo $n$ la cantidad total de registros de la tabla y $L$ el valor string más largo de todos los datos comparados.}
+
+      \Statex \underline{Justificación:} {\\
+\quad\quad En peor caso sobre campo indexado recorre el diccNat o el diccString para encontrar el iterador (el conjunto significado tiene longitud 1 por ser un campo clave) al conjunto y eliminarlo. Buscar en diccNat en promedio es $O(log\ n)$ dado que se inserta con probabilidad uniforme. Buscar en diccString es $O(L)$ en el peor caso. \\
+\quad\quad Se agrega el costo de actualizar el máximo, que es $O(log\ n)$ para índice nat y $O(L\ +\ L)$ = $O(L)$ (por comparar con máximo y mínimo actual y luego buscar máximo y mínimo respectivamente) para índice string, la inserción es por referencia aún así. Por lo tanto el máximo y mínimo se actualiza en $O(log\ n\ +\ L)$. \\
+\quad\quad En el peor caso sobre campo no indexado debe recorrer todo el conjunto de registros de la tabla preguntando si el dato de cada registro coincide con el criterio para eliminarlo.}
+      \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iNuevaTabla}(\In{nombre}{string}, \In{claves}{conj(campo)}, \In{columnas}{diccString(bool)}) $\to$ $res$ : estrTabla}
+  \begin{algorithmic}
+    
+    \State $res.indicesString \gets Vacio()$            \Comment $O(1)$
+    \State $res.indicesNat \gets Vacio()$               \Comment $O(1)$
+    \State $res.registros \gets Vacio()$                \Comment $O(1)$
+    \State $res.nombre \gets Copiar(nombre)$            \Comment $O(|nombre|)$
+    \State $res.campos \gets Copiar(columnas)$          \Comment $O\big(\#claves(columnas) * M\big)$
+    \State $res.claves \gets Copiar(claves)$            \Comment $O(\#claves * L)$
+    \State $res.campoIndexadoNat \gets Vacio()$         \Comment $O(1)$
+    \State $res.campoIndexadoString \gets Vacio()$      \Comment $O(1)$
+    \State $res.cantAccesos \gets 0$                    \Comment $O(1)$
+    
+    \medskip    
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {\\
+\quad\quad Todas las asignaciones que no usen copias son $O(1)$. Copiar el nombre es cte. porque, por enunciado los nombres de las tablas son acotados. \\ 
+\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre más largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos también son acotados y también la cantidad de campos por tabla (es decir \#claves <\ $n$, para algún $n$ natural). Vale lo mismo para copiar columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave más larga del diccionario (los significados de tipo bool se copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
+  }
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iAgregarRegistro}(\In{r}{registro}, \Inout{e}{estrTabla})}
+  \begin{algorithmic}
+    \comentario{Aumento la cantidad de accesos}
+    \State $e.cantAccesos++$                                          \Comment $O(1)$
+    
+
+    \comentario{Agrego el registro al conjunto e.registros}           
+    \State $it \gets AgregarRapido(r, e.registros)$                   \Comment $O\big(copy(r)\big)$
+    \comentario{Se paga una cantidad de veces acotada por copiar datos acotados en costo por L, que es el dato string más largo}
+    \BState
+
+    \comentario{Me fijo si tengo un campo nat indexado (me fijo en e.campoIndexadoNat)} 
+    \If{$\NOT Vacia?(e.campoIndexadoNat)$}                            \Comment $O(1)$
+      \If{$\big(Primero(e.campoIndexadoNat)\big).vacio?$}                        \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoNat)\big).min \gets Obtener\big(\big(Primero(e.campoIndexadoNat)\big).nombre, r\big)$                       \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoNat)\big).max \gets \big(Primero(e.campoIndexadoNat)\big).min$                                   \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoNat)\big).vacio? \gets false$ \Comment $O(1)$ 
+      \Else
+        \State $nPaMinMax \gets Obtener\big(\big(Primero(e.campoIndexadoNat)\big).nombre, r\big)$                                                       \Comment $O(1)$
+        \If{$nPaMinMax < \big(Primero(e.campoIndexadoNat)\big).min$}
+          \State $\big(Primero(e.campoIndexadoNat)\big).min \gets nPaMinMax$
+                                                                      \Comment $O(1)$
+        \EndIf
+        \If{$nPaMinMax > \big(Primero(e.campoIndexadoNat)\big).max$}
+          \State $\big(Primero(e.campoIndexadoNat)\big).max \gets nPaMinMax$
+                                                                      \Comment $O(1)$
+        \EndIf
+      \EndIf
+
+      \State $aux \gets Obtener\big(\big(Primero(e.campoIndexadoNat)\big).nombre, r\big)$                                                                \Comment $O(1)$
+      \comentario{Si lo tengo indexado y está definido}
+      \If{$Def?(aux, e.indicesNat)$}                                  \Comment $O(log\ n)$
+        \State $AgregarRapido\big(it, Obtener(aux, e.indicesNat)\big)$ \Comment $O\big(copy(it)\big)$
+      \Else
+        \State $Definir\big(aux, AgregarRapido(it, Vacio()), e.indicesNat\big)$                                                              \Comment $O(log\ n)$
+      \EndIf
+    \EndIf
+    \BState
+
+    \If{$\NOT Vacia?(e.campoIndexadoString)$}                         \Comment $O(1)$
+      \If{$\big(Primero(e.campoIndexadoString)\big).vacio?$} \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoString)\big).min \gets Obtener\big(\big(Primero(e.campoIndexadoString)\big).nombre, r\big)$\\ \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoString)\big).max \gets \big(Primero(e.campoIndexadoString)\big).min$                                \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoNat)\big).vacio? \gets false$ \Comment $O(1)$
+      \Else
+        \State $sPaMinMax \gets Obtener\big(\big(Primero(e.campoIndexadoString)\big).nombre, r\big)$                                               \Comment $O(1)$
+        \If{$sPaMinMax < \big(Primero(e.campoIndexadoString)\big).min$}
+                                                                      \Comment $O(L)$
+          \State $\big(Primero(e.campoIndexadoString)\big).min \gets sPaMinMax$
+                                                                      \Comment $O(1)$
+        \EndIf
+        \If{$sPaMinMax > \big(Primero(e.campoIndexadoString)\big).max$}                                                              \Comment $O(L)$
+          \State $\big(Primero(e.campoIndexadoString)\big).max \gets sPaMinMax$
+                                                                      \Comment $O(1)$
+        \EndIf
+      \EndIf
+
+      \State $aux \gets Obtener\big(\big(Primero(e.campoIndexadoString)\big).nombre, r\big)$                                                              \Comment $O(1)$
+      
+      \If{$Def?(aux, e.indicesString)$}                               \Comment $O(Max\ string)$
+        \State $AgregarRapido\big(it, Obtener(aux, e.indicesString)\big)$ \Comment $O\big(copy(it)\big)$
+      \Else
+        \State $Definir\big(aux, AgregarRapido(it, Vacio()), e.indicesString\big)$                                                              \Comment $O(Max\ string)$
+      \EndIf
+    \EndIf
+
+    \medskip    
+    \Statex \underline{Complejidad:} {\\
+\quad\quad Campo indexado: $O(|L| +log\ n)$\\
+\quad\quad Campo no indexado: $O(|S|)$\\
+\quad\quad Donde $n$ es la cantidad de claves del diccNat $e$.indicesNat (acotada por la cantidad de registros de la tabla) y $L$ es el string más largo de cualquier registro en la tabla. $S$ es el string más largo del registro a agregar.
+}
+
+    \algstore{myalg}
+  \end{algorithmic}
+\end{algorithm}
+
+\clearpage
+
+\begin{algorithm}
+  \ContinuedFloat
+  \begin{algorithmic}
+      \algrestore{myalg}
+
+    \Statex \underline{Justificación:} {\\
+\quad\quad Campo indexado: Agregar el registro al conjunto cuesta $O\big(copy (r)\big)$; al ser un diccString eso sería $O\big(\#claves(r) * Max\{K,S\}\big)$, siendo $K$ la clave de máximo costo para copiar y $S$ lo mismo pero para significados. Como la cantidad de claves está acotada por haber una cantidad acotada de campos (por enunciado) y la longitud de los nombres de campos también, vale que $O\big(\#claves(r) * K\big)$ = $O(1)$. Por lo tanto, el peor caso es pagar por el copiado del significado más costoso, que corresponde a la longitud máxima de cualquier string del registro (que acotamos por la máxima longitud de cualquier string de cualquier registro de la tabla, y lo denominamos |$L$|). \\
+\quad\quad Además se agrega el costo de agregar en el diccionario de índices nat (logarítmico en la cantidad $n$ de registros de la tabla) y el de agregar en el diccionario de índices string $\big($nuevamente, longitud máxima de cualquier string de cualquier registro de la tabla, es decir $O(|L|)\big)$. \\
+\quad\quad Por lo tanto, la complejidad final queda $O\big(|L| + log\ n + |L|\big)$ = $O\big(|L| + log\ n\big)$.\\
+\\
+\quad\quad Campo no indexado: Agregar el registro al conjunto cuesta $O\big(copy(r)\big)$, esto es igual a copiar el string más largo ya que copiar los nat es $O(1)$. Luego el algoritmo si no hay campos indexados no hace mas operaciones que sean mayores a $O(1)$. Por lo tanto el algoritmo tiene complejidad $O(|S|)$, siendo $S$ el string más largo del registro a agregar.
+
+}
+  \medskip
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iIndexar}(\In{c}{campo}, \Inout{e}{estrTabla})}
+  \begin{algorithmic}
+    \comentario{si es tipo nat...}
+    \If{$TipoCampo(c, e)$} \Comment $O(1)$
+      \State $dato \gets DatoNat(0)$ \Comment $O(1)$
+      \comentario{Agrego adelante de la lista de campoIndexadoNat}
+      \State $AgregarAdelante\big(e.campoIndexadoNat,  \big\langle c, dato, dato, true\big\rangle\big)$ \Comment $O\big(copy(\langle c, dato, dato, bool\rangle)\big) \in O(1)$
+      \BState
+
+      \State $it \gets CrearIt(e.registros)$ \Comment $O(1)$
+      \comentario{Si hay algun registro entonces lo seteo como maximo y minimo y en el while pregunto}
+      \If{$HaySiguiente(it)$} \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoNat)\big).vacio? \gets false$ \Comment $O(1)$ 
+        \State $\big(Primero(e.campoIndexadoNat)\big).max? \gets Obtener(c, Siguiente(it))$ \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoNat)\big).min? \gets Obtener(c, Siguiente(it))$ \Comment $O(1)$
+      \EndIf
+      \While{$HaySiguiente(it)$} \Comment $O\big(\#registros(e) * ...\big)$
+        \State $temp \gets ValorNat\big(Obtener(c, Siguiente(it))\big)$ \Comment $O(1)$
+        \If{$\NOT Def?\big(Obtener(temp, e.indicesNat)\big)$} \Comment $O\big(log\ \#registros\big)$
+            \State $Definir\big(temp, Vacio(), e.indicesNat\big)$ \Comment $O\big(log\ \#registros\big)$
+        \EndIf
+        \State $AgregarRapido\big(it, Obtener(temp, e.indicesNat)\big)$ \Comment $O\big(copy(it)\ +\ log\ \#registros\big)$
+        \If{$Obtener\big(c, Siguiente(it)\big) > \big(Primero(e.campoIndexadoNat)\big).max$} \Comment $O(1)$
+          \State $\big(Primero(e.campoIndexadoNat)\big).max \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
+        \EndIf
+        \If{$Obtener\big(c, Siguiente(it)\big) < \big(Primero(e.campoIndexadoNat)\big).min$} \Comment $O(L)$
+          \State $\big(Primero(e.campoIndexadoNat)\big).min \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
+        \EndIf
+        \State $Avanzar(it)$ \Comment $O(1)$
+      \EndWhile
+    \Else
+
+    \algstore{myalg}
+  \end{algorithmic}
+\end{algorithm}
+
+\clearpage
+
+\begin{algorithm}
+  \ContinuedFloat
+  \begin{algorithmic}
+      \algrestore{myalg}
+
+
+
+      \State $dato \gets DatoStr("temp")$ \Comment $O(1)$
+      \State $AgregarAdelante\big(e.campoIndexadoString,  \big\langle c, dato, dato, true\big\rangle\big)$ \Comment $O\big(copy(\langle c, dato, dato, bool\rangle)\big) \in O(1)$
+      \BState
+
+      \State $it \gets CrearIt(e.registros)$ \Comment $O(1)$
+      \comentario{Si hay algun registro entonces lo seteo como maximo y minimo y en el while pregunto}
+      \If{$HaySiguiente(it)$} \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoString)\big).vacio? \gets false$ \Comment $O(1)$ 
+        \State $\big(Primero(e.campoIndexadoString)\big).max? \gets Obtener(c, Siguiente(it))$ \Comment $O(1)$
+        \State $\big(Primero(e.campoIndexadoString)\big).min? \gets Obtener(c, Siguiente(it))$ \Comment $O(1)$
+      \EndIf
+      \While{$HaySiguiente(it)$} \Comment $O\big(\#registros(e) * ...\big)$
+        \State $temp \gets ValorStr\big(Obtener(c, Siguiente(it))\big)$ \Comment $O(1)$
+        \If{$\NOT Def?\big(Obtener(temp, e.indicesString)\big)$} \Comment $O\big(|L|\big)$
+            \State $Definir\big(temp, Vacio(), e.indicesString\big)$ \Comment $O\big(|L|\big)$
+        \EndIf
+        \State $AgregarRapido\big(it, Obtener(temp, e.indicesString)\big)$ \Comment $O\big(copy(it)\ +\ log\ \#registros\big)$
+        \If{$Obtener\big(c, Siguiente(it)\big) > \big(Primero(e.campoIndexadoString)\big).max$} \Comment $O(1)$
+          \State $\big(Primero(e.campoIndexadoString)\big).max \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
+        \EndIf
+        \If{$Obtener\big(c, Siguiente(it)\big) < \big(Primero(e.campoIndexadoString)\big).min$} \Comment $O(L)$
+          \State $\big(Primero(e.campoIndexadoString)\big).min \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
+        \EndIf
+        \State $Avanzar(it)$ \Comment $O(1)$
+      \EndWhile
+    \EndIf
+
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O\big(|registros| * L * (L\ +\ log\ |registros(e)|)\big)$, donde $L$ es el máximo string para el campo $c$ en cualquier registro.}
+    \Statex \underline{Justificación:} {\\
+\quad\quad En el peor caso se recorren todos los registros definiendo un iterador suyo $\big(O(1)\big)$ en un diccString $\big($inserción en $O(L)\big)$ o insertando en un diccNat $\big($en $O(log\ |registros|)$ para caso promedio$\big)$, por el costo de copiar cada valorStr si es máximo o mínimo (acotado por $L$).
+}
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]{\textbf{iBuscar}(\In{c}{campo}, \In{d}{dato}, \In{e}{estrTabla}) $\to$ $res$ : lista(registro)}
+  \begin{algorithmic}
+    \State $res \gets Vacia()$ \Comment $O(1)$
+    \If $Nat?(d)$ \Comment $O(1)$
+      \comentario{caso campoJOIN, donde esta indexado}
+      \If{$\big(Primero(e.campoIndexadoNat)\big).nombre = c$} \comentariocompl{nombres acotados}{$O(|c|) = O(1)$}
+        \If{$Def?\big(ValorNat(d), e.indicesNat\big)$} \comentariocompl{n cantidad de registros}{$O(log\ n)$}
+          \State $itConjIts \gets CrearIt\big(Obtener(ValorNat(d), e.indicesNat)\big)$ \Comment $O(log\ n)$
+          \While{$HaySiguiente?(itConjIts)$} \Comment $O(1 * ...)\ si\ c\ es\ clave\ / O(n * ...)\ si\ no$
+            \State $AgregarAtras\big(Siguiente\big(Siguiente(itConjIts)\big), res\big)$ \comentariocompl{L mayor string de la tabla}{$O(\#campos * |L|) = O\big(|L|\big)$}
+            \State $Avanzar(itConjIts)$ \Comment $O(1)$
+          \EndWhile
+        \EndIf
+      \Else
+        \State $it \gets CrearIt(e.registros)$ \Comment $O(1)$
+        \While{$HaySiguiente?(it)$} \Comment $O(n * ...)$
+          \If{$Obtener\big(c, Siguiente(it)\big) = d$} \Comment $O(|ValorStr(d)|) = O(|L|)$
+            \State $AgregarAtras\big(Siguiente(it), res\big)$
+          \EndIf
+          \State $Avanzar(it)$ \Comment $O(1)$
+        \EndWhile
+      \EndIf
+    \Else
+      \comentario{caso campoJOIN, donde esta indexado}
+      \If{$\big(Primero(e.campoIndexadoString)\big).nombre = c$} \comentariocompl{nombres acotados}{$O(|c|) = O(1)$}
+        \If{$Def?\big(ValorStr(d), e.indicesString\big)$} \Comment$O(|L|)$
+          \State $itConjIts \gets CrearIt\big(Obtener(ValorStr(d), e.indicesString)\big)$ \Comment $O(L)$
+          \While{$HaySiguiente?(itConjIts)$} \Comment $O(1 * ...)\ si\ c\ es\ clave\ / O(n * ...)\ si\ no$
+            \State $AgregarAtras\big(Siguiente\big(Siguiente(itConjIts)\big), res\big)$ \Comment$O(|L|)$
+            \State $Avanzar(itConjIts)$ \Comment $O(1)$
+          \EndWhile
+        \EndIf
+      \Else
+        \State $it \gets CrearIt(e.registros)$ \Comment $O(1)$
+        \While{$HaySiguiente?(it)$} \Comment $O(n * ...)$
+          \If{$Obtener\big(c, Siguiente(it)\big) = d$} \Comment $O(|ValorStr(d)|) = O(|L|)$
+            \State $AgregarAtras\big(Siguiente(it), res\big)$
+          \EndIf
+          \State $Avanzar(it)$ \Comment $O(1)$
+        \EndWhile
+      \EndIf
+    \EndIf
+
+
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+\quad\quad Campo indexado nat y clave $\implies$ $O(log\ n\ +\ |L|)$ promedio.\\
+\quad\quad Campo indexado nat y no clave $\implies$ $O(log\ n\ +\ n * |L|)$ promedio.\\
+\\
+\quad\quad Campo indexado String y clave $\implies$ $O(|L|\ +\ |L|)$ = $O(|L|)$. \\
+\quad\quad Campo indexado String y no clave $\implies$ $O(|L|+ n * |L|)$ = $O(n * |L|)$.\\\\
+\quad\quad Campo NO indexado $\implies$ $O(n * |L|)$.
+\\
+\quad\quad Donde $n$ es la cantidad de registros y $L$ el string más largo de la tabla.
+
+}
+    \Statex \underline{Justificación:} {En el peor caso se recorren todos los registros, con cada caso detallado anteriormente.}
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iMinimo}(\In{c}{campo}, \In{e}{estrTabla}) $\to$ $res$ : dato}
+  \begin{algorithmic}
+    \If{$c = \big(Primero(e.campoIndexadoNat)\big).nombre$} \Comment $O(1)$
+      \State $res \gets \big(Primero(e.campoIndexadoNat)\big).min$ \Comment $O(1)$
+    \Else
+      \State $res \gets \big(Primero(e.campoIndexadoStr)\big).min$ \Comment $O(1)$
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {El resultado se devuelve por referencia.}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iMaximo}(\In{c}{campo}, \In{e}{estrTabla}) $\to$ $res$ : dato}
+  \begin{algorithmic}
+    \If{$c = \big(Primero(e.campoIndexadoNat)\big).nombre$} \Comment $O(1)$
+      \State $res \gets \big(Primero(e.campoIndexadoNat)\big).max$ \Comment $O(1)$
+    \Else
+      \State $res \gets \big(Primero(e.campoIndexadoStr)\big).max$ \Comment $O(1)$
+    \EndIf
+
+    \medskip
+    \Statex \underline{Complejidad:} {$O(1)$}
+    \Statex \underline{Justificación:} {El resultado se devuelve por referencia.}
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+
+
+
+\end{Algoritmos}
