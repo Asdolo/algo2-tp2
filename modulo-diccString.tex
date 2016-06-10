@@ -167,12 +167,12 @@ FI}
 \begin{algorithm}[H]{\textbf{iDefinir}(\In{clave}{string}, \In{significado}{significado}, \Inout{e}{estrDiccString})}
       \begin{algorithmic}
         \State $entrada \gets \big\langle clave, significado \big\rangle$     \Comment $O(1)$
-        \BState
+        \State $ $
 
         \comentario{agregamos a la lista}
         \State $iter \gets AgregarAdelante(e.valores, entrada)$       \Comment $O\big(copy(entrada)\big) = O\big(copy(clave)\big) + O\big(copy(significado)\big)$
         \comentario{iter tiene a entrada como siguiente}
-        \BState
+        \State $ $
 
         \State $actual \gets \&e.trie$ \comentariorandom{actual es de tipo puntero(nodoTrie)}                             \Comment $O(1)$
         \For{$i \gets 0 \ \TO Longitud(clave) - 1$}     \Comment $O\big(long(clave) * ...\big)$
@@ -215,7 +215,7 @@ FI}
             \State $res \gets false$ \Comment $O(1)$
           \EndIf
         \EndWhile
-        \BState
+        \State $ $
 
         \If{$res$}  \Comment $O(1)$
           \State $res \gets \NOT\big((actual \to valor) = NULL\big)$ \Comment $O(1)$
@@ -270,7 +270,7 @@ FI}
           \comentario{seguimos recorriendo lo que antes era su nodo hijo para liberar el resto de memoria}
         \EndFor
         \State $EliminarSiguiente\big(*(actual \to valor)\big)$ \Comment $O(1)$
-        \BState
+        \State $ $
 
         \comentario{crea un iterador uniendo la lista antes del elemento más la lista después del elemento}
         \State $(actual \to valor) \gets NULL$ \Comment $O(1)$
@@ -364,7 +364,7 @@ FI}
           \Else
             \State $i \gets 255$ \Comment $O(1)$
             \State $seguir \gets true$ \Comment $O(1)$
-            \BState
+            \State $ $
 
             \While{$i \ge 0\ \AND seguir$}
               \If{$\NOT actual \to hijos\big[ord(clave[i])\big] = NULL$} \Comment $O(1)$

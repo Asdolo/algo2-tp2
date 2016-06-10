@@ -10,7 +10,6 @@
 \usepackage{xspace}
 \usepackage{xargs}
 \usepackage{ifthen}
-\usepackage{quoting}
 \usepackage{aed2-tad,aed2-symb,aed2-itef}
 \usepackage{algorithmicx, algpseudocode, algorithm, caratula, color, latex-lucas}
 \usepackage[colorlinks=true, linkcolor=blue]{hyperref}
@@ -18,8 +17,7 @@
 \usepackage{epigraph}
 \usepackage[spanish]{babel}
 \selectlanguage{spanish}
-\usepackage[utf8]{inputenc} 
-\usepackage[compatible]{algpseudocode}
+
 \setlength{\epigraphwidth}{0.35\linewidth}
 \setlength{\epigraphrule}{0pt}
 \renewcommand*{\textflush}{flushright}
@@ -70,7 +68,6 @@
 \let\TipoVariable=\texttt
 \let\ModificadorArgumento=\textbf
 \newcommand{\res}{$res$\xspace}
-\newcommand{\tab}{\hspace*{7mm}}
 
 \newcommandx{\TipoFuncion}[3]{%
   \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ \res\,: \TipoVariable{#3}\fi%

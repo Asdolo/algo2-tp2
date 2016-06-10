@@ -6,10 +6,10 @@ libs =  aed2-itef.sty aed2-symb.sty aed2-tad.sty aed2-tokenizer.sty algorithm.st
 all: $(targets)
 
 $(targets) : %.pdf : %.tex $(libs) $(includes)
-	pdflatex $*
-	pdflatex $*
-	bibtex $*
-	pdflatex $*
+	pdflatex -no-c-style-errors $*
+	pdflatex -no-c-style-errors $*
+	bibtex -no-c-style-errors $*
+	pdflatex -no-c-style-errors $*
 
 clean:
 	@rm $(targets) 2>/dev/null || true

@@ -377,11 +377,11 @@ FI}
         \EndIf
       \EndIf
     \EndWhile
-    \BState
+    \State $ $
 
     \comentario{Caso hoja}
     \If{$(diccAux \to izq) = NULL\ \AND (diccAux \to der) = NULL$} \Comment $O(1)$
-      \If{(padre \to izq) = diccAux} \Comment $O(1)$
+      \If{$(padre \to izq) = diccAux$} \Comment $O(1)$
         \State $(padre \to izq) \gets NULL$ \Comment $O(1)$
       \Else
         \State $(padre \to der) \gets NULL$ \Comment $O(1)$
@@ -389,7 +389,7 @@ FI}
 
     \comentario{Caso un sólo hijo (derecho)}
     \ElsIf{$(diccAux \to izq) = NULL\ \AND \NOT (diccAux \to der) = NULL$} \Comment $O(1)$
-      \If{(padre \to izq) = diccAux} \Comment $O(1)$
+      \If{$(padre \to izq) = diccAux$} \Comment $O(1)$
         \State $(padre \to izq) \gets (diccAux \to der)$ \Comment $O(1)$
       \Else
         \State $(padre \to der) \gets (diccAux \to der)$ \Comment $O(1)$
@@ -397,7 +397,7 @@ FI}
 
     \comentario{Caso un sólo hijo (izquierdo)}
     \ElsIf{$\NOT (diccAux \to izq) = NULL\ \AND (diccAux \to der) = NULL$} \Comment $O(1)$
-      \If{(padre \to izq) = diccAux} \Comment $O(1)$
+      \If{$(padre \to izq) = diccAux$} \Comment $O(1)$
         \State $(padre \to izq) \gets (diccAux \to izq)$ \Comment $O(1)$
       \Else
         \State $(padre \to der) \gets (diccAux \to izq)$ \Comment $O(1)$
@@ -407,7 +407,7 @@ FI}
     \ElsIf{$\NOT (diccAux \to izq) = NULL\ \AND \NOT (diccAux \to der) = NULL$} \Comment $2*O\big(log\ \#claves(dicc)\big)$
       \State $temp \gets Min(diccAux \to der)$\\ \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
       \State $Borrar(temp.clave, dicc)$ \comentariorandom{entra en caso hoja o caso un sólo hijo por características de mínimo}
-      \BState
+      \State $ $
 
       \State $(diccAux \to clave) \gets temp.clave$ \Comment $O(1)$
       \State $(diccAux \to significado) \gets temp.significado$ \Comment $O(1)$

@@ -355,7 +355,7 @@
         \If{$e.tablaMasAccedida = NULL \oluego CantidadDeAccesos\big(nombreATabla(*e.tablaMasAccedida)\big) < CantidadDeAccesos(t)$}               \Comment $O(1)$
           \State $e.tablaMasAccedida \gets \&Nombre(t)$               \Comment $O(1)$
         \EndIf
-        \BState
+        \State $ $
 
         \comentario{Agrego la tabla a todos lados}
         \State $Definir\big(Nombre(t), t, e.nombreATabla\big)$     \Comment $O(|nombre(t)|) = O(1)$ 
@@ -380,7 +380,7 @@
         \If{$CantidadDeAccesos(t) > CantidadDeAccesos(tabMax)$}            \Comment $O(1)$
           \State $e.tablaMasAccedida \gets \&Nombre(t)$                   \Comment $O(1)$
         \EndIf
-        \BState
+        \State $ $
 
         \comentario{Lo tengo que agregar a cambios con las tablas que tenga join}
         \State $iter \gets VistaDicc\big(Obtener(Nombre(t), e.hayJoin)\big)$ \Comment $O(1)$
@@ -446,21 +446,21 @@
     \State $aux \gets <c, Vacio()>$                             \Comment $O(1)$
     \State $Definir\big(t_2, aux, Obtener(t_1, e.hayJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
     \State $Definir\big(t_1, aux, Obtener(t_2, e.hayJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
-    \BState
+    \State $ $
 
     \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.registrosDelJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
     \State $Definir\big(t_1, Vacio(), Obtener(t_2, e.registrosDelJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
-    \BState
+    \State $ $
     
     \comentario{Si es nat el campoJoin...}
     \If{$TipoCampo(c, t1)$} \Comment $O(1)$
-      \comentraio{Defino en cada diccionario de joinPorCampoNat la otra tabla.}
+      \comentario{Defino en cada diccionario de joinPorCampoNat la otra tabla.}
       \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.joinPorCampoNat)\big)$ \Comment $O(1)$
       \State $Definir\big(t_1, Vacio(), Obtener(t_2, e.joinPorCampoNat)\big)$ \Comment $O(1)$
-      \BState
+      \State $ $
 
       \comentario{Itero sobre los registros de t1 buscando en t2 por el registro (es único por ser clave el campo, req) que comparta ese dato (si lo hay), los mergeamos y definimos en el diccionario de t1 a t2 (y viceversa)}
-      \BState
+      \State $ $
 
       \State $it \gets CrearIt(Registros(t_1))$ \Comment $O(1)$
       \While{$HaySiguiente(it)$} \Comment $O(n * ...)$
@@ -477,10 +477,10 @@
         \EndIf
         \State $Avanzar(it)$ \Comment $O(1)$
       \EndWhile
-      \BState
+      \State $ $
 
       \comentario{Itero sobre registros de t2 igual que arriba pero además de preguntando si ya los definimos antes}
-      \BState
+      \State $ $
 
       \State $it \gets CrearIt(Registros(t_2))$ \Comment $O(1)$
       \While{$HaySiguiente(it)$} \Comment $O(m * ...)$
@@ -497,14 +497,14 @@
         \EndIf
         \State $Avanzar(it)$ \Comment $O(1)$
       \EndWhile
-      \BState
+      \State $ $
 
     \Else
       
       \comentario{mismo que arriba pero para joinPorCampoString}
       \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.joinPorCampoString)\big)$ \Comment $O(1)$
       \State $Definir\big(t_1, Vacio(), Obtener(t_2, e.joinPorCampoString)\big)$ \Comment $O(1)$
-      \BState
+      \State $ $
       
       \algstore{myalg}
   \end{algorithmic}
@@ -513,13 +513,12 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 
 
       \comentario{Itero sobre registros de t1 buscando en t2 por cada clave el registro (es único por ser clave el campo, req) que comparta ese dato (si lo hay) y los mergeamos y definimos en el diccionario de t1 a t2 (y viceversa)}
-      \BState
+      \State $ $
 
       \State $it \gets CrearIt(Registros(t_1))$ \Comment $O(1)$
       \While{$HaySiguiente(it)$} \Comment $O(n * ...)$
@@ -536,10 +535,10 @@
         \EndIf
         \State $Avanzar(it)$ \Comment $O(1)$
       \EndWhile
-      \BState
+      \State $ $
 
       \comentario{Itero sobre registros de t2 igual que arriba pero además de preguntando si ya los definimos antes}
-      \BState
+      \State $ $
 
       \State $it \gets CrearIt(Registros(t_2))$ \Comment $O(1)$
       \While{$HaySiguiente(it)$} \Comment $O(m * ...)$
@@ -556,7 +555,7 @@
         \EndIf
         \State $Avanzar(it)$ \Comment $O(1)$
       \EndWhile
-      \BState
+      \State $ $
 
     \EndIf
     \State $res \gets CrearIt\big(Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big)$
@@ -587,7 +586,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 \Statex
@@ -703,21 +701,21 @@
   \begin{algorithmic}
     \comentario{convertimos s1 a tabla y preguntamos de qué tipo es su campoJoin con s2}
     \State $esNat \gets TipoCampo?\Big(Obtener\big(s_2, \big(Obtener(s_1.hayJoin)\big)\big), Obtener(s_1, b.nombreATabla)\Big)$             \Comment $O(1)$
-    \BState
+    \State $ $
 
     \comentario{campito = CAMPOJOIN}
     \State $campito \gets Obtener\big(s_2, \big(Obtener(s_1.hayJoin)\big)\big).campoJoin$
-    \BState
+    \State $ $
 
     \comentario{Creamos un iterador a la lista de cambios de tipo <registro, bool> de s1}
     \State $iteChanges \gets CrearIt\Big(obtener\big(s_2,\big(obtener(s_1,b.hayJoin)\big)\big).cambios\Big)$ \Comment $O(1)$
-    \BState
+    \State $ $
 
     \If{$esNat$}
       \comentario{Join por campo nat}
       \State $diccDeIters1 \gets Obtener\big(s_1, Obtener\big(s_2, b.joinPorCampoNat\big)\big)$ \Comment $O(1)$
       \State $diccDeIters2 \gets Obtener\big(s_2, Obtener\big(s_1, b.joinPorCampoNat\big)\big)$ \Comment $O(1)$
-      \BState
+      \State $ $
 
       \comentario{Guardo o elimino los registros en el join}
       \comentario{Si no hay ninguno $\implies$ No actualizo nada $\implies$ O(1)}
@@ -725,7 +723,7 @@
       \While{$HaySiguiente?(iteChanges)$} \comentariocompl{R regs. en '.cambios' de s1 y s2}{$O(R * ...)$}
         \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
         \State $claveNat \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
-        \BState
+        \State $ $
 
         \comentario{Si no existe reg en s2 que tenga el mismo valor claveNat para 'campito', no necesito ni borrar ni agregar en el join}
         \State $coincidencias \gets Buscar(campito, claveNat, nombreATabla(s_2))$\\ \Comment $Campo\ indexado \implies O(log\ m + |L|)\ /\ Campo\ no\ indexado \implies O(m * |L|)$
@@ -749,14 +747,14 @@
         \EndIf
         \State $EliminarSiguiente(iteChanges)$ \Comment $O(1)$
       \EndWhile
-      \BState
+      \State $ $
 
       \comentario{Ahora hago al reves, me fijo de la tabla 2 a la tabla 1}
       \State $iteChanges \gets CrearIt\Big(obtener\big(s_1,\big(obtener(s_2,b.hayJoin)\big)\big).cambios\Big)$ \Comment $O(1)$
       \While{$HaySiguiente?(iteChanges)$} \comentariocompl{R regs. en '.cambios' de s1 y s2}{$O(R * ...)$}
         \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
         \State $claveNat \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
-        \BState
+        \State $ $
 
       \algstore{myalg}
   \end{algorithmic}
@@ -765,7 +763,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 
@@ -805,7 +802,7 @@
       \comentario{Join por campo string}
       \State $diccDeIters1 \gets Obtener\big(s_1, Obtener\big(s_2, b.joinPorCampoString\big)\big)$ \Comment $O(1)$
       \State $diccDeIters2 \gets Obtener\big(s_2, Obtener\big(s_1, b.joinPorCampoString\big)\big)$ \Comment $O(1)$
-      \BState
+      \State $ $
 
       \While{$HaySiguiente?(iteChanges)$} \Comment $O(R * ...)$
         \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
@@ -830,7 +827,7 @@
         \EndIf
         \State $EliminarSiguiente(iteChanges)$ \Comment $O(1)$
       \EndWhile
-      \BState
+      \State $ $
 
       \algstore{myalg}
   \end{algorithmic}
@@ -839,7 +836,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 
@@ -908,7 +904,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 

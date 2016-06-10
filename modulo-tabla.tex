@@ -275,7 +275,7 @@
       \begin{algorithmic}
         \State $aux \gets Vacio()$                                  \Comment $O(1)$
         \If{$Longitud(e.campoIndexadoNat) > 0$}                     \Comment $O(1)$
-          \State $AgregarRapido\big(Primero((e.campoIndexadoNat).nombre), aux\big)\\$ \Comment $O\big(copy((e.campoIndexadoNat).nombre)\big)$
+          \State $AgregarRapido\big(Primero((e.campoIndexadoNat).nombre), aux\big)$\\ \Comment $O\big(copy((e.campoIndexadoNat).nombre)\big)$
         \EndIf
         \If{$Longitud(e.campoIndexadoString) > 0$}                     \Comment $O(1)$
           \State $AgregarRapido\big(Primero((e.campoIndexadoString).nombre), aux\big)$\\ \Comment $O\big(copy((e.campoIndexadoString).nombre)\big)$
@@ -331,7 +331,7 @@
       \State $it \gets CrearIt\big(VistaDicc(criterio)\big)$    \Comment $O(1)$
       \State $clave \gets Siguiente(it).clave$                  \Comment $O(1)$
       \State $dato \gets Siguiente(it).significado$             \Comment $O(1)$
-      \BState
+      \State $ $
       \comentario{Si el criterio es un índice tenemos que recorrer el conjunto de iteradores a registros con un iterador borrando todos, si no hay que recorrer registros linealmente}
 
       \If{$\big(Primero(e.campoIndexadoNat)\big).nombre = clave$} \Comment $O(|L|)$
@@ -357,7 +357,7 @@
         \EndIf
       \ElsIf{$\big(Primero(e.campoIndexadoString)\big).nombre = clave$}  \Comment $O(|L|)$
         \If{$Def?\big(ValorString(dato), e.indicesString\big)$}   \Comment $O(|L|)$
-          \State $iterador CrearIt\big(Obtener(ValorStr(dato), e.indicesString)\big)$ \Comment $O(|L|})$
+          \State $iterador CrearIt\big(Obtener(ValorStr(dato), e.indicesString)\big)$ \Comment $O(|L|)$
           \State $EliminarSiguiente\big(Siguiente(iterador)\big)$ \Comment $O(1)$
           \State $e.cantAccesos++$                                \Comment $O(1)$
           \State $Borrar\big(ValorStr(dato), e.indicesString\big)$ \Comment $O(|L|)$
@@ -385,7 +385,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 
@@ -445,7 +444,7 @@
     \comentario{Agrego el registro al conjunto e.registros}           
     \State $it \gets AgregarRapido(r, e.registros)$                   \Comment $O\big(copy(r)\big)$
     \comentario{Se paga una cantidad de veces acotada por copiar datos acotados en costo por L, que es el dato string más largo}
-    \BState
+    \State $ $
 
     \comentario{Me fijo si tengo un campo nat indexado (me fijo en e.campoIndexadoNat)} 
     \If{$\NOT Vacia?(e.campoIndexadoNat)$}                            \Comment $O(1)$
@@ -473,7 +472,7 @@
         \State $Definir\big(aux, AgregarRapido(it, Vacio()), e.indicesNat\big)$                                                              \Comment $O(log\ n)$
       \EndIf
     \EndIf
-    \BState
+    \State $ $
 
     \If{$\NOT Vacia?(e.campoIndexadoString)$}                         \Comment $O(1)$
       \If{$\big(Primero(e.campoIndexadoString)\big).vacio?$} \Comment $O(1)$
@@ -516,7 +515,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 
@@ -539,7 +537,7 @@
       \State $dato \gets DatoNat(0)$ \Comment $O(1)$
       \comentario{Agrego adelante de la lista de campoIndexadoNat}
       \State $AgregarAdelante\big(e.campoIndexadoNat,  \big\langle c, dato, dato, true\big\rangle\big)$ \Comment $O\big(copy(\langle c, dato, dato, bool\rangle)\big) \in O(1)$
-      \BState
+      \State $ $
 
       \State $it \gets CrearIt(e.registros)$ \Comment $O(1)$
       \comentario{Si hay algun registro entonces lo seteo como maximo y minimo y en el while pregunto}
@@ -571,7 +569,6 @@
 \clearpage
 
 \begin{algorithm}
-  \ContinuedFloat
   \begin{algorithmic}
       \algrestore{myalg}
 
@@ -579,7 +576,7 @@
 
       \State $dato \gets DatoStr("temp")$ \Comment $O(1)$
       \State $AgregarAdelante\big(e.campoIndexadoString,  \big\langle c, dato, dato, true\big\rangle\big)$ \Comment $O\big(copy(\langle c, dato, dato, bool\rangle)\big) \in O(1)$
-      \BState
+      \State $ $
 
       \State $it \gets CrearIt(e.registros)$ \Comment $O(1)$
       \comentario{Si hay algun registro entonces lo seteo como maximo y minimo y en el while pregunto}
