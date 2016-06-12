@@ -59,7 +59,7 @@
   [$O(1)$]
   [devuelve \texttt{true} si el tipo de campo es nat y \texttt{false} si el tipo de campo es string.]
 
-  \InterfazFuncion{Registros}{\In{t}{tabla}}{itBi(registro)}
+  \InterfazFuncion{Registros}{\In{t}{tabla}}{conj(registro)}
   [true]
   {$res$ $\igobs$ crearIt(registros($t$))}
   [$O(1)$]
@@ -308,12 +308,12 @@
       \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iRegistros}(\In{e}{estrTabla}) $\to$ $res$ : itConjunto(campo)}
+\begin{algorithm}[H]{\textbf{iRegistros}(\In{e}{estrTabla}) $\to$ $res$ : Conj(registros)}
       \begin{algorithmic}
-      \State $res \gets CrearIt(e.registros)$         \Comment $O(1)$
+      \State $res \gets (e.registros)$         \Comment $O(1)$
       \medskip
       \Statex \underline{Complejidad:} {$O(1)$}
-      \Statex \underline{Justificación:} {Crear un iterador del módulo conjunto lineal de la cátedra es $O(1)$.}
+      \Statex \underline{Justificación:} {Devolver el conjunto por referencia es $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
