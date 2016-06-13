@@ -26,17 +26,17 @@
   [$O\big(log\ n + |L| * \#tablas(b)\big)$, donde $L$ es el dato string más largo de $r$ y $n$ es la cantidad de registros en la tabla.]
   [inserta un registro en una tabla de la base de datos.]
 
-  \InterfazFuncion{Borrar}{\In{cr}{registro}, \In{t}{tabla}, \Inout{b}{base}}{}
-  [\#campos($cr$) = 1 $\land$ $t$ $\in$ tablas($b$) $\land$ $b$ = $b_0$]
+  \InterfazFuncion{Borrar}{\In{cr}{registro}, \In{t}{string}, \Inout{b}{base}}{}
+  [\#campos($cr$) = 1 $\land$ $t$ $\in$ tablas($b$) $\land$ $b$ = $b_0$ $\land$ dameUno(campos($cr$)) $\in$ claves(dameTabla(t,b)) ]
   {$b$ $\igobs$ borrar($cr$, $t$, $b_0$)}
   [\\
 \tab Campo indexado $\implies$ $O\big(log\ n + |L| * \#tablas(b)\big)$ \\
 \tab Campo no indexado $\implies$  $O\big(|L| * (n + \#tablas(b))\big)$, donde $L$ es el dato string más largo de $cr$ y $n$ es la cantidad de registros en la tabla.]
   [borra todos los registros que coincidan con el campo del registro $cr$ en la tabla $t$.]
   
-  \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{}
+  \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itBi(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
-  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$)}
+  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
   [\\
 \tab $c$ cualquier tipo indexado en $t_1$ y $t_2$ $\implies$ $O\big((n+m) * \big(L + log(n+m)\big)\big)$ \\
 \tab $c$ cualquier tipo no indexado $\implies$  $O\big((n+m)\big(L + log(n+m)\big) + L*n*m\big)$ \\
@@ -75,8 +75,21 @@
   
   \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itBi(registro)}
   [hayJoin?($t_1$, $t_2$, $b$)]
-  {$res$ $\igobs$ vistaJoin($t_1$, $t_2$, $b$)}
-  [ver en los algoritmos para los distintos casos.]
+  {alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
+  [
+\newline
+\quad\quad Join campo nat indexado $\implies$ $O\big(R*\big(|L| + log(n*m)\big)\big)$\\
+\\
+\quad\quad Join campo nat no indexado $\implies$ $O\big(R*\big(|L|*(m+n) + log(n+m)\big)\big)$\\
+\\
+\quad\quad Join campo string indexado $\implies$ $O(R*|L|)$\\
+\\
+\quad\quad Join campo string no indexado $\implies$ $O\big(R*|L|*(n+m)\big)$
+\newline
+
+\quad\quad $L$, cota para toda longitud de dato string en las dos tablas\\
+\quad\quad $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
+\quad\quad $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)\\  ]
   [devuelve un iterador a los conjuntos del join (ya definido) entre las dos tablas.]
 
   \InterfazFuncion{TablaMaxima}{\In{b}{base}}{string}
