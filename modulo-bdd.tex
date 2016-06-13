@@ -144,7 +144,7 @@
 
   \Rep[estr][e]{}
 
-  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\yluego$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
+  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\Longleftrightarrow$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
     $\big($esta?($s$, $e$.tablas) $\land$ sinRepetidos($e$.tablas)$\big)$} $\land$\\
     \noindent\tab\tab\bigpar{\textbf{2)} $e$.tablaMasAccedida $\in$ claves($e$.nombreATabla) $\yluego$ $\big(\forall$ $n$ : string, $n$ $\in$ claves($e$.nombreATabla)$\big)$\\
     cantAccesos$\big($obtener($n$, $e$.nombreATabla)$\big)$ $\le$ cantAccesos$\big($obtener(*$e$.tablaMasAccedida, $e$.nombreATabla)$\big)$}$\land$\\
@@ -157,7 +157,7 @@
     \bigpar{claves$\big($obtener($n$, $e$.JoinPorCampoNat)$\big)$ $\cup$\\
     claves$\big($obtener($n$, $e$.JoinPorCampoString)$\big)$} $\igobs$ claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\land$\\
     claves$\big($obtener($n$, $e$.registrosDelJoin)$\big)$ $\igobs$ claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\land$\\
-    claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\igobs$ claves$\big($obtener($n$, $e$.nombreATabla)$\big)$} $\land$\\
+    claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\subset $ claves$\big($obtener($n$, $e$.nombreATabla)$\big)$} $\land$\\
     \noindent\tab\tab\bigpar{\textbf{6)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
     \bigpar{$\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves($e$.hayJoin) $\land$ $s_1$ $\nigobs$ $s_2\big)$ \\
     $\Big(s_1$ $\in$ claves$\big($obtener($s_2$, $e$.hayJoin)$\big)$ $\ssi$ $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\Big)$}} $\land$\\
@@ -198,7 +198,7 @@
         \bigpar{
           $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.joinPorCampoString)$\big)\big)$\\
           \bigpar{
-            $\Big(\forall$ $n$ : nat, def?$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\big)\Big)$\\
+            $\Big(\forall$ $n$ : string, def?$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\big)\Big)$\\
             \bigpar{
               siguiente$\Big($obtener$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\big)\Big)$ $\in$ \\
               obtener$\big(s_2$, obtener($s_1$, $e$.registrosDelJoin)$\big)$
