@@ -42,6 +42,7 @@
 \tab $c$ cualquier tipo no indexado $\implies$  $O\big((n+m)\big(L + log(n+m)\big) + L*n*m\big)$ \\
 \tab Donde $n$ = \#registros($t_1$), $m$ = \#registros($t_2$) y $L$ el dato string más largo de cualquiera de las dos tablas.]
   [crea un join entre dos tablas de la base de datos.]
+  [res no es modificable, se itera solo a modo de vista del conjunto]
   
   \InterfazFuncion{BorrarJoin}{\In{t_1}{string}, \In{t_2}{string}, \Inout{b}{base}}{}
   [hayJoin?($t_1$, $t_2$, $b$) $\land$ $b$ = $b_0$]
@@ -91,6 +92,8 @@
 \quad\quad $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
 \quad\quad $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)\\  ]
   [devuelve un iterador a los conjuntos del join (ya definido) entre las dos tablas.]
+  [res no es modificable, se itera solo a modo de vista del conjunto]
+
 
   \InterfazFuncion{TablaMaxima}{\In{b}{base}}{string}
   [\#tablas($b$) > 0]
