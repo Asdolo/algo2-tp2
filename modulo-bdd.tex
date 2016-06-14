@@ -519,25 +519,18 @@
 
 
 \begin{algorithm}[H]{\textbf{iBorrarJoin}(\In{t_1}{string}, \In{t_2}{string}, \Inout{e}{estr})}
-  \begin{algorithmic}
-    \State $Borrar\big(t_2, Obtener(t_1, e.hayJoin)\big)$             \Comment $O(1)$
-    \State $Borrar\big(t_1, Obtener(t_2, e.hayJoin)\big)$             \Comment $O(1)$
-    \State $Borrar\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)$    \Comment $O(1)$
-    \State $Borrar\big(t_1, Obtener(t_2, e.registrosDelJoin)\big)$    \Comment $O(1)$
-    \If{$Def?\big(t_2, Obtener(t_1, e.joinPorCampoNat)\big)$}         \Comment $O(1)$
-      \State $Borrar\big(t_2, Obtener(t_1, e.joinPorCampoNat)\big)$   \Comment $O(1)$
-      \State $Borrar\big(t_1, Obtener(t_2, e.joinPorCampoNat)\big)$   \Comment $O(1)$
-    \Else
-      \State $Borrar\big(t_2, Obtener(t_1, joinPorCampoString)\big)$  \Comment $O(1)$
-      \State $Borrar\big(t_1, Obtener(t_2, joinPorCampoString)\big)$  \Comment $O(1)$
-    \EndIf
-
-
-
-    \medskip
-    \Statex \underline{Complejidad:} {$O(1)$}
-    \Statex \underline{Justificación:} {Todas las operaciones de buscar y borrar en diccString se hacen en el orden del largo del máximo nombre de todas las tablas; al estar acotados estos nombres, estas operaciones se resuelven en $O(1)$.}
-  \end{algorithmic}
+\begin{algorithmic}
+   \State $Borrar\big(t_2, Obtener(t_1, e.hayJoin)\big)$             \Comment $O(1)$
+   \State $Borrar\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)$    \Comment $O(1)$
+   \If{$Def?\big(t_2, Obtener(t_1, e.joinPorCampoNat)\big)$}         \Comment $O(1)$
+     \State $Borrar\big(t_2, Obtener(t_1, e.joinPorCampoNat)\big)$   \Comment $O(1)$
+   \Else
+     \State $Borrar\big(t_2, Obtener(t_1, joinPorCampoString)\big)$  \Comment $O(1)$
+   \EndIf
+\medskip
+   \Statex \underline{Complejidad:} {$O(1)$}
+   \Statex \underline{Justificación:} {Todas las operaciones de buscar y borrar en diccString se hacen en el orden del largo del máximo nombre de todas las tablas; al estar acotados estos nombres, estas operaciones se resuelven en $O(1)$.}
+ \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{iTablas}(\In{e}{estr}) $\to$ $res$ : itLista(string)}
@@ -609,209 +602,178 @@
 
 \begin{algorithm}[H]{\textbf{iVistaJoin}(\In{s_1}{string}, \In{s_2}{string}, \In{b}{estr}) $\to$ $res$ : itConj(registro)}
   \begin{algorithmic}
-    \comentario{convertimos s1 a tabla y preguntamos de qué tipo es su campoJoin con s2}
-    \State $esNat \gets TipoCampo?\Big(Obtener\big(s_2, \big(Obtener(s_1.hayJoin)\big)\big), Obtener(s_1, b.nombreATabla)\Big)$             \Comment $O(1)$
-    \State $ $
 
     \comentario{campito = CAMPOJOIN}
-    \State $campito \gets Obtener\big(s_2, \big(Obtener(s_1.hayJoin)\big)\big).campoJoin$
+    \State $campito \gets Obtener\big(s_2, \big(Obtener(s_1,b.hayJoin)\big)\big).campoJoin$ \Comment $O(1)$
     \State $ $
 
-    \comentario{Creamos un iterador a la lista de cambios de tipo <registro, bool> de s1}
-    \State $iteChanges \gets CrearIt\Big(obtener\big(s_2,\big(obtener(s_1,b.hayJoin)\big)\big).cambios\Big)$ \Comment $O(1)$
+    \comentario{convertimos s1 a tabla y preguntamos de qué tipo es su campoJoin con s2}
+    \State $tabla1 \gets Obtener(s_1, b.nombreATabla)$ \Comment $O(1)$
     \State $ $
-
+    \State $esNat \gets TipoCampo?(campito,tabla1)$ \Comment $O(1)$
+    \State $ $
+    \State $tabla2 \gets obtener(s_2,b.nombreATabla)$ \Comment $O(1)$
+    \State $ $
     \If{$esNat$}
       \comentario{Join por campo nat}
-      \State $diccDeIters1 \gets Obtener\big(s_1, Obtener\big(s_2, b.joinPorCampoNat\big)\big)$ \Comment $O(1)$
-      \State $diccDeIters2 \gets Obtener\big(s_2, Obtener\big(s_1, b.joinPorCampoNat\big)\big)$ \Comment $O(1)$
+      \State $diccDeIters \gets Obtener\big(s_2, Obtener\big(s_1, b.joinPorCampoNat\big)\big)$ \Comment $O(1)$
       \State $ $
-
+      \comentario{Creamos un iterador a la lista de cambios de tipo <registro, bool> de s1}
+      \State $itT1 \gets CrearIt\Big(obtener\big(s_2,\big(obtener(s_1,b.hayJoin)\big)\big).cambiosT1\Big)$ \Comment $O(1)$
+      \State $ $
       \comentario{Guardo o elimino los registros en el join}
       \comentario{Si no hay ninguno $\implies$ No actualizo nada $\implies$ O(1)}
-
-      \While{$HaySiguiente?(iteChanges)$} \comentariocompl{R regs. en '.cambios' de s1 y s2}{$O(R * ...)$}
-        \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
+      \While{$HaySiguiente?(itT1)$} \comentariocompl{R regs. en '.cambiosT1' de s1 y s2}{$O(R * ...)$}
+        \State $tupSiguiente \gets Siguiente(itT1)$ \Comment $O(1)$
         \State $claveNat \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
         \State $ $
+
 
         \comentario{Si no existe reg en s2 que tenga el mismo valor claveNat para 'campito', no necesito ni borrar ni agregar en el join}
-        \State $coincidencias \gets Buscar(campito, claveNat, nombreATabla(s_2))$\\ \Comment $Campo\ indexado \implies O(log\ m + |L|)\ /\ Campo\ no\ indexado \implies O(m * |L|)$
-        \If{$\#coincidencias > 0$} \Comment $O(1)$
-          \comentario{como campoJoin siempre es clave, \#coincidencias es 1}
-          \comentario{regTablaActual es el registro en s2 que coincide en 'campito' con claveNat}
+        \State $coincidencias \gets Buscar(campito, claveNat, tabla2)$\\ \Comment $Campo\ indexado \implies O(log\ m + |L|) promedio\ /\ Campo\ no\ indexado \implies O(m * |L|)$
+        \If{$\NOT Vacia?(coincidencias)$} \Comment $O(1)$
+          \comentario{CampoJoin siempre es clave, \#coincidencias es 1}
           \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
+
           \If{$tupSiguiente.agregar?$} \Comment $O(1)$
             \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
-            \State $iter1 \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
-            \State $iter2 \gets AgregarRapido\big(registroMergeado, Obtener(s_1, Obtener(s_2, e.registrosDelJoin))\big)$ \Comment $O(L)$
+            \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
+            
+      \algstore{myalg}
+  \end{algorithmic}
+\end{algorithm}
 
-            \State $Definir(claveNat, iter1, diccDeIters1)$\\ \comentariocompl{m regs en s2, n regs en s1}{$O\big(log\ (n+m)\big)\ +\ O\big(copy(iter)\big) = O\big(log(n+m)\big)$}
-            \State $Definir(claveNat, iter2, diccDeIters2)$ \Comment $O\big(log(n+m)\big)$
-          \Else
-            \State $EliminarSiguiente\big(Obtener(claveNat, diccDeIters1)\big)$ \Comment $O\big(log(n+m)\big)$
-            \State $EliminarSiguiente\big(Obtener(claveNat, diccDeIters2)\big)$ \Comment $O\big(log(n+m)\big)$
-            \State $Borrar(claveNat, diccDeIters1)$ \Comment $O\big(log(n+m)\big)$
-            \State $Borrar(claveNat, diccDeIters2)$ \Comment $O\big(log(n+m)\big)$
+\begin{algorithm}
+  \begin{algorithmic}
+      \algrestore{myalg}
+
+            \State $Definir(claveNat, iter, diccDeIters)$\\ \comentariocompl{m regs en s2, n regs en s1}{$O\big(log\ (n+m)\big)\ +\ O\big(copy(iter)\big) = O\big(log(n+m)\big)$}
+
+            \Else
+            \State $EliminarSiguiente\big(Obtener(claveNat, diccDeIters)\big)$ \Comment $O\big(log(n+m)\big)$
+            \State $Borrar(claveNat, diccDeIters)$ \Comment $O\big(log(n+m)\big)$
           \EndIf
         \EndIf
-        \State $EliminarSiguiente(iteChanges)$ \Comment $O(1)$
+
+        \State $EliminarSiguiente(itT1)$ \Comment $O(1)$
       \EndWhile
+
       \State $ $
 
-      \comentario{Ahora hago al reves, me fijo de la tabla 2 a la tabla 1}
-      \State $iteChanges \gets CrearIt\Big(obtener\big(s_1,\big(obtener(s_2,b.hayJoin)\big)\big).cambios\Big)$ \Comment $O(1)$
-      \While{$HaySiguiente?(iteChanges)$} \comentariocompl{R regs. en '.cambios' de s1 y s2}{$O(R * ...)$}
-        \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
+      \comentario{Ahora me fijo de la tabla 2}
+      \State $itT2 \gets CrearIt\Big(obtener\big(s_2,\big(obtener(s_1,b.hayJoin)\big)\big).cambiosT2\Big)$ \Comment $O(1)$
+      \While{$HaySiguiente?(itT2)$} \Comment $O(R * ...)$
+        \State $tupSiguiente \gets Siguiente(itT2)$ \Comment $O(1)$
         \State $claveNat \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
-        \State $ $
-
-      \algstore{myalg}
-  \end{algorithmic}
-\end{algorithm}
-
-\clearpage
-
-\begin{algorithm}
-  \begin{algorithmic}
-      \algrestore{myalg}
-
-
-        \comentario{Pregunto si esta definido para no agregar el registro dos veces, solo pregunto en un dicc porque si esta definido en uno esta definido en el otro}
-        \State $coincidencias \gets Buscar(campito, claveNat, nombreATabla(s_1))$\\ \Comment $Campo\ indexado \implies O(log\ n + |L|)\ promedio\ /\ Campo\ no\ indexado \implies O(n * |L|)$
-        \If{$\#coincidencias > 0\ \AND\ \NOT Def?\big(claveNat, diccIters1\big)$} \Comment $O\big(log(n+m)\big)$
-          \comentario{Como campoJoin siempre es clave, \#coincidencias es 1}
-          
+        \State $coincidencias \gets Buscar(campito, claveNat,tabla1)$\\ \Comment $Campo\ indexado\ \implies\ O(log\ n + |L|) promedio\ /\ Campo\ no\ indexado \implies O(n * |L|)$
+        \comentario{Pregunto si esta definido para no agregar el registro dos veces}
+        \If{$\NOT Vacia?(coincidencias)\ \AND \NOT Def?(claveNat, diccIters)$} \Comment $O\big(log(n+m)\big)$
+          \comentario{CampoJoin siempre es clave, \#coincidencias es 1}
           \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
           \If{$tupSiguiente.agregar?$} \Comment $O(1)$
             \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
-            \State $iter1 \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
-            \State $iter2 \gets AgregarRapido\big(registroMergeado, Obtener(s_1, Obtener(s_2, e.registrosDelJoin))\big)$ \Comment $O(L)$
+            \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
+            \State $Definir(claveNat, iter, diccDeIters)$ \Comment $O\big(log(n+m)\big)$
 
-            \State $Definir(claveNat, iter1, diccDeIters1)$\\ \Comment $O\big(log(n+m)\big)$
-            \State $Definir(claveNat, iter2, diccDeIters2)$ \Comment $O\big(log(n+m)\big)$
           \Else
-            \State $EliminarSiguiente\big(Obtener(claveNat, diccDeIters1)\big)$ \Comment $O\big(log(n+m)\big)$
-            \State $EliminarSiguiente\big(Obtener(claveNat, diccDeIters2)\big)$ \Comment $O\big(log(n+m)\big)$
-            \State $Borrar(claveNat, diccDeIters1)$ \Comment $O\big(log(n+m)\big)$
-            \State $Borrar(claveNat, diccDeIters2)$ \Comment $O\big(log(n+m)\big)$
+            \State $EliminarSiguiente\big(Obtener(claveNat, diccDeIters)\big)$\\ \Comment $O\big(log(n+m)\big) + O\big(copy(iter)\big) = O\big(log(n+m)\big)$
+            \State $Borrar(claveNat, diccDeIters)$ \Comment $O\big(log(n+m)\big)$
           \EndIf
         \EndIf
-        \State $EliminarSiguiente(iteChanges)$ \Comment $O(1)$
+        \State $EliminarSiguiente(itT2)$ \Comment $O(1)$
       \EndWhile
-      \State $res \gets CrearIt\big(Obtener\big(s_1, Obtener(s_2, e.registrosDelJoin)\big)\big)$ \Comment $O(1)$
-    
 
-    
-
-
+      \State $res \gets CrearIt\big(Obtener\big(s_2, Obtener(s_1, e.registrosDelJoin)\big)\big)$ \Comment $O(1)$
     \Else
-
-
-    
       \comentario{Join por campo string}
-      \State $diccDeIters1 \gets Obtener\big(s_1, Obtener\big(s_2, b.joinPorCampoString\big)\big)$ \Comment $O(1)$
-      \State $diccDeIters2 \gets Obtener\big(s_2, Obtener\big(s_1, b.joinPorCampoString\big)\big)$ \Comment $O(1)$
+      \State $itT1 \gets CrearIt\Big(Obtener\big(s_2, Obtener\big(s_2, b.hayJoin\big)\big.cambiosT1\Big)$ \Comment $O(1)$
+      \State $diccDeIters \gets Obtener\big(s_2, Obtener\big(s_1, b.joinPorCampoString\big)\big)$ \Comment $O(1)$
       \State $ $
 
-      \While{$HaySiguiente?(iteChanges)$} \Comment $O(R * ...)$
-        \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
+      \While{$HaySiguiente?(itT1)$} \Comment $O(R * ...)$
+        \State $tupSiguiente \gets Siguiente(itT1)$ \Comment $O(1)$
         \State $claveString \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
-        \State $coincidencias \gets Buscar(campito, claveString, nombreATabla(s_2))$\\ \Comment $Campo\ indexado \implies O(L|)\ /\ Campo\ no\ indexado \implies O(m * |L|)$
+        \State $coincidencias \gets Buscar(campito, claveString, tabla2)$\\ \Comment $Campo\ indexado \implies O(|L|)\ /\ Campo\ no\ indexado \implies O(m * |L|)$
         \If{$\#coincidencias > 0$} \Comment $O(1)$
+
           \comentario{como campoJoin siempre es clave, \#coincidencias es 1}
           \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
-          \If{$tupSiguiente.agregar?$} \Comment $O(1)$
+          \If{$tupSiguiente.loAgrego?$} \Comment $O(1)$
             \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
-            \State $iter1 \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
-            \State $iter2 \gets AgregarRapido\big(registroMergeado, Obtener(s_1, Obtener(s_2, e.registrosDelJoin))\big)$ \Comment $O(L)$
-
-            \State $Definir(claveString, iter1, diccDeIters1)$\\ \Comment $O(L)\ +\ O\big(copy(iter)\big) = O(L)$
-            \State $Definir(claveString, iter2, diccDeIters2)$ \Comment $O(L)$
-          \Else
-            \State $EliminarSiguiente\big(Obtener(claveString, diccDeIters1)\big)$ \Comment $O(L)$
-            \State $EliminarSiguiente\big(Obtener(claveString, diccDeIters2)\big)$ \Comment $O(L)$
-            \State $Borrar(claveString, diccDeIters1)$ \Comment $O(L)$
-            \State $Borrar(claveString, diccDeIters2)$ \Comment $O(L)$
-          \EndIf
-        \EndIf
-        \State $EliminarSiguiente(iteChanges)$ \Comment $O(1)$
-      \EndWhile
-      \State $ $
-
+            \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
+            \State $Definir(claveString, iter, diccDeIters)$ \Comment $O(L)\ +\ O\big(copy(iter)\big) = O(L)$
+    
       \algstore{myalg}
   \end{algorithmic}
 \end{algorithm}
-
-\clearpage
 
 \begin{algorithm}
   \begin{algorithmic}
       \algrestore{myalg}
 
-      \comentario{Ahora hago al reves, me fijo de la tabla 2 a la tabla 1}
-      \State $listCambios \gets obtener\big(s_1,\big(obtener(s_2,b.hayJoin)\big)\big).cambios$ \Comment $O(1)$
-      \State $iteChanges \gets CrearIt(listCambios)$ \Comment $O(1)$
-      \While{$HaySiguiente?(iteChanges)$} \Comment $O(R * ...)$
-        \State $tupSiguiente \gets Siguiente(itChanges)$ \Comment $O(1)$
-        \State $claveString \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
-        \State $coincidencias \gets Buscar(campito, claveString, nombreATabla(s_1))$\\ \Comment $Campo\ indexado \implies O(|L|)\ /\ Campo\ no\ indexado \implies O(n * |L|)$
-        \If{$\#coincidencias > 0\ \AND\ \NOT Def?\big(claveString, diccIters1\big)$} \Comment $O\big(|L|)$
-          \comentario{Como campoJoin siempre es clave, \#coincidencias es 1}
-          
-          \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
-          \If{$tupSiguiente.agregar?$} \Comment $O(1)$
-            \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
-            \State $iter1 \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
-            \State $iter2 \gets AgregarRapido\big(registroMergeado, Obtener(s_1, Obtener(s_2, e.registrosDelJoin))\big)$ \Comment $O(L)$
-
-            \State $Definir(claveString, iter1, diccDeIters1)$\\ \Comment $O(L) + O\big(copy(iter)\big) = O(L)$
-            \State $Definir(claveString, iter2, diccDeIters2)$ \Comment $O(L)$
           \Else
-            \State $EliminarSiguiente\big(Obtener(claveString, diccDeIters1)\big)$ \Comment $O(L)$
-            \State $EliminarSiguiente\big(Obtener(claveString, diccDeIters2)\big)$ \Comment $O(L)$
-            \State $Borrar(claveString, diccDeIters1)$ \Comment $O(L)$
-            \State $Borrar(claveString, diccDeIters2)$ \Comment $O(L)$
+            \State $EliminarSiguiente\big(Obtener(claveString, diccDeIters)\big)$ \Comment $O(L)$
+            \State $Borrar(claveString, diccDeIters)$ \Comment $O(L)$
           \EndIf
         \EndIf
-        \State $EliminarSiguiente(iteChanges)$ \Comment $O(1)$
+        \State $EliminarSiguiente(itT1)$ \Comment $O(1)$
       \EndWhile
-      \State $res \gets CrearIt\big(Obtener\big(s_1, Obtener(s_2, e.registrosDelJoin)\big)\big)$ \Comment $O(1)$
 
+      \State $listCambios \gets obtener\big(s_1,\big(obtener(s_2,b.hayJoin)\big)\big).cambiosT2$ \Comment $O(1)$
+      \State $itT2 \gets CrearIt(listCambios)$ \Comment $O(1)$
+      \While{$HaySiguiente?(itT2)$} \Comment $O(R * ...)$
+        \State $tupSiguiente \gets Siguiente(itT2)$ \Comment $O(1)$
+        \State $claveString \gets Obtener(campito, tupSiguiente.reg)$ \Comment $O(1)$
+        \State $coincidencias \gets Buscar(campito, claveString, tabla1)$\\ \Comment $Campo\ indexado \implies O(|L|)\ /\ Campo\ no\ indexado \implies O(n * |L|)$
 
+        \If{$\#coincidencias > 0\ \AND\ \NOT Def?\big(claveString, diccIters\big)$} \Comment $O\big(|L|)$
+          \comentario{Como campoJoin siempre es clave, \#coincidencias es 1}
+          \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
+
+          \If{$tupSiguiente.loAgrego?$} \Comment $O(1)$
+            \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
+            \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
+            \State $Definir(claveString, iter, diccDeIters)$\\ \Comment $O(L) + O\big(copy(iter)\big) = O(L)$
+          \Else
+            \State $EliminarSiguiente\big(Obtener(claveString, diccDeIters)\big)$ \Comment $O(L)$
+            \State $Borrar(claveString, diccDeIters)$ \Comment $O(L)$
+          \EndIf
+
+        \EndIf
+        \State $EliminarSiguiente(itT2)$ \Comment $O(1)$
+      \EndWhile
+      \State $res \gets CrearIt\big(Obtener\big(s_2, Obtener(s_1, e.registrosDelJoin)\big)\big)$ \Comment $O(1)$
     \EndIf
 
     \medskip
     \Statex \underline{Complejidad:} {\\
-\quad\quad Campo nat indexado $\implies$ \\
-\quad\quad $O(R)$ * $\big(O(log m + |L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)\big)$ + $O(R)$ * $\Big(O(log n + |L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)\Big)$ = $O(R)$ * ( $O(log\ m + |L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)$ + $O(log\ n + |L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)$ ) = \\
-\quad\quad $O(R)$ * $\big(O(|L|)$ + $O\big(log(n+m)\big)$ + $O(log m)$ + $O(log n)\big)$ =\\
-\quad\quad $O\big(R*\big(|L|+ log(n+m) + log(m) + log\ n\big)\big)$ =  $O\big(R*\big(|L| + log(n+m) + log(n*m)\big)\big)$ =\\
-\quad\quad $O\big(R*\big(|L| + log(n*m)\big)\big)$\\
-\\
-\quad\quad Campo nat no indexado $\implies$ \\
-\quad\quad $O(R)$ * $\big(O(m*|L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)\big)$ + $O(R)$ * $\big(O(n*|L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)\big)$ =\\
-\quad\quad $O(R)$ * $\big(O(m*|L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)$ + $O(n*|L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)\big)$ =\\
-\quad\quad $O\big(R*(m*|L| + |L|) + log(n+m) + n*|L| + |L| + log (n+m)\big)$ =\\
-\quad\quad $O\big(R*\big(|L|*(m+n+2) + log(n+m) + log(n+m)\big)\big)$ = \\
-\quad\quad $O\big(R*\big(|L|*(m+n) + log(n+m)\big)\big)$\\
-\\
-\quad\quad Campo string indexado $\implies$ \\
-\quad\quad $O(R)$ * $O(|L|)$ + $O(R)$ * $O(|L|)$ = $O(R*|L|)$\\
-\\
-\quad\quad Campo string no indexado $\implies$ $O(R)$ * $\big(O(m * |L|)$ + $O(|L|)\big)$ + $O(R)$ * $\big(O(n * |L|)$ + $O(|L|)\big)$ = $O\big(R * (m*|L| + |L| + n*|L| + |L|)\big)$ = $O\big(R*(|L|(n+m+2))\big)$ = $O\big(R*|L|*(n+m)\big)$\\
+    \quad\quad Campo nat indexado $\implies$ \\
+    \quad\quad $O(R)$ * $\big(O(log m + |L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)\big)$ + $O(R)$ * $\Big(O(log n + |L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)\Big)$ = $O(R)$ * ( $O(log\ m + |L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)$ + $O(log\ n + |L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)$ ) = \\
+    \quad\quad $O(R)$ * $\big(O(|L|)$ + $O\big(log(n+m)\big)$ + $O(log m)$ + $O(log n)\big)$ =\\
+    \quad\quad $O\big(R*\big(|L|+ log(n+m) + log(m) + log\ n\big)\big)$ =  $O\big(R*\big(|L| + log(n+m) + log(n*m)\big)\big)$ =\\
+    \quad\quad $O\big(R*\big(|L| + log(n*m)\big)\big)$\\
+    \\
+    \quad\quad Campo nat no indexado $\implies$ \\
+    \quad\quad $O(R)$ * $\big(O(m*|L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)\big)$ + $O(R)$ * $\big(O(n*|L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)\big)$ =\\
+    \quad\quad $O(R)$ * $\big(O(m*|L|)$ + $O(|L|)$ + $O\big(log(n+m)\big)$ + $O(n*|L|)$ + $O(|L|)$ + $O\big(log (n+m)\big)\big)$ =\\
+    \quad\quad $O\big(R*(m*|L| + |L|) + log(n+m) + n*|L| + |L| + log (n+m)\big)$ =\\
+    \quad\quad $O\big(R*\big(|L|*(m+n+2) + log(n+m) + log(n+m)\big)\big)$ = \\
+    \quad\quad $O\big(R*\big(|L|*(m+n) + log(n+m)\big)\big)$\\
+    \\
+    \quad\quad Campo string indexado $\implies$ \\
+    \quad\quad $O(R)$ * $O(|L|)$ + $O(R)$ * $O(|L|)$ = $O(R*|L|)$\\
+    \\
+    \quad\quad Campo string no indexado $\implies$ $O(R)$ * $\big(O(m * |L|)$ + $O(|L|)\big)$ + $O(R)$ * $\big(O(n * |L|)$ + $O(|L|)\big)$ = $O\big(R * (m*|L| + |L| + n*|L| + |L|)\big)$ = $O\big(R*(|L|(n+m+2))\big)$ = $O\big(R*|L|*(n+m)\big)$\\
 
-\quad\quad $L$, cota para toda longitud de dato string en las dos tablas\\
-\quad\quad $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
-\quad\quad $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)\\
+    \quad\quad $L$, cota para toda longitud de dato string en las dos tablas\\
+    \quad\quad $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
+    \quad\quad $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)\\
 
     }
 
       \algstore{myalg}
   \end{algorithmic}
 \end{algorithm}
-
-\clearpage
 
 \begin{algorithm}
   \begin{algorithmic}
