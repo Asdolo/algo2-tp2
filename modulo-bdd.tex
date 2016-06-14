@@ -36,12 +36,13 @@
   
   \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itBi(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
-  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($secuAConj(siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$)$\big)$}
+  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$)$\big)$}
   [\\
-\tab $c$ cualquier tipo indexado en $t_1$ y $t_2$ $\implies$ $O\big((n+m) * \big(L + log(n+m)\big)\big)$ \\
-\tab $c$ cualquier tipo no indexado $\implies$  $O\big((n+m)\big(L + log(n+m)\big) + L*n*m\big)$ \\
-\tab Donde $n$ = \#registros($t_1$), $m$ = \#registros($t_2$) y $L$ el dato string más largo de cualquiera de las dos tablas.]
-  [crea un join entre dos tablas de la base de datos.]
+  \tab $c$ tipo string indexado en $t_1$ ó $t_2$ $\implies$ $O\big((n+m) * L\big)$ \\
+  \tab $c$ tipo nat indexado en $t_1$ ó $t_2$ $\implies$ $O\big((n+m) * (log(n+m) + L)\big)$ \\
+  \tab $c$ cualquier tipo no indexado $\implies$ $O\big((n+m) * \big(L\ +\ log(n+m)\big)\ +\ L * n * m\big)$ \\
+  \tab Donde $n$ = \#registros($t_1$), $m$ = \#registros($t_2$) y $L$ el dato string más largo de cualquiera de las dos tablas.]
+  [crea un join entre dos tablas de la base de datos y devuelve un iterador no modificable a sus registros.]
   [res no es modificable, se itera sólo a modo de vista del conjunto.]
   
   \InterfazFuncion{BorrarJoin}{\In{t_1}{string}, \In{t_2}{string}, \Inout{b}{base}}{}
@@ -77,22 +78,25 @@
   \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itBi(registro)}
   [hayJoin?($t_1$, $t_2$, $b$)]
   {alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
-  [
-\newline
-\quad\quad Join campo nat indexado $\implies$ $O\big(R*\big(|L| + log(n*m)\big)\big)$\\
+  [\\
+\tab Join campo nat indexado $\implies$ $O\big(R*\big(|L| + log(n*m)\big)\big)$\\
+\tab Join campo nat no indexado $\implies$ $O\big(R*\big(|L|*(m+n) + log(n+m)\big)\big)$\\
+\tab Join campo string indexado $\implies$ $O(R*|L|)$\\
+\tab Join campo string no indexado $\implies$ $O\big(R*|L|*(n+m)\big)$\\
 \\
-\quad\quad Join campo nat no indexado $\implies$ $O\big(R*\big(|L|*(m+n) + log(n+m)\big)\big)$\\
-\\
-\quad\quad Join campo string indexado $\implies$ $O(R*|L|)$\\
-\\
-\quad\quad Join campo string no indexado $\implies$ $O\big(R*|L|*(n+m)\big)$
-\newline
-
-\quad\quad $L$, cota para toda longitud de dato string en las dos tablas\\
-\quad\quad $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
-\quad\quad $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)\\  ]
+\tab $L$, cota para toda longitud de dato string en las dos tablas\\
+\tab $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
+\tab $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)]
   [devuelve un iterador a los conjuntos del join (ya definido) entre las dos tablas.]
   [res no es modificable, se itera sólo a modo de vista del conjunto.]
+
+
+  \InterfazFuncion{CoincidenTodosCrit}{\In{crit}{registro}, \In{r}{registro}}{bool}
+  [campos($crit$) $\subset$ campos($r$)]
+  {$res$ $\igobs$ coincidenTodos$\big(crit$, campos($crit$), $r\big)$}
+  [$O\big(|L|\big)$]
+  [determina si el registro comparte los mismos valores para los campos de crit.]
+
 
   \InterfazFuncion{TablaMaxima}{\In{b}{base}}{string}
   [\#tablas($b$) > 0]
@@ -456,173 +460,63 @@
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{iGenerarVistaJoin}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{e}{estr}) $\to$ $res$ : itConj(registro)}
-  
-  \begin{algorithmic}
-    \comentario{Creo en el diccionario hayJoin de cada tabla la otra tabla.}
-    \State $aux \gets <c, Vacio()>$                             \Comment $O(1)$
-    \State $Definir\big(t_2, aux, Obtener(t_1, e.hayJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
-    \State $Definir\big(t_1, aux, Obtener(t_2, e.hayJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
-    \State $ $
-
-    \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.registrosDelJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
-    \State $Definir\big(t_1, Vacio(), Obtener(t_2, e.registrosDelJoin)\big)$ \Comment $O(|maximo\ nombre\ de\ tabla|) = O(1)$
-    \State $ $
-    
-    \comentario{Si es nat el campoJoin...}
-    \If{$TipoCampo(c, t1)$} \Comment $O(1)$
-      \comentario{Defino en cada diccionario de joinPorCampoNat la otra tabla.}
-      \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.joinPorCampoNat)\big)$ \Comment $O(1)$
-      \State $Definir\big(t_1, Vacio(), Obtener(t_2, e.joinPorCampoNat)\big)$ \Comment $O(1)$
-      \State $ $
-
-      \comentario{Itero sobre los registros de t1 buscando en t2 por el registro (es único por ser clave el campo, req) que comparta ese dato (si lo hay), los mergeamos y definimos en el diccionario de t1 a t2 (y viceversa)}
-      \State $ $
-
-      \State $it \gets CrearIt(Registros(t_1))$ \Comment $O(1)$
-      \While{$HaySiguiente(it)$} \Comment $O(n * ...)$
-        \State $d \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
-        \State $coincis \gets Buscar(c, d ,t_2)$ \Comment $Si\ esta\ indexado\ \implies O(log\ m + |L|)\ /\ Si\ no\ esta\ indexado\ \implies O(m * |L|)$
-        \If{$\NOT Vacia?(coincis)$} \Comment $O(L)$
-          \State $regMergeado \gets Merge\big(Siguiente(it), Primero(coincis)\big)$ \Comment $O(L)$
-          \comentario{Agrego a los dos conjuntos de registros (son iguales)}
-          \State $iter_1 \gets AgregarRapido\big(regMergeado, Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $iter_2 \gets AgregarRapido\big(regMergeado, Obtener\big(t_1, Obtener(t_2, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $n \gets ValorNat(d)$ \Comment $O(1)$
-          \State $Definir\big(n, iter_1, Obtener\big(t_2, Obtener(t_1, e.joinPorCampoNat)\big)\big)$ \Comment $O(log\ n)$
-          \State $Definir\big(n, iter_2, Obtener\big(t_1, Obtener(t_2, e.joinPorCampoNat)\big)\big)$ \Comment $O(log\ n)$
-        \EndIf
-        \State $Avanzar(it)$ \Comment $O(1)$
-      \EndWhile
-      \State $ $
-
-      \comentario{Itero sobre registros de t2 igual que arriba pero además de preguntando si ya los definimos antes}
-      \State $ $
-
-      \State $it \gets CrearIt(Registros(t_2))$ \Comment $O(1)$
-      \While{$HaySiguiente(it)$} \Comment $O(m * ...)$
-        \State $d \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
-        \State $coincis \gets Buscar(c, d ,t_1)$ \Comment $Si\ esta\ indexado\ \implies O(log\ n + |L|)\ /\ Si\ no\ esta\ indexado\ \implies O(n * |L|)$
-        \State $n \gets ValorNat(d)$
-        \If{$\NOT Vacia?(coincis)\ \AND \NOT Def?\big(n, Obtener\big(t_1, Obtener(t_2, e.joinPorCampoNat)\big)\big)$}\\ \Comment $O(log(n+m))$
-          \State $regMergeado \gets Merge\big(Siguiente(it), Primero(coincis)\big)$ \Comment $O(L)$
-          \comentario{Agrego a los dos conjuntos de registros (son iguales)}
-          \State $iter_1 \gets AgregarRapido\big(regMergeado, Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $iter_2 \gets AgregarRapido\big(regMergeado, Obtener\big(t_1, Obtener(t_2, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $Definir\big(n, iter_1, Obtener\big(t_2, Obtener(t_1, e.joinPorCampoNat)\big)\big)$ \Comment $O(log\ n+m)$
-          \State $Definir\big(n, iter_2, Obtener\big(t_1, Obtener(t_2, e.joinPorCampoNat)\big)\big)$ \Comment $O(log\ n+m)$
-        \EndIf
-        \State $Avanzar(it)$ \Comment $O(1)$
-      \EndWhile
-      \State $ $
-
-    \Else
-      
-      \comentario{mismo que arriba pero para joinPorCampoString}
-      \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.joinPorCampoString)\big)$ \Comment $O(1)$
-      \State $Definir\big(t_1, Vacio(), Obtener(t_2, e.joinPorCampoString)\big)$ \Comment $O(1)$
-      \State $ $
-      
-      \algstore{myalg}
-  \end{algorithmic}
+ \begin{algorithmic}
+   \comentario{Creo en el diccionario hayJoin de t1 la otra tabla}
+   \State $aux \gets <c, Vacio(), Vacio()>$   \Comment $O(1)$
+   \State $Definir(t_2, aux, Obtener(t_1, e.hayJoin))$ \Comment $O\big(|maximo\ nombre\ de\ tabla|\big) = O(1)$
+   \State $Definir\big(t_2, Vacio(), Obtener(t_1, e.registrosDelJoin)\big)$   \Comment $O\big(|maximo\ nombre\ de\ tabla|\big) = O(1)$
+   \State $tabla1 \gets Obtener(t_1, e.nombreATabla)$ \Comment $O(1)$
+   \State $tabla2 \gets Obtener(t_2, e.nombreATabla)$ \Comment $O(1)$
+   \State $ $
+   \comentario {Si es nat el campoJoin...}
+   \If{$TipoCampo(c, tabla1)$} \Comment $O(1)$
+     \comentario {Defino en el diccionario de joinPorCampoNat de t1 a t2}
+     \State $Definir(t_2, Vacio(), Obtener(t_1,e.joinPorCampoNat))$ \Comment $O(1)$
+     \State $regsMergeados \gets CombinarRegistros(t_1, t_2, c)$ \Comment $c\ esta\ indexado\ en\ alguna\ tabla\ \implies\ O\big(n * (log\ m\ +\ |L|)\big)$
+     \State $ $                                              \Comment $Si\ no\ esta\ indexado\ \implies\ O\big(n * m * |L|\big)$
+     \State $it \gets CrearIt(regsMergeados)$                \Comment $O(1)$
+     \While{$HaySiguiente(it)$}                            \Comment $O(n * ...)$
+       \State $d \gets Obtener\big(c, Siguiente(it)\big)$             \Comment $O(1)$
+       \comentario {Agrego al conjunto de registros y al diccNat}
+       \State $iter \gets AgregarRapido\big(Siguiente(it), Obtener\big(t_2,Obtener(t_1,e.registrosDelJoin)\big)\big) $ \Comment $O(L)$
+       \State $n \gets ValorNat(d)$    \Comment $O(1)$
+       \State $Definir(n, iter, Obtener(t_2, Obtener(t_1, e.joinPorCampoNat)))$ \Comment $O(log\ n)$
+       \State $Avanzar(it)$ \Comment $O(1)$
+     \EndWhile
+   \Else
+     \comentario {Defino en el diccionario de joinPorCampoStr de t1 a t2}
+     \State $Definir\big(t_2, Vacio(), Obtener(t_1,e.joinPorCampoString)\big)$ \Comment $O(1)$
+     \State $regsMergeados \gets CombinarRegistros(t_1, t_2, c)$ \Comment $c\ esta\ indexado\ en\ alguna\ tabla\ \implies\ O(n * |L|)$
+     \State $ $                                             \Comment $Si\ no\ esta\ indexado\ \implies\ O\big(n * m * |L|\big)$
+     \State $it \gets CrearIt(regsMergeados)$                \Comment $O(1)$
+     \While{$HaySiguiente(it)$}                            \Comment $O(n * ...)$
+       \State $d \gets Obtener(c, Siguiente(it))$              \Comment $O(1)$
+       \comentario {Agrego al conjunto de registros y al diccString}
+       \State $iter \gets AgregarRapido\big(Siguiente(it), Obtener\big(t_2, Obtener(t_1,e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
+       \State $s \gets valorStr(d)$                                \Comment $O(1)$
+       \State $Definir\big(n, iter, Obtener\big(t_2, Obtener(t_1, e.joinPorCampoString)\big)\big)$ \Comment $O(L)$
+       \State $Avanzar(it)$ \Comment $O(1)$
+       \EndWhile
+   \EndIf
+   \State $ CrearIt\big(Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big) $ \Comment $O(1)$
+ 
+   \medskip
+   \Statex \underline{Complejidad:}{\\
+\quad\quad Si $c$ está indexado en alguna de las dos tablas y es string $\implies$ $O\big(n * L\ +\ n * L\big)$ = $O(n * L)$ = $O\big((n+m) * L\big)$ \\
+\quad\quad Si $c$ está indexado y es nat $\implies$ $O\big(n * (log\ m\ +\ |L|) + n * (log\ n\ +\ L)\big)$ = $O\big(n * (log\ n\ +\ log\ m + L)\big)$ = $O\big(n * (log(n+m)\ +\ log(n+m) + L)\big)$ = $O\big(n * (log(n+m)\ +\ L)\big)$ = $O\big((n+m) * (log(n+m)\ +\ L)\big)$\\
+\quad\quad Si $c$ no está indexado $\implies$ $O\big(n * m * |L| + n * (log\ n + L)\big)$ = $O\big(n * (m * L\ +\ log\ n\ +\ L)\big)$ = $O\big(n * (m * L\ +\ log\ n)\big)$ \\
+\\
+\quad\quad Siendo $L$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (varían en base a criterio de búsqueda indexado o no). \\
+\quad\quad Esta indeterminación se puede salvar considerando que las cantidades de registros de las tablas (que ahora sí serían $n$ y $m$) pueden ser tomadas como $O\big(max(n,m)\big)$ = $O(n+m)$ (quedando complejidades acorde al enunciado).\\
+\quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección. \\ 
+}
+   \Statex \underline{Justificación:}{\\
+\quad\quad Además del costo por combinar registros, se agrega el de iterar todos los registros combinados, el de recorrerlos (como dijimos, están acotados por $n$) realizando inserciones por copia en sus respectivos diccionarios.}
+ 
+ \end{algorithmic}
 \end{algorithm}
 
-\clearpage
 
-\begin{algorithm}
-  \begin{algorithmic}
-      \algrestore{myalg}
-
-
-      \comentario{Itero sobre registros de t1 buscando en t2 por cada clave el registro (es único por ser clave el campo, req) que comparta ese dato (si lo hay) y los mergeamos y definimos en el diccionario de t1 a t2 (y viceversa)}
-      \State $ $
-
-      \State $it \gets CrearIt(Registros(t_1))$ \Comment $O(1)$
-      \While{$HaySiguiente(it)$} \Comment $O(n * ...)$
-        \State $d \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
-        \State $coincis \gets Buscar(c, d ,t_2)$ \Comment $Si\ esta\ indexado\ \implies O(|L|)\ /\ Si\ no\ esta\ indexado\ \implies O(m * |L|)$
-        \If{$\NOT Vacia?(coincis)$} \Comment $O(1)$
-          \State $regMergeado \gets Merge\big(Siguiente(it), Primero(coincis)\big)$ \Comment $O(L)$
-          \State $s \gets ValorStriing(d)$ \Comment $O(L)$
-          \comentario{Agrego a los dos conjuntos de registros (son iguales)}
-          \State $iter_1 \gets AgregarRapido\big(regMergeado, Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $iter_2 \gets AgregarRapido\big(regMergeado, Obtener\big(t_1, Obtener(t_2, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $Definir\big(s, iter_1, Obtener\big(t_2, Obtener(t_1, e.joinPorCampoString)\big)\big)$ \Comment $O(L)$
-          \State $Definir\big(s, iter_2, Obtener\big(t_1, Obtener(t_2, e.joinPorCampoString)\big)\big)$ \Comment $O(L)$
-        \EndIf
-        \State $Avanzar(it)$ \Comment $O(1)$
-      \EndWhile
-      \State $ $
-
-      \comentario{Itero sobre registros de t2 igual que arriba pero además de preguntando si ya los definimos antes}
-      \State $ $
-
-      \State $it \gets CrearIt(Registros(t_2))$ \Comment $O(1)$
-      \While{$HaySiguiente(it)$} \Comment $O(m * ...)$
-        \State $d \gets Obtener\big(c, Siguiente(it)\big)$ \Comment $O(1)$
-        \State $coincis \gets Buscar(c, d ,t_1)$ \Comment $Si\ esta\ indexado\ \implies O(|L|)\ /\ Si\ no\ esta\ indexado\ \implies O(n * |L|)$
-        \State $s \gets ValorString(d)$
-        \If{$\NOT Vacia?(coincis)\ \AND \NOT Def?\big(s, Obtener\big(t_1, Obtener(t_2, e.joinPorCampoString)\big)\big)$}\\ \Comment $O(L)$
-          \State $regMergeado \gets Merge\big(Siguiente(it), Primero(coincis)\big)$ \Comment $O(L)$
-          \comentario{Agrego a los dos conjuntos de registros (son iguales)}
-          \State $iter_1 \gets AgregarRapido\big(regMergeado, Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $iter_2 \gets AgregarRapido\big(regMergeado, Obtener\big(t_1, Obtener(t_2, e.registrosDelJoin)\big)\big)$ \Comment $O(L)$
-          \State $Definir\big(s, iter_1, Obtener\big(t_2, Obtener(t_1, e.joinPorCampoString)\big)\big)$ \Comment $O(L)$
-          \State $Definir\big(s, iter_2, Obtener\big(t_1, Obtener(t_2, e.joinPorCampoString)\big)\big)$ \Comment $O(L)$
-        \EndIf
-        \State $Avanzar(it)$ \Comment $O(1)$
-      \EndWhile
-      \State $ $
-
-    \EndIf
-    \State $res \gets CrearIt\big(Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big)$
-
-    \medskip
-    \Statex \underline{Complejidad:}{ \\
-\quad $c$ tipo nat indexado en $t_1$ y $t_2$ $\implies$ \\ 
-\quad $O\big(n*( L+ log n + log m)\big)$ + $O\big(m*(L + log n + log(n+m)\big)$ \\
-\quad = $O\big(n*(L + log n + log m)\big)$ + $O\big(m*\big(L + log(n+m)\big)\big)$ \\
-\quad = $O\big(n*\big(L + log (n+m) + log (n+m)\big)\big)$ + $O\big(m*\big(L + log(n+m)\big)\big)$ \\
-\quad = $O\big(n*\big(L + log(n+m)\big)\big)$ + $O\big(m*\big(L +log(n+m)\big)\big)$ \\
-\quad = $O\big((n+m) * \big(L + log(n+m)\big)\big)$\\
-\\
-\quad $c$ tipo nat no indexado $\implies$ \\
-\quad $O\big(n*(L + log n + m*L)\big)$ + $O\big(m*(L + n*L + log (n+m))\big)$ \\
-\quad = $O\big(L(n+m) + n(log n + m*L) + m\big(log (n+m) + n*L\big)\big)$\\
-\quad = $O\big(L(n+m) + n\big(log (n+m)+ m*L\big) + m\big(log (n+m) + n*L\big) \big)$ \\
-\quad = $O\big(\big(L + log (n+m)\big)(n+m) + n*m*L + n*m*L\big)$ \\
-\quad = $O\big((n+m)\big(L + log(n+m)\big) + n*m*L\big)$ \\
-\\
-\quad $c$ tipo string indexado en $t_1$ y $t_2$ $\implies$ $O(n*L + m*L)$ =  $O\big(L*(n+m)\big)$ \\
-\quad $c$ tipo string no indexado $\implies$ $O\big(n*(m*L+L)\big)$ + $O\big(m*(n*L+L)\big)$ = $O\big(L*(m + n + n*m + n*m)\big)$ = $O\big(L*(n + m + m*n)\big)$ = $O(L*m*n)$}
-
-      \algstore{myalg}
-  \end{algorithmic}
-\end{algorithm}
-
-\clearpage
-
-\begin{algorithm}
-  \begin{algorithmic}
-      \algrestore{myalg}
-\Statex
-{\quad $\implies$ $c$ cualquier tipo indexado en $t_1$ y $t_2$ $\implies$ \\
-\quad $O\big(max\{(n+m) * (L + log(n+m)), L*(n+m)\}\big)$ = $O\big((n+m) * \big(L + log(n+m)\big)\big)$ \\
-\\
-\quad $\implies$ $c$ cualquier tipo no indexado $\implies$ \\
-\quad $O\big(max\{(n+m)(L + log(n+m)) + L*n*m, L*m*n\}\big)$ = $O\big((n+m)\big(L + log(n+m)\big) + L*n*m\big)$}
-    \Statex \underline{Justificación:}
-    Definir el campo y los dos diccionarios vacíos para cada estructura es $O(1)$. \\
-\quad Obtener un significado en los diccString que tienen nombres de campos por claves también es $O(1)$ porque están acotados en longitud. \\
-\\
-\\
-\quad \underline{Caso nat:} Se recorren los $n$ registros de $t_1$ buscando coincidencias en $t_2$ para el campo $c$ (si $c$ es indexado en $t_2$ entonces esto se realiza en tiempo promedio logarítmico sobre la cantidad $m$ de registros de $t_2$, si no es lineal con el agregado de copiar coincidencias considerando peor caso recorrer todos los registros). \\
-\quad Si hay coincidencias se deben mergear ambos registros en $O(L)$, siendo $L$ el dato string más largo de cualquiera de las dos tablas, y luego definir el merge en las dos estructuras que almacenan registros de joins en común con complejidad Copy(merge) = $O(L)$ ya que al tener campos acotados sólo es significativo el costo de copiar una cantidad acotada de veces el dato más largo. \\
-\quad Se define para cada registro mergeado un iterador en cada diccNat de la estructura de joinPorCampoNat (como solamente se agregaron iteradores de registros de $t_1$ hasta ahora, log\ n peor caso). \\
-\quad Luego se aplica el mismo procedimiento para los $m$ registros de $t_2$, pero esta vez considerando que no hayan sido agregados en el paso anterior, por lo que se agrega una búsqueda sobre la estructura de registros de joins $\big($peor caso contiene todos los registros de ambas tablas: $O(log (n+m)\big)$. \\
-\\
-\quad \underline{Caso string}: Similar al caso nat pero considerando que las búsquedas e inserciones se realizan en tiempo de orden $L$ (nuevamente, el dato string más largo de cualquiera de las dos tablas).
-  \end{algorithmic}
-\end{algorithm}
 
 \begin{algorithm}[H]{\textbf{iBorrarJoin}(\In{t_1}{string}, \In{t_2}{string}, \Inout{e}{estr})}
   \begin{algorithmic}
@@ -937,7 +831,7 @@
  \begin{algorithmic}
    \State $itCrit \gets VistaDicc(crit)$             \Comment $O(1)$
    \State $res \gets true$  \Comment $O(1)$
-   \While{$HaySiguiente(itCrit) \land res$}  \Comment $O(\#campos(crit) * ..)$
+   \While{$HaySiguiente(itCrit) \AND res$}  \Comment $O(\#campos(crit) * ...)$
      \State $tuplaCrit \gets Siguiente(itCrit)$      \Comment $O(1)$
      \If{$\NOT Obtener(tuplaCrit.clave) = tuplaCrit.significado$}  \Comment $O(L)$
        \State $res \gets false$      \Comment $O(1)$
