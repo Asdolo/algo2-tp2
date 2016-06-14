@@ -27,7 +27,7 @@
   [inserta un registro en una tabla de la base de datos.]
 
   \InterfazFuncion{Borrar}{\In{cr}{registro}, \In{t}{string}, \Inout{b}{base}}{}
-  [\#campos($cr$) = 1 $\land$ $t$ $\in$ tablas($b$) $\land$ $b$ = $b_0$ $\land$ dameUno(campos($cr$)) $\in$ claves(dameTabla(t,b)) ]
+  [\#campos($cr$) = 1 $\land$ $t$ $\in$ tablas($b$) $\land$ $b$ = $b_0$ $\land$ dameUno$\big($campos($cr$)$\big)$ $\in$ claves$\big($dameTabla($t$, $b$)$\big)$]
   {$b$ $\igobs$ borrar($cr$, $t$, $b_0$)}
   [\\
 \tab Campo indexado $\implies$ $O\big(log\ n + |L| * \#tablas(b)\big)$ \\
@@ -36,13 +36,13 @@
   
   \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itBi(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
-  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
+  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($secuAConj(siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$)$\big)$}
   [\\
 \tab $c$ cualquier tipo indexado en $t_1$ y $t_2$ $\implies$ $O\big((n+m) * \big(L + log(n+m)\big)\big)$ \\
 \tab $c$ cualquier tipo no indexado $\implies$  $O\big((n+m)\big(L + log(n+m)\big) + L*n*m\big)$ \\
 \tab Donde $n$ = \#registros($t_1$), $m$ = \#registros($t_2$) y $L$ el dato string más largo de cualquiera de las dos tablas.]
   [crea un join entre dos tablas de la base de datos.]
-  [res no es modificable, se itera solo a modo de vista del conjunto]
+  [res no es modificable, se itera sólo a modo de vista del conjunto.]
   
   \InterfazFuncion{BorrarJoin}{\In{t_1}{string}, \In{t_2}{string}, \Inout{b}{base}}{}
   [hayJoin?($t_1$, $t_2$, $b$) $\land$ $b$ = $b_0$]
@@ -92,14 +92,13 @@
 \quad\quad $n$ y $m$, cantidad de registros de las tablas con nombre s1 y s2 respectivamente\\
 \quad\quad $R$, cantidad de registros a 'actualizar' (unión de las listas de cambios de ambas tablas)\\  ]
   [devuelve un iterador a los conjuntos del join (ya definido) entre las dos tablas.]
-  [res no es modificable, se itera solo a modo de vista del conjunto]
-
+  [res no es modificable, se itera sólo a modo de vista del conjunto.]
 
   \InterfazFuncion{TablaMaxima}{\In{b}{base}}{string}
   [\#tablas($b$) > 0]
-  {alias \big($res$ $\igobs$ tablaMaxima($b$) \big)}
+  {alias $\big(res$ $\igobs$ tablaMaxima($b$)$\big)$}
   [$O(1)$]
-  [evuelve el nombre de la tabla más accedida.]
+  [devuelve el nombre de la tabla más accedida.]
   [res no es modificable]
 
 
@@ -144,7 +143,7 @@
 
   \Rep[estr][e]{}
 
-  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\Longleftrightarrow$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
+  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\ssi$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
     $\big($esta?($s$, $e$.tablas) $\land$ sinRepetidos($e$.tablas)$\big)$} $\land$\\
     \noindent\tab\tab\bigpar{\textbf{2)} $e$.tablaMasAccedida $\in$ claves($e$.nombreATabla) $\yluego$ $\big(\forall$ $n$ : string, $n$ $\in$ claves($e$.nombreATabla)$\big)$\\
     cantAccesos$\big($obtener($n$, $e$.nombreATabla)$\big)$ $\le$ cantAccesos$\big($obtener(*$e$.tablaMasAccedida, $e$.nombreATabla)$\big)$}$\land$\\
@@ -930,6 +929,32 @@
     }
   \end{algorithmic}
 \end{algorithm}
+
+
+
+
+\begin{algorithm}[H]{\textbf{iCoincidenTodosCrit}(\In{crit}{registro}, \In{r}{registro}) $\to$ $res$ : bool}
+ \begin{algorithmic}
+   \State $itCrit \gets VistaDicc(crit)$             \Comment $O(1)$
+   \State $res \gets true$  \Comment $O(1)$
+   \While{$HaySiguiente(itCrit) \land res$}  \Comment $O(\#campos(crit) * ..)$
+     \State $tuplaCrit \gets Siguiente(itCrit)$      \Comment $O(1)$
+     \If{$\NOT Obtener(tuplaCrit.clave) = tuplaCrit.significado$}  \Comment $O(L)$
+       \State $res \gets false$      \Comment $O(1)$
+     \EndIf
+     \State $Avanzar(itCrit)$         \Comment $O(1)$
+   \EndWhile
+   \medskip
+   \Statex \underline{Complejidad:} {$O\big(\#campos(crit) * |L|\big) = O\big(|L|\big)$, donde $L$ valor string más largo en $r$.}
+   \Statex \underline{Justificación:} {\\
+\quad\quad En peor caso se compara en todos los campos un dato string de máxima longitud en $r$.\\
+\quad\quad Por enunciado los registros tienen acotadas las cantidades de campos, por lo tanto el costo es el de comparar una cantidad acotada de veces el string más largo.}
+ \end{algorithmic}
+\end{algorithm}
+
+
+
+
 
 
 \begin{algorithm}[H]{\textbf{iTablaMaxima}(\In{b}{estr}) $\to$ $res$ : string}

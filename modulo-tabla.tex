@@ -1,12 +1,12 @@
-\section{M√≥dulo Tabla}
+\section{MÛdulo Tabla}
 
 \begin{Interfaz}
   
   \textbf{se explica con}: \tadNombre{Tabla}.
 
-  \textbf{g√©neros}: \TipoVariable{tabla}.
+  \textbf{gÈneros}: \TipoVariable{tabla}.
 
-  \Titulo{Operaciones b√°sicas de tabla}
+  \Titulo{Operaciones b·sicas de tabla}
 
   \InterfazFuncion{Nombre}{\In{t}{tabla}}{string}
   [true]  
@@ -34,16 +34,16 @@
 \\
 \tab Campo NO indexado $\implies$ $O(n * |L|)$. \\
 \\
-\tab Donde $n$ es la cantidad de registros de la tabla pasada por argumento y |$L$| corresponde a la longitud m√°xima de cualquier valor string de datos de la tabla.
+\tab Donde $n$ es la cantidad de registros de la tabla pasada por argumento y |$L$| corresponde a la longitud m·xima de cualquier valor string de datos de la tabla.
 ]
   [Busca en todos los registros de la tabla los que tengan el dato $d$ en el campo $c$, esos registros los devuelve en una secuencia.]
   [no hay ya que se copian los registros.]
 
-  \InterfazFuncion{Indices}{\In{t}{tabla}}{Conj(campo)}
+  \InterfazFuncion{Indices}{\In{t}{tabla}}{conj(campo)}
   [true]
   {$res$ $\igobs$ indices($t$)}
   [$O(1)$]
-  [devuelve el conjunto de campos con √≠ndice de la tabla indicada.]
+  [devuelve el conjunto de campos con Ìndice de la tabla indicada.]
   [No hay aliasing]
 
   \InterfazFuncion{Campos}{\In{t}{tabla}}{itBi(campo)}
@@ -83,8 +83,8 @@
   [campos($r$) $\igobs$ campos($t$) $\land$ puedoInsertar?($r$, $t$) $\land$ $t_{0}$ = $t$]
   {$t$ $\igobs$ agregarRegistro($r$, $t_0$)}
   [\\
-\tab Campo indexado $\implies$ En caso promedio $O(|L| + log\ n)$, donde $n$ es la cantidad de registros($t$) y $L$ es el string m√°s largo de $r$.\\
-\tab Campo no indexado $\implies$ $O(|S|)$, donde $S$ es el string m√°s largo de $r$.]
+\tab Campo indexado $\implies$ En caso promedio $O(|L| + log\ n)$, donde $n$ es la cantidad de registros($t$) y $L$ es el string m·s largo de $r$.\\
+\tab Campo no indexado $\implies$ $O(|S|)$, donde $S$ es el string m·s largo de $r$.]
   [agrega un registro a la tabla.]
 
   \InterfazFuncion{BorrarRegistro}{\In{criterio}{registro}, \Inout{t}{tabla}}{}
@@ -93,13 +93,13 @@
   [\\
 \tab Criterio sobre campo indexado $\implies$ $O(log\ n\ +\ L)$. \\
 \tab Criterio sobre campo no indexado $\implies$ $O(n * |L|)$. \\
-\tab Donde $n$ es la cantidad total de registros de la tabla y $L$ el valor string m√°s largo de todos los datos comparados.]
+\tab Donde $n$ es la cantidad total de registros de la tabla y $L$ el valor string m·s largo de todos los datos comparados.]
   [borra un registro de la tabla.]
 
   \InterfazFuncion{Indexar}{\In{c}{campo}, \Inout{t}{tabla}}{}
   [puedeIndexar($c$, $t$)]
   {$t$ $\igobs$ indexar($c$, $t$)}
-  [$O\big(|registros| * L * (L\ +\ log\ |registros|)\big)$, donde $L$ es el m√°ximo string para el campo $c$ en cualquier registro.]
+  [$O\big(|registros| * L * (L\ +\ log\ |registros|)\big)$, donde $L$ es el m·ximo string para el campo $c$ en cualquier registro.]
   [indexa un campo de la tabla.]
 
   \InterfazFuncion{Minimo}{\In{c}{campo}, \In{t}{tabla}}{dato}
@@ -123,7 +123,7 @@
 
 \begin{Representacion}
   
-  \Titulo{Representaci√≥n de tabla}
+  \Titulo{RepresentaciÛn de tabla}
 
   \begin{Estructura}{tabla}[estrTabla]
     \begin{flushright}
@@ -139,13 +139,13 @@
         \emph{cantAccesos}: \TipoVariable{nat}
         $\Big)$ \veryquad
       \end{flushright}
-     \dondees{registro}{diccString(dato)}y se explica con \tadNombre{Registro}, y \TipoVariable{conj} corresponde al conjunto lineal de la c√°tedra.
+     \dondees{registro}{diccString(dato)}y se explica con \tadNombre{Registro}, y \TipoVariable{conj} corresponde al conjunto lineal de la c·tedra.
   \end{Estructura}
 
-  \noindent\textbf{Invariante de representaci√≥n}
+  \noindent\textbf{Invariante de representaciÛn}
   
-  \noindent\tab 1) Las claves de indicesString corresponden al valor del campo indexado para cada registro que est√© en sus significados. \\
-  \noindent\tab 2) Las claves de indicesNat corresponden al valor del campo indexado para cada registro que est√© en sus significados. \\
+  \noindent\tab 1) Las claves de indicesString corresponden al valor del campo indexado para cada registro que estÈ en sus significados. \\
+  \noindent\tab 2) Las claves de indicesNat corresponden al valor del campo indexado para cada registro que estÈ en sus significados. \\
   \noindent\tab 3) Los significados de indicesString e indicesNat pertenecen a registros. \\
   \noindent\tab 4) Todos los registros estan indexados. \\
   \noindent\tab 5) Claves esta entre los campos y no es vacio. \\
@@ -155,9 +155,9 @@
   \noindent\tab 9) El tipo de dato en registro corresponde al tipo de dato en campos y las claves de los registros son los campos de la tabla. \\
   \noindent\tab 10) El campo indexado pertenece a campos. \\
   \noindent\tab 11) cantAccesos es menor o igual a la cantidad de registros. \\
-  \noindent\tab 12) Tama√±o de las listas 'campoIndexado...' es menor o igual a 1. \\
-  \noindent\tab 13) El bool 'vacio?' de las tuplas de campoIndexado valen true si y solo si sus respectivos diccionarios est√°n vac√≠os. \\
-  \noindent\tab 14) Si no hay un campoIndexado de cierto tipo, el diccionario correspodiente, esta vac√≠o.\\
+  \noindent\tab 12) TamaÒo de las listas 'campoIndexado...' es menor o igual a 1. \\
+  \noindent\tab 13) El bool 'vacio?' de las tuplas de campoIndexado valen true si y solo si sus respectivos diccionarios est·n vacÌos. \\
+  \noindent\tab 14) Si no hay un campoIndexado de cierto tipo, el diccionario correspodiente, esta vacÌo.\\
 
   \Rep[estrTabla][e]{}
     \noindent\tab\tab\textbf{1)} $\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
@@ -228,7 +228,7 @@
 
 \medskip
 
-  \noindent\textbf{Auxiliares sint√°cticos}
+  \noindent\textbf{Auxiliares sint·cticos}
   \tadAuxiliar{campoIndexString}{$\Pi_1\big($prim($e$.campoIndexString)$\big)$}
   \tadAuxiliar{campoIndexNat}{$\Pi_1\big($prim($e$.campoIndexadoNat)$\big)$}
 
@@ -258,7 +258,7 @@
 
         \medskip
         \Statex \underline{Complejidad:} {$O(1)$}
-        \Statex \underline{Justificaci√≥n:} {El algoritmo tiene una √∫nica llamada a una funci√≥n con costo $O(1)$.}
+        \Statex \underline{JustificaciÛn:} {El algoritmo tiene una ˙nica llamada a una funciÛn con costo $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -268,11 +268,11 @@
 
         \medskip
         \Statex \underline{Complejidad:} {$O(1)$}
-        \Statex \underline{Justificaci√≥n:} {El algoritmo tiene una √∫nica llamada a una funci√≥n con costo $O(1)$.}
+        \Statex \underline{JustificaciÛn:} {El algoritmo tiene una ˙nica llamada a una funciÛn con costo $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iIndices}(\In{e}{estrTabla}) $\to$ $res$ : Conj(campo)}
+\begin{algorithm}[H]{\textbf{iIndices}(\In{e}{estrTabla}) $\to$ $res$ : conj(campo)}
       \begin{algorithmic}
         \State $res \gets Vacio()$                                  \Comment $O(1)$
         \If{$Longitud(e.campoIndexadoNat) > 0$}                     \Comment $O(1)$
@@ -284,7 +284,7 @@
 
         \medskip
         \Statex \underline{Complejidad:} {$O(1)$}
-        \Statex \underline{Justificaci√≥n:} {El algoritmo utiliza la funci√≥n agregarRapido del M√≥dulo Conjunto lineal 2 veces, entonces la complejidad es la de copiar el string del campo m√°s largo de los dos. Como los strings de los campos estan acotados por una constante, entonces la complejidad queda $O(1)$.}
+        \Statex \underline{JustificaciÛn:} {El algoritmo utiliza la funciÛn agregarRapido del MÛdulo Conjunto lineal 2 veces, entonces la complejidad es la de copiar el string del campo m·s largo de los dos. Como los strings de los campos estan acotados por una constante, entonces la complejidad queda $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -294,7 +294,7 @@
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(\#claves(e.campos)\big)$}
-        \Statex \underline{Justificaci√≥n:} {Por m√≥dulo diccString, la operaci√≥n Claves exporta complejidad $O\big(\#claves(e.campos) * L\big)$ siendo $L$ la longitud del mayor string en claves. Dado que los nombres de los campos est√°n acotados, la complejidad final es $O\big(\#claves(e.campos)\big)$.
+        \Statex \underline{JustificaciÛn:} {Por mÛdulo diccString, la operaciÛn Claves exporta complejidad $O\big(\#claves(e.campos) * L\big)$ siendo $L$ la longitud del mayor string en claves. Dado que los nombres de los campos est·n acotados, la complejidad final es $O\big(\#claves(e.campos)\big)$.
 }
       \end{algorithmic}
 \end{algorithm}
@@ -304,16 +304,16 @@
       \State $res \gets Obtener(c, e.campos)$         \Comment $O(1)$
       \medskip
       \Statex \underline{Complejidad:} {$O(1)$}
-      \Statex \underline{Justificaci√≥n:} {Como la longitud de los campos es acotada, buscar en un diccString pasa de ser orden de longitud de la clave m√°s larga a $O(1)$.}
+      \Statex \underline{JustificaciÛn:} {Como la longitud de los campos es acotada, buscar en un diccString pasa de ser orden de longitud de la clave m·s larga a $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iRegistros}(\In{e}{estrTabla}) $\to$ $res$ : Conj(registros)}
+\begin{algorithm}[H]{\textbf{iRegistros}(\In{e}{estrTabla}) $\to$ $res$ : conj(registros)}
       \begin{algorithmic}
       \State $res \gets (e.registros)$         \Comment $O(1)$
       \medskip
       \Statex \underline{Complejidad:} {$O(1)$}
-      \Statex \underline{Justificaci√≥n:} {Devolver el conjunto por referencia es $O(1)$.}
+      \Statex \underline{JustificaciÛn:} {Devolver el conjunto por referencia es $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -322,7 +322,7 @@
       \State $res \gets e.cantAccesos$         \Comment $O(1)$
       \medskip
       \Statex \underline{Complejidad:} {$O(1)$}
-      \Statex \underline{Justificaci√≥n:} {El algoritmo tiene una √∫nica llamada a una funci√≥n con costo $O(1)$.}
+      \Statex \underline{JustificaciÛn:} {El algoritmo tiene una ˙nica llamada a una funciÛn con costo $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -332,12 +332,12 @@
       \State $clave \gets Siguiente(it).clave$                  \Comment $O(1)$
       \State $dato \gets Siguiente(it).significado$             \Comment $O(1)$
       \State $ $
-      \comentario{Si el criterio es un √≠ndice tenemos que recorrer el conjunto de iteradores a registros con un iterador borrando todos, si no hay que recorrer registros linealmente}
+      \comentario{Si el criterio es un Ìndice tenemos que recorrer el conjunto de iteradores a registros con un iterador borrando todos, si no hay que recorrer registros linealmente}
 
       \If{$\big(Primero(e.campoIndexadoNat)\big).nombre = clave$} \Comment $O(|L|)$
         \If{$Def?(ValorNat(dato), e.indicesNat)$}                 \Comment $O(log\ n) \ promedio$
           \State $iterador \gets CrearIt\big(Obtener(ValorNat(dato), e.indicesNat)\big)$                           \Comment $O(log\ n) \ promedio$
-          \comentario{es clave, por lo tanto es el √∫nico en el conjunto, lo borro de e.registros:}
+          \comentario{es clave, por lo tanto es el ˙nico en el conjunto, lo borro de e.registros:}
           \State $EliminarSiguiente\big(Siguiente(iterador)\big)$ \Comment $O(1)$
           \State $e.cantAccesos++$                                \Comment $O(1)$
           \State $Borrar\big(ValorNat(dato), e.indicesNat\big)$   \Comment $O(log\ n) \ promedio$
@@ -404,11 +404,11 @@
       \Statex \underline{Complejidad:} {\\
 \quad\quad Criterio sobre campo indexado $\implies$ $O(log n + L)$. \\
 \quad\quad Criterio sobre campo no indexado $\implies$ $O(n*|L|)$. \\
-\quad\quad Siendo $n$ la cantidad total de registros de la tabla y $L$ el valor string m√°s largo de todos los datos comparados.}
+\quad\quad Siendo $n$ la cantidad total de registros de la tabla y $L$ el valor string m·s largo de todos los datos comparados.}
 
-      \Statex \underline{Justificaci√≥n:} {\\
+      \Statex \underline{JustificaciÛn:} {\\
 \quad\quad En peor caso sobre campo indexado recorre el diccNat o el diccString para encontrar el iterador (el conjunto significado tiene longitud 1 por ser un campo clave) al conjunto y eliminarlo. Buscar en diccNat en promedio es $O(log\ n)$ dado que se inserta con probabilidad uniforme. Buscar en diccString es $O(L)$ en el peor caso. \\
-\quad\quad Se agrega el costo de actualizar el m√°ximo, que es $O(log\ n)$ para √≠ndice nat y $O(L\ +\ L)$ = $O(L)$ (por comparar con m√°ximo y m√≠nimo actual y luego buscar m√°ximo y m√≠nimo respectivamente) para √≠ndice string, la inserci√≥n es por referencia a√∫n as√≠. Por lo tanto el m√°ximo y m√≠nimo se actualiza en $O(log\ n\ +\ L)$. \\
+\quad\quad Se agrega el costo de actualizar el m·ximo, que es $O(log\ n)$ para Ìndice nat y $O(L\ +\ L)$ = $O(L)$ (por comparar con m·ximo y mÌnimo actual y luego buscar m·ximo y mÌnimo respectivamente) para Ìndice string, la inserciÛn es por referencia a˙n asÌ. Por lo tanto el m·ximo y mÌnimo se actualiza en $O(log\ n\ +\ L)$. \\
 \quad\quad En el peor caso sobre campo no indexado debe recorrer todo el conjunto de registros de la tabla preguntando si el dato de cada registro coincide con el criterio para eliminarlo.}
       \end{algorithmic}
 \end{algorithm}
@@ -428,9 +428,9 @@
     
     \medskip    
     \Statex \underline{Complejidad:} {$O(1)$}
-    \Statex \underline{Justificaci√≥n:} {\\
+    \Statex \underline{JustificaciÛn:} {\\
 \quad\quad Todas las asignaciones que no usen copias son $O(1)$. Copiar el nombre es cte. porque, por enunciado los nombres de las tablas son acotados. \\ 
-\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre m√°s largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos tambi√©n son acotados y tambi√©n la cantidad de campos por tabla (es decir \#claves <\ $n$, para alg√∫n $n$ natural). Vale lo mismo para copiar columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave m√°s larga del diccionario (los significados de tipo bool se copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
+\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre m·s largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos tambiÈn son acotados y tambiÈn la cantidad de campos por tabla (es decir \#claves <\ $n$, para alg˙n $n$ natural). Vale lo mismo para copiar columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave m·s larga del diccionario (los significados de tipo bool se copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
   }
   \end{algorithmic}
 \end{algorithm}
@@ -443,7 +443,7 @@
 
     \comentario{Agrego el registro al conjunto e.registros}           
     \State $it \gets AgregarRapido(r, e.registros)$                   \Comment $O\big(copy(r)\big)$
-    \comentario{Se paga una cantidad de veces acotada por copiar datos acotados en costo por L, que es el dato string m√°s largo}
+    \comentario{Se paga una cantidad de veces acotada por copiar datos acotados en costo por L, que es el dato string m·s largo}
     \State $ $
 
     \comentario{Me fijo si tengo un campo nat indexado (me fijo en e.campoIndexadoNat)} 
@@ -465,7 +465,7 @@
       \EndIf
 
       \State $aux \gets Obtener\big(\big(Primero(e.campoIndexadoNat)\big).nombre, r\big)$                                                                \Comment $O(1)$
-      \comentario{Si lo tengo indexado y est√° definido}
+      \comentario{Si lo tengo indexado y est· definido}
       \If{$Def?(aux, e.indicesNat)$}                                  \Comment $O(log\ n)$
         \State $AgregarRapido\big(it, Obtener(aux, e.indicesNat)\big)$ \Comment $O\big(copy(it)\big)$
       \Else
@@ -505,7 +505,7 @@
     \Statex \underline{Complejidad:} {\\
 \quad\quad Campo indexado: $O(|L| +log\ n)$\\
 \quad\quad Campo no indexado: $O(|S|)$\\
-\quad\quad Donde $n$ es la cantidad de claves del diccNat $e$.indicesNat (acotada por la cantidad de registros de la tabla) y $L$ es el string m√°s largo de cualquier registro en la tabla. $S$ es el string m√°s largo del registro a agregar.
+\quad\quad Donde $n$ es la cantidad de claves del diccNat $e$.indicesNat (acotada por la cantidad de registros de la tabla) y $L$ es el string m·s largo de cualquier registro en la tabla. $S$ es el string m·s largo del registro a agregar.
 }
 
     \algstore{myalg}
@@ -518,12 +518,12 @@
   \begin{algorithmic}
       \algrestore{myalg}
 
-    \Statex \underline{Justificaci√≥n:} {\\
-\quad\quad Campo indexado: Agregar el registro al conjunto cuesta $O\big(copy (r)\big)$; al ser un diccString eso ser√≠a $O\big(\#claves(r) * Max\{K,S\}\big)$, siendo $K$ la clave de m√°ximo costo para copiar y $S$ lo mismo pero para significados. Como la cantidad de claves est√° acotada por haber una cantidad acotada de campos (por enunciado) y la longitud de los nombres de campos tambi√©n, vale que $O\big(\#claves(r) * K\big)$ = $O(1)$. Por lo tanto, el peor caso es pagar por el copiado del significado m√°s costoso, que corresponde a la longitud m√°xima de cualquier string del registro (que acotamos por la m√°xima longitud de cualquier string de cualquier registro de la tabla, y lo denominamos |$L$|). \\
-\quad\quad Adem√°s se agrega el costo de agregar en el diccionario de √≠ndices nat (logar√≠tmico en la cantidad $n$ de registros de la tabla) y el de agregar en el diccionario de √≠ndices string $\big($nuevamente, longitud m√°xima de cualquier string de cualquier registro de la tabla, es decir $O(|L|)\big)$. \\
+    \Statex \underline{JustificaciÛn:} {\\
+\quad\quad Campo indexado: Agregar el registro al conjunto cuesta $O\big(copy (r)\big)$; al ser un diccString eso serÌa $O\big(\#claves(r) * Max\{K,S\}\big)$, siendo $K$ la clave de m·ximo costo para copiar y $S$ lo mismo pero para significados. Como la cantidad de claves est· acotada por haber una cantidad acotada de campos (por enunciado) y la longitud de los nombres de campos tambiÈn, vale que $O\big(\#claves(r) * K\big)$ = $O(1)$. Por lo tanto, el peor caso es pagar por el copiado del significado m·s costoso, que corresponde a la longitud m·xima de cualquier string del registro (que acotamos por la m·xima longitud de cualquier string de cualquier registro de la tabla, y lo denominamos |$L$|). \\
+\quad\quad Adem·s se agrega el costo de agregar en el diccionario de Ìndices nat (logarÌtmico en la cantidad $n$ de registros de la tabla) y el de agregar en el diccionario de Ìndices string $\big($nuevamente, longitud m·xima de cualquier string de cualquier registro de la tabla, es decir $O(|L|)\big)$. \\
 \quad\quad Por lo tanto, la complejidad final queda $O\big(|L| + log\ n + |L|\big)$ = $O\big(|L| + log\ n\big)$.\\
 \\
-\quad\quad Campo no indexado: Agregar el registro al conjunto cuesta $O\big(copy(r)\big)$, esto es igual a copiar el string m√°s largo ya que copiar los nat es $O(1)$. Luego el algoritmo si no hay campos indexados no hace mas operaciones que sean mayores a $O(1)$. Por lo tanto el algoritmo tiene complejidad $O(|S|)$, siendo $S$ el string m√°s largo del registro a agregar.
+\quad\quad Campo no indexado: Agregar el registro al conjunto cuesta $O\big(copy(r)\big)$, esto es igual a copiar el string m·s largo ya que copiar los nat es $O(1)$. Luego el algoritmo si no hay campos indexados no hace mas operaciones que sean mayores a $O(1)$. Por lo tanto el algoritmo tiene complejidad $O(|S|)$, siendo $S$ el string m·s largo del registro a agregar.
 
 }
   \medskip
@@ -603,9 +603,9 @@
 
 
     \medskip
-    \Statex \underline{Complejidad:} {$O\big(|registros| * L * (L\ +\ log\ |registros(e)|)\big)$, donde $L$ es el m√°ximo string para el campo $c$ en cualquier registro.}
-    \Statex \underline{Justificaci√≥n:} {\\
-\quad\quad En el peor caso se recorren todos los registros definiendo un iterador suyo $\big(O(1)\big)$ en un diccString $\big($inserci√≥n en $O(L)\big)$ o insertando en un diccNat $\big($en $O(log\ |registros|)$ para caso promedio$\big)$, por el costo de copiar cada valorStr si es m√°ximo o m√≠nimo (acotado por $L$).
+    \Statex \underline{Complejidad:} {$O\big(|registros| * L * (L\ +\ log\ |registros(e)|)\big)$, donde $L$ es el m·ximo string para el campo $c$ en cualquier registro.}
+    \Statex \underline{JustificaciÛn:} {\\
+\quad\quad En el peor caso se recorren todos los registros definiendo un iterador suyo $\big(O(1)\big)$ en un diccString $\big($inserciÛn en $O(L)\big)$ o insertando en un diccNat $\big($en $O(log\ |registros|)$ para caso promedio$\big)$, por el costo de copiar cada valorStr si es m·ximo o mÌnimo (acotado por $L$).
 }
   \end{algorithmic}
 \end{algorithm}
@@ -665,10 +665,10 @@
 \quad\quad Campo indexado String y no clave $\implies$ $O(|L|+ n * |L|)$ = $O(n * |L|)$.\\\\
 \quad\quad Campo NO indexado $\implies$ $O(n * |L|)$.
 \\
-\quad\quad Donde $n$ es la cantidad de registros y $L$ el string m√°s largo de la tabla.
+\quad\quad Donde $n$ es la cantidad de registros y $L$ el string m·s largo de la tabla.
 
 }
-    \Statex \underline{Justificaci√≥n:} {En el peor caso se recorren todos los registros, con cada caso detallado anteriormente.}
+    \Statex \underline{JustificaciÛn:} {En el peor caso se recorren todos los registros, con cada caso detallado anteriormente.}
   \end{algorithmic}
 \end{algorithm}
 
@@ -683,7 +683,7 @@
 
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
-    \Statex \underline{Justificaci√≥n:} {El resultado se devuelve por referencia.}
+    \Statex \underline{JustificaciÛn:} {El resultado se devuelve por referencia.}
   \end{algorithmic}
 \end{algorithm}
 
@@ -697,16 +697,9 @@
 
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
-    \Statex \underline{Justificaci√≥n:} {El resultado se devuelve por referencia.}
+    \Statex \underline{JustificaciÛn:} {El resultado se devuelve por referencia.}
   \end{algorithmic}
 \end{algorithm}
-
-
-
-
-
-
-
 
 
 \end{Algoritmos}
