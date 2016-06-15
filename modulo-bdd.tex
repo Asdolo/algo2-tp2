@@ -1,7 +1,7 @@
 \section{Módulo Base de Datos}
 
 \begin{Interfaz}
-  
+
   \textbf{se explica con}: \tadNombre{Base de Datos}.
 
   \textbf{géneros}: \TipoVariable{base}.
@@ -9,17 +9,17 @@
   \Titulo{Operaciones básicas de base}
 
   \InterfazFuncion{NuevaBDD}{}{base}
-  [true]  
+  [true]
   {$res$ $\igobs$ nuevaBDD}
   [$O(1)$]
   [crea una base de datos sin tablas.]
-  
+
   \InterfazFuncion{AgregarTabla}{\In{t}{tabla}, \Inout{b}{base}}{}
   [vacio?(registros($t$)) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ agregarTabla($t$, $b_0$)}
   [$O(1)$]
   [devuelve un iterador al conjunto de campos claves de la tabla indicada.]
-  
+
   \InterfazFuncion{InsertarEntrada}{\In{r}{registro}, \In{t}{tabla}, \Inout{b}{base}}{}
   [$t$ $\in$ tablas($b$) $\yluego$ puedoInsertar?($r$, $t$) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ insertarEntrada($r$, $t$, $b_0$)}
@@ -33,7 +33,7 @@
 \tab Campo indexado $\implies$ $O\big(log\ n + |L| * \#tablas(b)\big)$ \\
 \tab Campo no indexado $\implies$  $O\big(|L| * (n + \#tablas(b))\big)$, donde $L$ es el dato string más largo de $cr$ y $n$ es la cantidad de registros en la tabla.]
   [borra todos los registros que coincidan con el campo del registro $cr$ en la tabla $t$.]
-  
+
 
   \InterfazFuncion{CombinarRegistros}{\In{t_1}{String}, \In{t_2}{String}, \In{c}{Campo}}{conj(Registro)}
   [true]
@@ -55,19 +55,19 @@
   \tab Donde $n$ = \#registros($t_1$), $m$ = \#registros($t_2$) y $L$ el dato string más largo de cualquiera de las dos tablas.]
   [crea un join entre dos tablas de la base de datos y devuelve un iterador no modificable a sus registros.]
   [res no es modificable, se itera sólo a modo de vista del conjunto.]
-  
+
   \InterfazFuncion{BorrarJoin}{\In{t_1}{string}, \In{t_2}{string}, \Inout{b}{base}}{}
   [hayJoin?($t_1$, $t_2$, $b$) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ borrarJoin($t_1$, $t_2$, $b_0$)}
   [$O(1)$]
   [elimina el join entre dos tablas.]
-  
+
   \InterfazFuncion{Tablas}{\In{b}{base}}{itConj(string)}
   [true]
   {$res$ $\igobs$ crearIt$\big($tablas($b$)$\big)$}
   [$O(1)$]
   [se obtienen todas las tablas de la base de datos.]
-  
+
   \InterfazFuncion{DameTabla}{\In{s}{string}, \In{b}{base}}{tabla}
   [$s$ $\in$ tablas($b$)]
   {$res$ $\igobs$ dameTabla($s$)}
@@ -79,13 +79,13 @@
   {$res$ $\igobs$ hayJoin?($t_1$, $t_2$, $b$)}
   [$O(1)$]
   [devuelve \texttt{true} si hay un join entre los dos nombres de las tablas dados.]
-  
+
   \InterfazFuncion{CampoJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{campo}
   [hayJoin?($t_1$, $t_2$, $b$)]
   {$res$ $\igobs$ campoJoin($t_1$, $t_2$, $b$)}
   [$O(1)$]
   [devuelve el campo que une al join entre las dos tablas.]
-  
+
   \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itBi(registro)}
   [hayJoin?($t_1$, $t_2$, $b$)]
   {alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
@@ -103,7 +103,7 @@
 
 
   \InterfazFuncion{BusquedaCriterio}{\In{criterio}{registro}, \In{t}{String},\In{b}{base}}{conj(registro)}
-  [$t$ $\in$ tablas($b$) $\land$ $\big($campos($criterio$) $\subset$ campos(dameTabla($t$, $b$))$\big)$]  
+  [$t$ $\in$ tablas($b$) $\land$ $\big($campos($criterio$) $\subset$ campos(dameTabla($t$, $b$))$\big)$]
   {$res$ $\igobs$ buscar($r$, $t$, $b$)}
   [depende de la disposición de índices en $t$ y si son claves o no (consultar complejidad y justificación debajo del algoritmo).]
   [devuelve por copia una lista de todos los registros de $t$ que coinciden en todos los campos con el registro $criterio$.]
@@ -127,14 +127,14 @@
 \end{Interfaz}
 
 \begin{Representacion}
-  
+
   \Titulo{Representación de base}
 
   \begin{Estructura}{base}[estr]
 
       \dondees{estr}{tupla}$\Big($\emph{tablaMasAccedida}: \TipoVariable{puntero(string)},
         \emph{nombreATabla}: \TipoVariable{diccString(tabla)}, \veryquad \\
-        \emph{tablas}: \TipoVariable{conj(string)}, 
+        \emph{tablas}: \TipoVariable{conj(string)},
         \emph{joinPorCampoNat}: \TipoVariable{diccString\big(diccString\big(diccNat(itConj(registro))\big)\big)}, \\
         \emph{joinPorCampoString}: \TipoVariable{diccString\big(diccString\big(diccString(itConj(registro))\big)\big)}, \\
         \emph{registrosDelJoin}: \TipoVariable{diccString\big(diccString\big(conj(registro)\big)\big)}, \\
@@ -163,8 +163,8 @@
   \Rep[estr][e]{}
 
 
-  \noindent\tab\tab\bigpar {\textbf{1)} 
-    $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\yluego$ 
+  \noindent\tab\tab\bigpar {\textbf{1)}
+    $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\yluego$
     nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$ \\
     $s$ $\in$ $e$.tablas)} $\land$ \\
 
@@ -187,7 +187,7 @@
     \noindent\tab\tab\bigpar{\textbf{6)}
       $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.registrosDelJoin)$\big)$ \\
       $\big(\forall$ $s_2$ : string, $s_2$ $\in$ Obtener($s_1$, $e$.registrosDelJoin)$\big)$ \\
-      \bigpar{$\big(\exists$ $r_m$, $r_1$, $r_2$ : registro, $r_m$ $\in$ Obtener($s_2$, Obtener($s_1$, $e$. registrosDelJoin)) $\land$ \\   
+      \bigpar{$\big(\exists$ $r_m$, $r_1$, $r_2$ : registro, $r_m$ $\in$ Obtener($s_2$, Obtener($s_1$, $e$. registrosDelJoin)) $\land$ \\
         $r_1$ $\in$ Registros(Obtener($s_1$, $e$.nombreATabla)) $\land$ \\
         $r_2$ $\in$ Registros(Obtener($s_2$, $e$.nombreATabla)) $\big)$
       } \\
@@ -198,12 +198,12 @@
     $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$ \\
     $\Big($def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoNat)$\big)$ $\implies$ $\neg$def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\Big)$ $\land$ \\
     $\Big($def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)$ $\implies$ $\neg$def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoNat)$\big)\Big)$} $\land$\\
-    
+
     \noindent\tab\tab\bigpar{\textbf{8)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
     $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$ \\
     $\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo $\in$ claves$\big($obtener($s_1$, e.nombreATabla)$\big)\Big)$ $\land$ \\
     $\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo $\in$ claves$\big($obtener($s_2$, $e$.nombreATabla)$\big)\Big)$} $\land$ \\
-    
+
     \noindent\tab\tab\bigpar{\textbf{9)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
     $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$ \\
     \bigpar{tipoCampo$\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo, obtener$\big(e$.nombreATabla($s_1$)$\big)\Big)$ $\igobs$ \\
@@ -215,7 +215,7 @@
         def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)$}
       }
     }}$\land$ \\
-    
+
     \noindent\tab\tab
       \bigpar{
         \textbf{10)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.joinPorCampoNat)$\big)$\\
@@ -241,7 +241,7 @@
           }
         }
       } $\land$\\
-   
+
     \noindent\tab\tab
       \bigpar{
         \textbf{11)}
@@ -299,7 +299,7 @@
   \tadOperacion{sinRepetidos}{secu(string)}{bool}{}
   \tadAxioma{sinRepetidos($ls$)}
   {\IF vacia?($ls$) THEN
-    true 
+    true
   ELSE
     $\neg$esta?$\big($prim($ls$), fin($ls$)$\big)$ $\yluego$ sinRepetidos$\big($fin($ls$)$\big)$
   FI}
@@ -309,7 +309,7 @@
   \tadOperacion{estaAgregado?}{registro/r, secu$\big($tupla(registro$\text{,}$ bool)$\big)$/s}{bool}{esta?$\big($<$r$, true>, $s\big)$ $\lor$ esta?$\big($<$r$, false>, $s\big)$}
   \tadAxioma{estaAgregado?($t$, $s$)}
   {\IF $\Pi_1\big($ult($s$)$\big)$ $\igobs$ $r$ THEN
-    $\Pi_2\big($ult($s$)$\big)$ 
+    $\Pi_2\big($ult($s$)$\big)$
   ELSE
     estaAgregado?$\big(t$, com($s$)$\big)$
   FI}
@@ -317,7 +317,7 @@
   ~
 
 \medskip
- 
+
   \Abs[estr]{base}[e]{b}{tablas($b$) $\igobs$ $\big($claves($e$.nombreATabla)$\big)$ $\land$ \\
   $\Big($($\forall$ $s$ : string) $\big(s$ $\in$ claves($e$.nombreATabla)$\big)$ $\implies$ $\big($(dameTabla($s$, $b$) $\igobs$ obtener($s$, $e$.nombreATabla)$\big)\Big)$ $\land$ $\Big($($\forall$ $s_1$, $s_2$ : string) $\big(s_1$ $\in$ claves($e$.nombreATabla) $\land$ $s_2$ $\in$ claves($e$.nombreATabla)$\big)$ $\implies$ $\big($hayJoin?($s_1$, $s_1$, $b$) $\igobs$ def?$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)\big)$ $\yluego$ campoJoin($s_1$, $s_2$, $b$) $\igobs$ $\Pi_1\big($obtener$\big(s_2$, $\big($obtener($s_1$, $e$.hayJoin)$\big)\big)\big)$ $\Big)$}
 
@@ -330,10 +330,10 @@
 \begin{Algoritmos}
 
 \medskip
-	
+
  \Titulo{Algoritmos de base}
   	\medskip
-  
+
 \begin{algorithm}[H]{\textbf{iNuevaBDD}() $\to$ $res$ : base}
     	\begin{algorithmic}
         \State $res.tablaMasAccedida \gets NULL$              \Comment $O(1)$
@@ -360,7 +360,7 @@
         \State $ $
 
         \comentario{Agrego la tabla a todos lados}
-        \State $Definir\big(Nombre(t), t, e.nombreATabla\big)$     \Comment $O(|nombre(t)|) = O(1)$ 
+        \State $Definir\big(Nombre(t), t, e.nombreATabla\big)$     \Comment $O(|nombre(t)|) = O(1)$
         \State $AgregarRapido\big(nombre(t), e.tablas\big)$       \Comment $O(|nombre(t)|) = O(1)$
         \State $Definir\big(Nombre(t), Vacio(), e.hayJoin\big)$\Comment $O(|nombre(t)|) = O(1)$
         \State $Definir\big(Nombre(t), Vacio(), e.joinPorCampoNat\big)$    \Comment $O(|nombre(t)|) = O(1)$
@@ -384,28 +384,28 @@
          \State $e.tablaMasAccedida \gets \&t$                   \Comment $O(1)$
        \EndIf
        \State $ $
- 
+
        \comentario{Lo tengo que agregar a cambios con las tablas que tenga join}
        \State $iter \gets VistaDicc\big(Obtener(t, e.hayJoin)\big)$ \Comment $O(1)$
-       \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas...)$          
+       \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas...)$
            \State $AgregarAtras\big(<r, true>, (Siguiente(iter).significado).cambiosT1\big)$\\ \Comment $O\big(copy(r)\big) = O\big(\#campos * dato\ mas\ costoso\big) = O(L)$
            \State $Avanzar(iter)$         \Comment $O(1)$
        \EndWhile
- 
+
        \State $iter \gets CrearIt\big(e.tablas\big)$ \Comment $O(1)$
-       \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas...)$  
+       \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas...)$
                \If{$Def?\big(t, Obtener(Siguiente(iter), e.hayJoin)\big)$}            \Comment $O(1)$
                 \State $cambios \gets Obtener\big(t, Obtener(Siguiente(iter), e.hayJoin)\big)$                   \Comment $O(1)$
- 
+
            \State $AgregarAtras\big(<r, true>, (cambios.significado).cambiosT2\big)$\\ \Comment $O\big(copy(r)\big) = O\big(\#campos * dato\ mas\ costoso\big) = O(L)$
-           
+
        \EndIf
        \State $Avanzar(iter)$         \Comment $O(1)$
- 
+
        \EndWhile
- 
+
        \medskip
- 
+
 \Statex \underline{Complejidad:} {\\
 \quad\quad $O\big(|L|\ +\ log\ n\ +\ \#tablas * |L|\big)$ = $O\big(log\ n\ +\ |L| * (\#tablas + 1)\big)$ = $O\big(log\ n\ +\ |L| * \#tablas(b)\big)$\\
 \quad\quad Donde $L$ es el dato string más largo de $r$ y $n$ es la cantidad de registros en la tabla.}
@@ -416,7 +416,7 @@
        \quad\quad El puntero al nombre de la tabla más accedida se asigna por referencia en $O(1)$. \\
        \quad\quad VistaDicc exporta complejidad $O(1)$. \\
                \quad\quad CrearIterador a tablas es $O(1)$. \\
- 
+
        \quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas) dos veces. Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#tablas(b)\big)$.}
      \end{algorithmic}
 
@@ -490,7 +490,7 @@
      \State $AgregarRapido(regMergeado, res)$ \Comment $O(1)$
      \State $Avanzar(it)$ \Comment $O(1)$
    \EndWhile
- 
+
    \medskip
    \Statex \underline{Complejidad:} {\\
    \quad\quad $O(n * buscar\ +\ L)$ = \\
@@ -577,7 +577,7 @@
      \State $AgregarRapido(regMergeado, res)$ \Comment $O(1)$
      \State $Avanzar(it)$ \Comment $O(1)$
    \EndWhile
- 
+
    \medskip
    \Statex \underline{Complejidad:} {\\
    \quad\quad $O(n * buscar\ +\ L)$ = \\
@@ -634,7 +634,7 @@
        \EndWhile
    \EndIf
    \State $ CrearIt\big(Obtener\big(t_2, Obtener(t_1, e.registrosDelJoin)\big)\big) $ \Comment $O(1)$
- 
+
    \medskip
    \Statex \underline{Complejidad:}{\\
 \quad\quad Si $c$ está indexado en alguna de las dos tablas y es string $\implies$ $O\big(n * L\ +\ n * L\big)$ = $O(n * L)$ = $O\big((n+m) * L\big)$ \\
@@ -643,11 +643,11 @@
 \\
 \quad\quad Siendo $L$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (varían en base a criterio de búsqueda indexado o no). \\
 \quad\quad Esta indeterminación se puede salvar considerando que las cantidades de registros de las tablas (que ahora sí serían $n$ y $m$) pueden ser tomadas como $O\big(max(n,m)\big)$ = $O(n+m)$ (quedando complejidades acorde al enunciado).\\
-\quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección. \\ 
+\quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección. \\
 }
    \Statex \underline{Justificación:}{\\
 \quad\quad Además del costo por combinar registros, se agrega el de iterar todos los registros combinados, el de recorrerlos (como dijimos, están acotados por $n$) realizando inserciones por copia en sus respectivos diccionarios.}
- 
+
  \end{algorithmic}
 \end{algorithm}
 
@@ -671,7 +671,7 @@
 \begin{algorithm}[H]{\textbf{iTablas}(\In{e}{estr}) $\to$ $res$ : itLista(string)}
   \begin{algorithmic}
     \State $res \gets crearIt(e.tablas)$             \Comment $O(1)$
-    
+
 
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
@@ -682,7 +682,7 @@
 \begin{algorithm}[H]{\textbf{iDameTabla}(\In{s}{string}, \In{e}{estr}) $\to$ $res$ : tabla}
   \begin{algorithmic}
     \State $res \gets Obtener(s, e.nombreATabla)$             \Comment $O(1)$
-    
+
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {Los nombres de las tablas están acotados, por lo tanto, buscar en un diccString con nombres por claves es $O(1)$.}
@@ -692,7 +692,7 @@
 \begin{algorithm}[H]{\textbf{iHayJoin?}(\In{s_1}{string}, \In{s_2}{string}, \In{e}{estr}) $\to$ $res$ : bool}
   \begin{algorithmic}
     \State $res \gets Def?\big(s_2, Obtener(s_1, e.hayJoin)\big)$             \Comment $O(1)$
-    
+
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {Los nombres de las tablas están acotados, por lo tanto, buscar en un diccString con nombres por claves es $O(1)$.}
@@ -702,7 +702,7 @@
 \begin{algorithm}[H]{\textbf{iCampoJoin}(\In{s_1}{string}, \In{s_2}{string}, \In{e}{estr}) $\to$ $res$ : campo}
   \begin{algorithmic}
     \State $res \gets \big(Obtener\big(s_2, Obtener(s_1, e.hayJoin)\big)\big).campoJoin$             \Comment $O(1)$
-    
+
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {Los nombres de las tablas están acotados, por lo tanto, buscar en un diccString con nombres por claves es $O(1)$.}
@@ -726,7 +726,7 @@
       \EndIf
       \State $Avanzar(it)$ \Comment $O(1)$
     \EndWhile
-    
+
     \medskip
     \Statex \underline{Complejidad:} {$O(L)$, donde $L$ es el dato string más largo de $r_1$.}
     \Statex \underline{Justificación:} {\\
@@ -768,12 +768,12 @@
         \State $coincidencias \gets Buscar(campito, claveNat, tabla2)$\\ \Comment $Campo\ indexado \implies O(log\ m + |L|) promedio\ /\ Campo\ no\ indexado \implies O(m * |L|)$
         \If{$\NOT Vacia?(coincidencias)$} \Comment $O(1)$
           \comentario{CampoJoin siempre es clave, \#coincidencias es 1}
-          \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
+          \State $regT2 \gets Primero(coincidencias)$ \Comment $O(1)$
 
           \If{$tupSiguiente.agregar?$} \Comment $O(1)$
-            \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
+            \State $registroMergeado \gets Merge(tupSiguiente.reg, regT2)$ \Comment $O(L)$
             \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
-            
+
       \algstore{myalg}
   \end{algorithmic}
 \end{algorithm}
@@ -804,9 +804,9 @@
         \comentario{Pregunto si esta definido para no agregar el registro dos veces}
         \If{$\NOT Vacia?(coincidencias)\ \AND \NOT Def?(claveNat, diccIters)$} \Comment $O\big(log(n+m)\big)$
           \comentario{CampoJoin siempre es clave, \#coincidencias es 1}
-          \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
+          \State $regT1 \gets Primero(coincidencias)$ \Comment $O(1)$
           \If{$tupSiguiente.agregar?$} \Comment $O(1)$
-            \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
+            \State $registroMergeado \gets Merge(regT1, tupSiguiente.reg)$ \Comment $O(L)$
             \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
             \State $Definir(claveNat, iter, diccDeIters)$ \Comment $O\big(log(n+m)\big)$
 
@@ -832,12 +832,12 @@
         \If{$\#coincidencias > 0$} \Comment $O(1)$
 
           \comentario{como campoJoin siempre es clave, \#coincidencias es 1}
-          \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
+          \State $regT2 \gets Primero(coincidencias)$ \Comment $O(1)$
           \If{$tupSiguiente.loAgrego?$} \Comment $O(1)$
-            \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
+            \State $registroMergeado \gets Merge(tupSiguiente.reg, regT2)$ \Comment $O(L)$
             \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
             \State $Definir(claveString, iter, diccDeIters)$ \Comment $O(L)\ +\ O\big(copy(iter)\big) = O(L)$
-    
+
       \algstore{myalg}
   \end{algorithmic}
 \end{algorithm}
@@ -863,10 +863,10 @@
 
         \If{$\#coincidencias > 0\ \AND\ \NOT Def?\big(claveString, diccIters\big)$} \Comment $O\big(|L|)$
           \comentario{Como campoJoin siempre es clave, \#coincidencias es 1}
-          \State $regTablaActual \gets Primero(coincidencias)$ \Comment $O(1)$
+          \State $regT1 \gets Primero(coincidencias)$ \Comment $O(1)$
 
           \If{$tupSiguiente.loAgrego?$} \Comment $O(1)$
-            \State $registroMergeado \gets Merge(tupSiguiente.reg, regTablaActual)$ \Comment $O(L)$
+            \State $registroMergeado \gets Merge(regT1, tupSiguiente.reg)$ \Comment $O(L)$
             \State $iter \gets AgregarRapido\big(registroMergeado, Obtener(s_2, Obtener(s_1, e.registrosDelJoin))\big)$\\ \Comment $O\big(copy(reg)\big) = O(L)$
             \State $Definir(claveString, iter, diccDeIters)$\\ \Comment $O(L) + O\big(copy(iter)\big) = O(L)$
           \Else
@@ -945,13 +945,13 @@
                     \State $AgregarRapido\big(res, Siguiente(itAux)\big)$ \Comment $O(L)$
                 \EndIf
                 \State $Avanzar(itAux)$ \Comment $O(1)$
-            \EndWhile  
+            \EndWhile
             \State $termine \gets true$  \Comment $O(1)$
             \State $Avanzar(it)$ \Comment $O(1)$
-        \EndIf 
-    \EndWhile      
+        \EndIf
+    \EndWhile
     \State $ $
-    \comentario{No había índices -> todos los registros contra crit}    
+    \comentario{No había índices -> todos los registros contra crit}
     \State $ $
     \If {$\NOT termine $} \Comment $O(1)$
         \State $itRegs \gets CrearIt\big(Registros(tabla)\big)$ \Comment $O(1)$
@@ -962,14 +962,14 @@
             \State $Avanzar(itRegs)$  \Comment $O(1)$
         \EndWhile
     \EndIf
-   
+
    \Statex \underline{Complejidad:} {\\
    \quad\quad campoIndice nat $\implies$ $O\big(log\ n\ +\ |L|\ +\ n * |L|\big)$ = $O\big(log\ n\ +\ n * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
- 
+
     \quad\quad campoIndice string $\implies$ $O\big(|L|\ +\ n * |L|\big)$ = $O(n * |L|)$. $O(|L|)$ si además es clave.\\
-    \quad\quad Sin campoIndice $\implies$ $O(n * |L|)$\\       
+    \quad\quad Sin campoIndice $\implies$ $O(n * |L|)$\\
     \quad\quad Donde $L$ es la longitud de dato string más largo de $t$ y $n$ su cantidad de registros.}
-   
+
    \Statex \underline{Justificación:} {\\
    \quad\quad Su campoIndice es clave, entonces \#coincis = 1, de no serlo está acotada por $n$. \\
    \quad\quad Los registros tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.\\
@@ -1008,7 +1008,7 @@
 \begin{algorithm}[H]{\textbf{iTablaMaxima}(\In{b}{estr}) $\to$ $res$ : string}
   \begin{algorithmic}
     \State $res \gets *(b.tablaMasAccedida)$             \Comment $O(1)$
-    
+
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {El algoritmo pasa por referencia un string, por lo tanto es $O(1)$.}
@@ -1025,12 +1025,12 @@
 	\State $res \gets Vacio()$								\Comment $O(1)$
 	\State $ $
 	\comentario{Por si hay algún campo indexado para facilitar búsqueda}
-	\While{$ HaySiguiente(it) \land ¬termine $}	\Comment $O(\#regs*..) = O(1*..)$ 
+	\While{$ HaySiguiente(it) \land ¬termine $}	\Comment $O(\#regs*..) = O(1*..)$
 		\If{$ Def?(Siguiente(it), crit)$}					\Comment $O(1)$
 			\State $campoIndice \gets Siguiente(it)$			\Comment $O(1)$
 			\State $valorCampo \gets Obtener(campoIndice, crit)$	\Comment $O(1)$
 			\State $coincis \gets Buscar(campoIndice, valorCampo, tabla)$
-			\Comment Campo nat  $\implies O(log(n) + |L|)$ promedio 
+			\Comment Campo nat  $\implies O(log(n) + |L|)$ promedio
 			\State $ $	\Comment Campo string $\implies O(|L|)  $
 			\State $ $
 			\State $itAux \gets CrearIt(coincis)$ 			\Comment $O(1)$
@@ -1039,13 +1039,13 @@
 					\State $AgregarRapido(res, Siguiente(itAux))$ \Comment $O(L)$
 				\EndIf
 				\State $Avanzar(itAux)$ \Comment $O(1)$
-			\EndWhile	
+			\EndWhile
 			\State $termine \gets true$  \Comment $O(1)$
 			\State $Avanzar(it)$ \Comment $O(1)$
-		\EndIf	
-	\EndWhile	    
+		\EndIf
+	\EndWhile
 	\State $ $
-	\comentario{No había índices -> todos los registros contra crit}    
+	\comentario{No había índices -> todos los registros contra crit}
 	\State $ $
 	\If {$ ¬termine $} \Comment $O(1)$
 		\State $itRegs \gets CrearIt(Registros(tabla))$ \Comment $O(1)$
@@ -1056,8 +1056,8 @@
 			\State $Avanzar(itRegs)$  \Comment $O(1)$
 		\EndWhile
 	\EndIf
-	
-	
+
+
     \Statex \underline{Complejidad:} {
     \quad\quad
     \quad\quad \underline{campoIndice nat} $\implies O(log(n) + |L| + n*|L|) = O(log (n) + n*|L|)$, \\
@@ -1065,13 +1065,13 @@
 
 	\quad\quad \underline {campoIndice string} $\implies O(|L| + n*|L|) ) = O(n*|L|)$, \\
 	$O(|L|)$ si además es clave
-	
-	\quad\quad \underline {Sin campoIndice} $\implies O(n*|L|)$	
-	   
-	\quad\quad Donde L es la longitud de dato string más largo de t y n su cantidad de registros.      
+
+	\quad\quad \underline {Sin campoIndice} $\implies O(n*|L|)$
+
+	\quad\quad Donde L es la longitud de dato string más largo de t y n su cantidad de registros.
     \quad\quad
     }
-    
+
     \Statex \underline{Justificación:} {Su campoIndice es clave entonces $\#coincis = 1$, de no serlo está acotada por $n$. \\
     Los registros tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.
     Operaciones def? y obtener en registros (con campos acotados por enunciado) es $O(1)$}
