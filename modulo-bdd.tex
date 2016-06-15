@@ -50,7 +50,7 @@
   [$O(1)$]
   [elimina el join entre dos tablas.]
   
-  \InterfazFuncion{Tablas}{\In{b}{base}}{itBi(string)}
+  \InterfazFuncion{Tablas}{\In{b}{base}}{itConj(string)}
   [true]
   {$res$ $\igobs$ crearIt$\big($tablas($b$)$\big)$}
   [$O(1)$]
@@ -125,51 +125,63 @@
 
   \noindent\textbf{Invariante de representación}
 
-  \noindent\tab 1) Las claves de nombreATabla están en tablas, sus significados tienen su nombre y son todas las tablas de la lista $e$.tablas. Y la lista de $e$.tablas no tiene repetidos. \\
-\noindent\tab 2) La tabla más accedida está en $e$.tablas y tiene más accesos que todas las demás. \\
-\noindent\tab 3) Las claves de JoinPorCampo, hayJoin y registrosDelJoin son las tablas de $e$.tablas (y por (1), las de nombreATabla). \\
+  \noindent\tab 1) Las claves de nombreATabla están en tablas, sus significados tienen su nombre y son todas las tablas de la lista $e$.tablas. \\
+\noindent\tab 2) La tabla más accedida está entre las tablas y tiene más accesos que todas las demás. \\
+\noindent\tab 3) Las claves de JoinPorCampo, hayJoin y registrosDelJoin son las tablas de $e$.tablas (por (1), lo mismo que claves de $e$.nombreATabla) y las tablas con las que tienen joins a su vez también son de tablas de la base. \\
 \noindent\tab 4) No hay tablas con joins con ellas mismas. \\
 \noindent\tab 5) Los significados de una clave en las estructuras relacionadas a los joins son las mismas para cada estructura (son aquellas con las que comparten un join). \\
-\noindent\tab 6) En JoinPorCampoNat, joinPorCampoString, registrosDelJoin y hayJoin, las claves son recíprocas. \\
-\noindent\tab 7) Entre dos tablas solamente puede haber un único join. \\
+\noindent\tab 6) Los registros del join se crean por combinación de sus tablas \\
+\noindent\tab 7) Entre dos tablas solamente puede haber un único join (en una dirección). \\
 \noindent\tab 8) El campo del join también es recíproco y es clave para los dos. \\
 \noindent\tab 9) El campo del join en hayJoin es el que lo define en el diccionario según su tipo (que es el mismo tipo para ambas tablas). \\
 \noindent\tab 10) Los significados de cada diccionario de joins tienen siguiente perteneciente a registros del join para las mismas claves. \\
 \noindent\tab 11) Para cada registro en registros del join hay un iterador en alguno de los dos diccionarios (nat o string) con siguiente en él. \\
-\noindent\tab 12) Para cada registro en registros, sus campos son la unión de los campos de las dos tablas. \\
-\noindent\tab 13) Los iteradores de los diccionarios también son recíprocos entre las tablas. \\
-\noindent\tab 14) Los registros del join también son recíprocos entre las tablas. \\
-\noindent\tab 15) Los registros en la lista de cambios tienen por campos a los campos de la primer clave y, para cada última aparación de un registro en la lista, el bool agregar refleja si pertenece el registro o no a los registros de las primer clave. \\
+\noindent\tab 12) Los registros en la lista de cambios tienen por campos a los campos de la primer clave y, para cada última aparación de un registro en la lista, el bool agregar refleja si pertenece el registro o no a los registros de las primer clave (para ambas listas). \\
 
 
   \Rep[estr][e]{}
 
-  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\Longleftrightarrow$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
-    $\big($esta?($s$, $e$.tablas) $\land$ sinRepetidos($e$.tablas)$\big)$} $\land$\\
+  \noindent\tab\tab\bigpar {\textbf{1)} 
+    $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\yluego$ 
+    nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$ \\
+    $s$ $\in$ $e$.tablas)} $\land$ \\
+
     \noindent\tab\tab\bigpar{\textbf{2)} $e$.tablaMasAccedida $\in$ claves($e$.nombreATabla) $\yluego$ $\big(\forall$ $n$ : string, $n$ $\in$ claves($e$.nombreATabla)$\big)$\\
     cantAccesos$\big($obtener($n$, $e$.nombreATabla)$\big)$ $\le$ cantAccesos$\big($obtener(*$e$.tablaMasAccedida, $e$.nombreATabla)$\big)$}$\land$\\
+
     \noindent\tab\tab\bigpar{\textbf{3)} claves($e$.joinPorCampoNat) $\igobs$ claves($e$.hayJoin) $\land$\\
     claves($e$.joinPorCampoString) $\igobs$ claves($e$.hayJoin) $\land$\\
     claves($e$.registrosDelJoin) $\igobs$ claves($e$.hayJoin) $\land$\\
     claves($e$.hayJoin) $\igobs$ claves($e$.nombreATabla)} $\land$\\
+
     \noindent\tab\tab$\Big($\textbf{4)} $\neg\big(\exists$ $s$ : string, $s$ $\in$ claves($e$.hayJoin)$\big)$ $\big(s$ $\in$ claves$\big($obtener($s$, $e$.hayJoin)$\big)\big)\Big)$ $\land$\\
+
     \noindent\tab\tab\bigpar{\textbf{5)} $\big(\forall$ $n$ : string, $n$ $\in$ claves($e$.hayJoin)$\big)$\\
     \bigpar{claves$\big($obtener($n$, $e$.JoinPorCampoNat)$\big)$ $\cup$\\
     claves$\big($obtener($n$, $e$.JoinPorCampoString)$\big)$} $\igobs$ claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\land$\\
     claves$\big($obtener($n$, $e$.registrosDelJoin)$\big)$ $\igobs$ claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\land$\\
-    claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\subset $ claves$\big($obtener($n$, $e$.nombreATabla)$\big)$} $\land$\\
-    \noindent\tab\tab\bigpar{\textbf{6)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
-    \bigpar{$\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves($e$.hayJoin) $\land$ $s_1$ $\nigobs$ $s_2\big)$ \\
-    $\Big(s_1$ $\in$ claves$\big($obtener($s_2$, $e$.hayJoin)$\big)$ $\ssi$ $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\Big)$}} $\land$\\
+    claves$\big($obtener($n$, $e$.hayJoin)$\big)$ $\subset $ $\big($claves($e$.nombreATabla)$\big)$} $\land$\\
+
+    \noindent\tab\tab\bigpar{\textbf{6)}
+      $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.registrosDelJoin)$\big)$ \\
+      $\big(\forall$ $s_2$ : string, $s_2$ $\in$ Obtener($s_1$, $e$.registrosDelJoin)$\big)$ \\
+      \bigpar{$\big(\exists$ $r_m$, $r_1$, $r_2$ : registro, $r_m$ $\in$ Obtener($s_2$, Obtener($s_1$, $e$. registrosDelJoin)) $\land$ \\   
+        $r_1$ $\in$ Registros(Obtener($s_1$, $e$.nombreATabla)) $\land$ \\
+        $r_2$ $\in$ Registros(Obtener($s_2$, $e$.nombreATabla)) $\big)$
+      } \\
+      \ $r_m$ $\igobs$ AgregarCampos($r_1$, $r_2$)
+    } $\land$ \\
+
     \noindent\tab\tab\bigpar{\textbf{7)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
     $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$ \\
     $\Big($def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoNat)$\big)$ $\implies$ $\neg$def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\Big)$ $\land$ \\
     $\Big($def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)$ $\implies$ $\neg$def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoNat)$\big)\Big)$} $\land$\\
+    
     \noindent\tab\tab\bigpar{\textbf{8)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
     $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$ \\
-    $\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo $\igobs$ obtener$\big(s_1$, obtener($s_2$, $e$.hayJoin)$\big)$.campo$\Big)$ $\yluego$ \\
     $\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo $\in$ claves$\big($obtener($s_1$, e.nombreATabla)$\big)\Big)$ $\land$ \\
     $\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo $\in$ claves$\big($obtener($s_2$, $e$.nombreATabla)$\big)\Big)$} $\land$ \\
+    
     \noindent\tab\tab\bigpar{\textbf{9)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
     $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$ \\
     \bigpar{tipoCampo$\Big($obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.campo, obtener$\big(e$.nombreATabla($s_1$)$\big)\Big)$ $\igobs$ \\
@@ -181,6 +193,7 @@
         def?$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)$}
       }
     }}$\land$ \\
+    
     \noindent\tab\tab
       \bigpar{
         \textbf{10)} $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.joinPorCampoNat)$\big)$\\
@@ -193,7 +206,7 @@
               obtener$\big(s_2$, obtener($s_1$, $e$.registrosDelJoin)$\big)$
             }
           }
-        } $\land$ \\
+        } $\land$ \\ \\
         $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.joinPorCampoString)$\big)$\\
         \bigpar{
           $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.joinPorCampoString)$\big)\big)$\\
@@ -206,6 +219,7 @@
           }
         }
       } $\land$\\
+   
     \noindent\tab\tab
       \bigpar{
         \textbf{11)}
@@ -231,78 +245,27 @@
           }
         }
       } $\land$\\
-    \noindent\tab\tab
-      \bigpar{
-        \textbf{12)}
-        $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.registrosDelJoin)$\big)$\\
-        \bigpar{
-          $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.registrosDelJoin)$\big)\big)$\\
-          \bigpar{
-            $\big(\forall$ $r$ : registro, $r$ $\in$ obtener$\big(s_2$, obtener($s_1$, $e$.registrosDelJoin)$\big)\big)$\\
-            \bigpar{
-              campos($r$) $\igobs$
-              \bigpar{
-                campos$\big($obtener($s_1$, $e$.nombreATabla)$\big)$ $\cup$ campos$\big($obtener($s_2$, $e$.nombreATabla)$\big)$
-              }
-            } 
-          }
-        }
-      }$\land$\\
-    \noindent\tab\tab
-      \bigpar{
-        \textbf{13)}
-        $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.joinPorCampoString)$\big)$\\
-        \bigpar{
-          $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.joinPorCampoString)$\big)\big)$\\
-          \bigpar{
-            $\Big(\forall$ $n$ : string, def?$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\big)\Big)$\\
-            \bigpar{
-              def?$\big(n$, obtener$\big(s_1$, obtener($s_2$, $e$.joinPorCampoString)$\big)\big)$ $\yluego$ \\
-              obtener$\big(n$, obtener$\big(s_1$, obtener($s_2$, $e$.joinPorCampoString)$\big)\big)$ $\igobs$ \\
-              obtener$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoString)$\big)\big)$
-            }
-          }
-        } $\land$ \\
-        $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.joinPorCampoNat)$\big)$\\
-        \bigpar{
-          $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.joinPorCampoNat)$\big)\big)$\\
-          \bigpar{
-            $\Big(\forall$ $n$ : nat, def?$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoNat)$\big)\big)\Big)$\\
-            \bigpar{
-              def?$\big(n$, obtener$\big(s_1$, obtener($s_2$, $e$.joinPorCampoNat)$\big)\big)$ $\yluego$ \\
-              obtener$\big(n$, obtener$\big(s_1$, obtener($s_2$, $e$.joinPorCampoNat)$\big)\big)$ $\igobs$ \\
-              obtener$\big(n$, obtener$\big(s_2$, obtener($s_1$, $e$.joinPorCampoNat)$\big)\big)$
-            }
-          }
-        }
-      } $\land$\\
-    \noindent\tab\tab
-      \bigpar{
-        \textbf{14)}
-        $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.registrosDelJoin)$\big)$\\
-        \bigpar{
-          $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.registrosDelJoin)$\big)\big)$\\
-          \bigpar{
-            ($\forall$ $r$ : registro)\\
-            \bigpar{
-              $r$ $\in$ obtener$\big(s_2$, obtener($s_1$, $e$.registrosDelJoin)$\big)$ $\ssi$\\
-              $r$ $\in$ obtener$\big(s_1$, obtener($s_2$, $e$.registrosDelJoin)$\big)$
-            }
-          }
-        }
-      } $\land$\\
+
       \noindent\tab\tab
       \bigpar{
-        \textbf{15)}
+        \textbf{12)}
         $\big(\forall$ $s_1$ : string, $s_1$ $\in$ claves($e$.hayJoin)$\big)$\\
         \bigpar{
           $\big(\forall$ $s_2$ : string, $s_2$ $\in$ claves$\big($obtener($s_1$, $e$.hayJoin)$\big)\big)$\\
           \bigpar{
-            $\Big(\forall$ $t$ : tupla(registro, bool), esta?$\Big(t$, obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambios$\Big)\Big)$\\
+            $\Big(\forall$ $t$ : tupla(registro, bool), esta?$\Big(t$, obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT1$\Big)\Big)$\\
             \bigpar{
               campos$\big(\Pi_1$($t$)$\big)$ $\igobs$ campos$\big($obtener($s_1$, $e$.nombreATabla)$\big)$ $\land$ \\
-              estaAgregado?$\Big(\Pi_1$($t$), obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambios$\Big)$ $\ssi$ \\
+              estaAgregado?$\Big(\Pi_1$($t$), obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT2$\Big)$ $\ssi$ \\
               $\Pi_1$($t$) $\in$ registros$\big($obtener($s_1$, $e$.nombreATabla)$\big)$
+            }
+          } $\land$ \\
+          \bigpar{
+            $\Big(\forall$ $t$ : tupla(registro, bool), esta?$\Big(t$, obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT2$\Big)\Big)$\\
+            \bigpar{
+              campos$\big(\Pi_1$($t$)$\big)$ $\igobs$ campos$\big($obtener($s_2$, $e$.nombreATabla)$\big)$ $\land$ \\
+              estaAgregado?$\Big(\Pi_1$($t$), obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT2$\Big)$ $\ssi$ \\
+              $\Pi_1$($t$) $\in$ registros$\big($obtener($s_2$, $e$.nombreATabla)$\big)$
             }
           }
         }
@@ -376,7 +339,7 @@
 
         \comentario{Agrego la tabla a todos lados}
         \State $Definir\big(Nombre(t), t, e.nombreATabla\big)$     \Comment $O(|nombre(t)|) = O(1)$ 
-        \State $AgregarAtras\big(nombre(t), e.tablas\big)$       \Comment $O(1)$
+        \State $AgregarRapido\big(nombre(t), e.tablas\big)$       \Comment $O(|nombre(t)|) = O(1)$
         \State $Definir\big(Nombre(t), Vacio(), e.hayJoin\big)$\Comment $O(|nombre(t)|) = O(1)$
         \State $Definir\big(Nombre(t), Vacio(), e.joinPorCampoNat\big)$    \Comment $O(|nombre(t)|) = O(1)$
         \State $Definir\big(Nombre(t), Vacio(), e.joinPorCampoString\big)$   \Comment $O(|nombre(t)|) = O(1)$
@@ -939,6 +902,72 @@
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {El algoritmo pasa por referencia un string, por lo tanto es $O(1)$.}
+  \end{algorithmic}
+\end{algorithm}
+
+
+\end{Algoritmos}
+
+
+
+\begin{algorithm}[H]{\textbf{iBusquedaCriterio}(\In{criterio}{Registro}, \In{t}{string}, \In{b}{estr}) $\to$ $res$ : conj(registro)}
+  \begin{algorithmic}
+    \State $tabla \gets obtener(t, b.nombreATabla)$        	\Comment $O(1)$
+	\State $it \gets CrearIt(Indices(tabla))$				\Comment $O(1)$
+	\State $termine \gets false$								\Comment $O(1)$
+	\State $res \gets Vacio()$								\Comment $O(1)$
+	\State $ $
+	\comentario{Por si hay algún campo indexado para facilitar búsqueda}
+	\While{$ HaySiguiente(it) \land ¬termine $}	\Comment $O(#regs*..) = O(1*..)$ 
+		\If{$ Def?(Siguiente(it), crit)$}					\Comment $O(1)$
+			\State $campoIndice \gets Siguiente(it)$			\Comment $O(1)$
+			\State $valorCampo \gets Obtener(campoIndice, crit)$	\Comment $O(1)$
+			\State $coincis \gets Buscar(campoIndice, valorCampo, tabla)$
+			\Comment Campo nat  $\implies O(log(n) + |L|)$ promedio 
+			\State $ $	\Comment Campo string $\implies O(|L|)  $
+			\State $ $
+			\State $itAux \gets CrearIt(coincis)$ 			\Comment $O(1)$
+			\While{$ HaySiguiente(itAux) $}					\Comment $O(#coincis*...)$
+				\If{$ coincidenTodosCrit(crit, Siguiente(itAux)) $} \Comment $O(L)$
+					\State $AgregarRapido(res, Siguiente(itAux))$ \Comment $O(L)$
+				\EndIf
+				\State $Avanzar(itAux)$ \Comment $O(1)$
+			\EndWhile	
+			\State $termine \gets true$  \Comment $O(1)$
+			\State $Avanzar(it)$ \Comment $O(1)$
+		\EndIf	
+	\EndWhile	    
+	\State $ $
+	\comentario{No había índices -> todos los registros contra crit}    
+	\State $ $
+	\If {$ ¬termine $} \Comment $O(1)$
+		\State $itRegs \gets CrearIt(Registros(tabla))$ \Comment $O(1)$
+		\While{$ HaySiguiente(itRegs) $}   \Comment $O(n*...)$
+			\If{$ coincidenTodosCrit(crit, Siguiente(itRegs)) $} \Comment $O(L)$
+				\State $AgregarRapido(res, Siguiente(itRegs))$ \Comment $O(L)$
+			\EndIf
+			\State $Avanzar(itRegs)$  \Comment $O(1)$
+		\EndWhile
+	\EndIf
+	
+	
+    \Statex \underline{Complejidad:} {
+    \quad\quad
+    \quad\quad \underline{campoIndice nat} $\implies O(log(n) + |L| + n*|L|) = O(log (n) + n*|L|)$, \\
+    $O(log(n) + |L|)$ si además es clave
+
+	\quad\quad \underline {campoIndice string} $\implies O(|L| + n*|L|) ) = O(n*|L|)$, \\
+	$O(|L|)$ si además es clave
+	
+	\quad\quad \underline {Sin campoIndice} $\implies O(n*|L|)$	
+	   
+	\quad\quad Donde L es la longitud de dato string más largo de t y n su cantidad de registros.      
+    \quad\quad
+    }
+    
+    \Statex \underline{Justificación:} {Su campoIndice es clave entonces $#coincis = 1$, de no serlo está acotada por $n$. \\
+    Los registros tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.
+    Operaciones def? y obtener en registros (con campos acotados por enunciado) es $O(1)$}
   \end{algorithmic}
 \end{algorithm}
 
