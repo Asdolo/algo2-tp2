@@ -5,6 +5,9 @@
   \textbf{se explica con}: \tadNombre{Dato}.
 
   \textbf{géneros}: \TipoVariable{dato}.
+  \textbf{servicios exportados}: \tadNombre{Todos los de la interfaz}
+
+  \textbf{servicios usados}\hangindent=2\parindent : Conjunto Lineal (cátedra) \\
 
   \Titulo{Operaciones básicas de dato}
 
@@ -69,7 +72,7 @@
   [mismoTipo?($d_1$, $d_2$)]
   {$\Big($nat?($d_1$) $\implies$ $\big(res$ $\igobs$ (valorNat($d_1$) $\le_{nat}$ valorNat($d_2$))$\big)\Big)$ $\yluego$ \\
   $\Big($string?($d_1$) $\implies$ $\big(res$ $\igobs$ (valorStr($d_1$) $\le_{string}$ valorStr($d_2$))$\big)\Big)$}
-  [$O\big(min\{|valorStr(d_1)|, |valorStr(d_2)|\}\big)$]
+  [$O\big(min\{|valorStr(d_1)|, |valorStr(d_2)|\}\big)$ si d1 y d2 es string \\ $O(1)$ si d1 y d2 son del tipo nat]
   [devuelve \texttt{true} si $d_1$ $\le$ $d_2$.]
   
   \InterfazFuncion{$\argumento$ = $\argumento \ $}{\In{d_1}{dato}, \In{d_2}{dato}}{bool}
@@ -220,7 +223,7 @@
 
     \medskip
     \Statex \underline{Complejidad:} {$O(\#cs * L)$, donde $L$ es la longitud del string más largo}
-    \Statex \underline{Justificación:} {Se recorre toda la lista $\big(O(\#cs)\big)$ y cada elemento se compara con el auxiliar $res$. En algún momento, $res$ se va a comparar con el string de longitud $L$. }
+    \Statex \underline{Justificación:} {Se recorre toda la lista $\big(O(\#cs)\big)$ y cada elemento se compara con el auxiliar $res$. A lo sumo, $res$ se va a comparar con el string de longitud $L$. }
       \end{algorithmic}
 \end{algorithm}
 
@@ -249,10 +252,15 @@
       \State $res \gets (e_1.valorNat \le e_2.valorNat)$ \Comment $O(1)$
     \Else
       \State $res \gets true$ \Comment $O(1)$
-      \While{$res \ \AND i < min\big(longitud(e_1.valorStr), longitud(e_2.valorStr)\big)$} \Comment $O(1)$
+            \State $i \gets 0$ \Comment $O(1)$
+
+    
+      \While{$res \ \AND i < min\big(longitud(e_1.valorStr), longitud(e_2.valorStr)\big)$} \Comment $O(L)$
         \If{$e_1.valorStr[i] > e_2.valorStr[i]$} \Comment $O(1)$
           \State $res \gets false$ \Comment $O(1)$
         \EndIf
+                    \State $i \gets i+1$ \Comment $O(1)$
+
       \EndWhile
       \State $res \gets (e_1.valorStr \le e_2.valorStr)$ \Comment $O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$
     \EndIf

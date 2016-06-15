@@ -14,6 +14,10 @@
   \textbf{se explica con}: \tadNombre{Diccionario Extendido(Nat, Significado)},\\ \tadNombre{Iterador Unidireccional\big(Tupla(Nat, Significado)\big)}.
 
   \textbf{géneros}: \TipoVariable{diccNat(significado)}, \TipoVariable{itDiccNat(significado)}.
+  
+   \textbf{servicios exportados}: \tadNombre{Todos los de la interfaz}
+
+  \textbf{servicios usados}\hangindent=2\parindent : Pila\\
 
   \Titulo{Operaciones básicas de diccNat}
 
@@ -26,39 +30,40 @@
   \InterfazFuncion{Definir}{\In{clave}{nat}, \In{significado}{significado}, \Inout{dicc}{diccNat(significado)}}{}
   [$\neg$def?($clave$,$dicc$) $\land$ $dicc_0$ = $dicc$]
   {$dicc$ $\igobs$ definir($clave$, $significado$, $dicc_0$)}
-  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [define la clave ingresada en el diccionario.]
+  [se genera aliasing con significado]
   
   \InterfazFuncion{Def?}{\In{clave}{nat}, \In{dicc}{diccNat(significado)}}{bool}
   [true]
   {$res$ $\igobs$ def?($clave$, $dicc$)}
-  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [devuelve \texttt{true} si la clave está definida en el diccionario.]
 
   \InterfazFuncion{Obtener}{\In{clave}{nat}, \In{dicc}{diccNat(significado)}}{significado}
   [def?($clave$, $dicc$)]
   {alias\big($res$ $\igobs$ obtener($clave$, $dicc$)\big)}
-  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [devuelve el significado correspondiente a la clave ingresada.]
   [se genera alias entre $res$ y el significado en el diccionario si el tipo significado no es primitivo. $res$ no es modificable.]
 
   \InterfazFuncion{Borrar}{\In{clave}{nat}, \Inout{dicc}{diccNat(significado)}}{}
   [def?($clave$, $dicc$) $\land$ $dicc_0$ = $dicc$]
   {$dicc$ $\igobs$ borrar($clave$, $dicc_0$)}
-  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [borra la clave del diccionario.]
 
   \InterfazFuncion{Min}{\In{dicc}{diccNat(significado)}}{tupla(nat, significado)}
   [\#claves($dicc$) > 0]
   {alias$\big(\Pi_1$($res$) $\igobs$ min$\big($claves($dicc$)$\big)\big)$ $\yluego$ alias$\big(\Pi_2$($res$) $\igobs$ obtener$\big(\Pi_1$($res$), $dicc\big)\big)$}
-  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [devuelve una tupla con la clave mínima y su significado.]
   [$res$ no es modificable.]
 
   \InterfazFuncion{Max}{\In{dicc}{diccNat(significado)}}{tupla(nat, significado)}
   [\#claves($dicc$) > 0]
   {alias$\big(\Pi_1$($res$) $\igobs$ max$\big($claves($dicc$)$\big)\big)$ $\yluego$ alias$\big(\Pi_2$($res$) $\igobs$ obtener$\big(\Pi_1$($res$), $dicc\big)\big)$}
-  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ asumiendo distribución uniforme de claves.]
+  [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [devuelve una tupla con la clave máxima y su significado.]
   [$res$ no es modificable.]
 
