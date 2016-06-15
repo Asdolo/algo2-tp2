@@ -34,6 +34,17 @@
 \tab Campo no indexado $\implies$  $O\big(|L| * (n + \#tablas(b))\big)$, donde $L$ es el dato string más largo de $cr$ y $n$ es la cantidad de registros en la tabla.]
   [borra todos los registros que coincidan con el campo del registro $cr$ en la tabla $t$.]
   
+
+  \InterfazFuncion{CombinarRegistros}{\In{t_1}{String}, \In{t_2}{String}, \In{c}{Campo}}{conj(Registro)}
+  [true]
+  {$res$ $\igobs$ combinarRegistros$\big(c$, registros(dameTabla($t_1$)), registros(dameTabla($t_2$))$\big)$}
+  [\\
+  \tab Si $c$ está indexado en alguna de las tablas y es tipo string $\implies$ $O\big(n * |L|)\big)$\\
+  \tab Si $c$ está indexado y es nat $\implies$ $O\big(n * (|L|\ +\ log\ m)\big)$\\
+  \tab Si no está indexado $\implies$ $O\big(n * m * |L|)\big)$]
+  [unión de todos los registros (en caso de que ambas tablas tengan campos con mismo nombre no claves, desempata para $t_1$).]
+
+
   \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itBi(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$)$\big)$}
@@ -465,6 +476,57 @@
 }
       \end{algorithmic}
 \end{algorithm}
+
+
+
+
+
+\begin{algorithm}[H]{\textbf{iCombinarRegistros}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}) $\to$ $res$ : conj(registro)}
+\begin{algorithmic}
+   \State $tabla1 \gets Obtener(t_1, e.nombreATabla) $ \Comment $O(1)$
+   \State $tabla2 \gets Obtener(t_2, e.nombreATabla) $ \Comment $O(1)$
+   \If{$Pertenece?\big(Indices(tabla1), c\big)$}  \Comment $O(2 * |max\ nombre\ de\ campo|) = O(1)$
+     \State $tablaIt \gets tabla2$  \Comment $O(1)$
+     \State $tablaBusq \gets tabla1$  \Comment $O(1)$
+   \Else
+     \State $tablaIt \gets tabla1$    \Comment $O(1)$
+     \State $tablaBusq \gets tabla2$   \Comment $O(1)$
+   \EndIf
+   \State $res \gets Vacio()$    \Comment $O(1)$
+   \State $it \gets CrearIt\big(Registros(tablaIt)\big)$   \Comment $O(1)$
+   \While{$HaySiguiente(it)$}  \Comment $O(n * ...)$
+     \State $d \gets Obtener\big(c, Siguiente(it)\big)$     \Comment $O\big(|max\ nombre\ de\ campo|\ +\ L\big) = O(L)$
+      \State $coincis \gets Buscar(c, d, tablaBusq)$  \Comment $c\ campo\ string:\ Si\ esta\ indexado\ \implies\ O(|L|),\ si\ no\ O\big(m * |L|\big)$
+     \State $ $ \Comment $c\ campo\ nat:\ Si\ esta\ indexado\ \implies\ O\big(log\ m\ +\ |L|\big),\ si\ no\ esta\ indexado\ \implies\ O\big(m * |L|\big)$
+     \If{$\NOT Vacia?(coincis)$} \Comment $O(1)$
+       \If{$nombre(tablaBusq) = t_1$} \Comment $O(1)$
+         \State $regMergeado \gets Merge\big(Prim(coincis), Siguiente(it)\big)$ \Comment $O(L)$
+       \Else
+         \State $regMergeado \gets Merge\big(Siguiente(it), Prim(coincis)\big)$ \Comment $O(L)$
+       \EndIf
+     \EndIf
+     \State $AgregarRapido(regMergeado, res)$ \Comment $O(1)$
+     \State $Avanzar(it)$ \Comment $O(1)$
+   \EndWhile
+ 
+   \medskip
+   \Statex \underline{Complejidad:} {\\
+   \quad\quad $O(n * buscar\ +\ L)$ = \\
+   \quad\quad Si $c$ está indexado en alguna de las tablas y es tipo string $\implies$ $O(n * |L|)$ = $O\big((n+m) * |L|\big)$ \\
+   \quad\quad Si $c$ está indexado y es nat $\implies$ $O\big(n * (log\ m\ +\ |L|)\big)$ = $O\big((n*m)(log(m)\ +\ |L|)\big)$ \\
+   \quad\quad Si no está indexado $\implies$ $O(n * m * |L|)$ \\
+   \\
+   \quad\quad Siendo $|L|$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (varían en base a criterio de búsqueda indexado o no).\\
+   \quad\quad Esta indeterminación se puede salvar considerando que las cantidades de registros de las tablas (que ahora sí serían n y m) pueden ser tomadas como $O\big(max(n,m)\big)$ = $O(n+m)$.\\
+   \quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección.}
+   \Statex \underline{Justificación:} {\\
+  \quad\quad Siempre se itera linealmente una tabla, y se realizan búsquedas sobre la otra (complejidad variable exportada por buscar de tabla, según campo indexado o no).}
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+
 
 \begin{algorithm}[H]{\textbf{iGenerarVistaJoin}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{e}{estr}) $\to$ $res$ : itConj(registro)}
  \begin{algorithmic}
