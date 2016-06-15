@@ -368,7 +368,7 @@ FI}
           \comentario{Quiero que mientras haya hijos se meta en el índice más grande}
           \If{$(actual \to cantHijos) = 0$} \Comment $O(1)$
             \State $res \gets Siguiente\big(*(actual \to valor)\big).clave$ \Comment $O(1)$
-            \State $termine \gets true $
+            \State $termine \gets true $   \Comment $O(1)$
           \Else
             \State $i \gets 255$ \Comment $O(1)$
             \State $seguir \gets true$ \Comment $O(1)$
