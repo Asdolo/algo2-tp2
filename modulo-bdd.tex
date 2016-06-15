@@ -410,39 +410,51 @@
       \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iInsertarEntrada}(\In{r}{registro}, \In{t}{tabla}, \Inout{e}{estr})}
-      \begin{algorithmic}
-        \State $AgregarRegistro(r, t)$                          \Comment $O(|L| + log\ n)\ indexado\ /\ O(|L|)\ no\ indexado$
-        \comentario{Me fijo si cambió la tabla más accedida}
-        \State $tabMax \gets e.nombreATabla\big(*(e.tablaMasAccedida)\big)$    \Comment $O(1)$
-        \If{$CantidadDeAccesos(t) > CantidadDeAccesos(tabMax)$}            \Comment $O(1)$
-          \State $e.tablaMasAccedida \gets \&Nombre(t)$                   \Comment $O(1)$
-        \EndIf
-        \State $ $
-
-        \comentario{Lo tengo que agregar a cambios con las tablas que tenga join}
-        \State $iter \gets VistaDicc\big(Obtener(Nombre(t), e.hayJoin)\big)$ \Comment $O(1)$
-        \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas * L)$           
-            \State $AgregarAtras\big(<r, true>, Siguiente(iter).significado.cambios\big)$\\ \Comment $O\big(copy(r)\big) = O\big(\#campos * dato\ mas\ costoso\big) = O(L)$
-            \State $Avanzar(iter)$         \Comment $O(1)$
-        \EndWhile
-
-        \medskip
-        \Statex \underline{Complejidad:} {\\
-\quad\quad Campo indexado $\implies$ $O\big(|L| + log\ n + \#tablas * |L|\big)$ = $O\big(log\ n + |L| * (\#tablas + 1)\big)$ = $O\big(log\ n + |L| * \#tablas(b)\big)$\\
-\quad\quad Campo no indexado $\implies$ $O\big(|L| * \#tablas(b)\big)$\\
-\\
+\begin{algorithm}[H]{\textbf{iInsertarEntrada}(\In{r}{registro}, \In{t}{String}, \Inout{e}{estr})}
+     \begin{algorithmic}
+       \State $tabla \gets Obtener(t, e.nombreATabla)$    \Comment $O(1)$
+       \State $AgregarRegistro(r, tabla)$                          \Comment $O(|L|\ +\ log\ n)\ indexado\ /\ O(|L|)\ no\ indexado$
+       \comentario{Me fijo si cambió la tabla más accedida}
+       \State $tabMax \gets Obtener\big(*(e.tablaMasAccedida), e.nombreATabla\big)$    \Comment $O(1)$
+       \If{$CantidadDeAccesos(tabla) > CantidadDeAccesos(tabMax)$}            \Comment $O(1)$
+         \State $e.tablaMasAccedida \gets \&t$                   \Comment $O(1)$
+       \EndIf
+       \State $ $
+ 
+       \comentario{Lo tengo que agregar a cambios con las tablas que tenga join}
+       \State $iter \gets VistaDicc\big(Obtener(t, e.hayJoin)\big)$ \Comment $O(1)$
+       \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas...)$          
+           \State $AgregarAtras\big(<r, true>, (Siguiente(iter).significado).cambiosT1\big)$\\ \Comment $O\big(copy(r)\big) = O\big(\#campos * dato\ mas\ costoso\big) = O(L)$
+           \State $Avanzar(iter)$         \Comment $O(1)$
+       \EndWhile
+ 
+       \State $iter \gets CrearIt\big(e.tablas\big)$ \Comment $O(1)$
+       \While{$HaySiguiente?(iter)$}      \Comment $O(\#tablas...)$  
+               \If{$Def?\big(t, Obtener(Siguiente(iter), e.hayJoin)\big)$}            \Comment $O(1)$
+                \State $cambios \gets Obtener\big(t, Obtener(Siguiente(iter), e.hayJoin)\big)$                   \Comment $O(1)$
+ 
+           \State $AgregarAtras\big(<r, true>, (cambios.significado).cambiosT2\big)$\\ \Comment $O\big(copy(r)\big) = O\big(\#campos * dato\ mas\ costoso\big) = O(L)$
+           
+       \EndIf
+       \State $Avanzar(iter)$         \Comment $O(1)$
+ 
+       \EndWhile
+ 
+       \medskip
+ 
+\Statex \underline{Complejidad:} {\\
+\quad\quad $O\big(|L|\ +\ log\ n\ +\ \#tablas * |L|\big)$ = $O\big(log\ n\ +\ |L| * (\#tablas + 1)\big)$ = $O\big(log\ n\ +\ |L| * \#tablas(b)\big)$\\
 \quad\quad Donde $L$ es el dato string más largo de $r$ y $n$ es la cantidad de registros en la tabla.}
-        \Statex \underline{Justificación:} {\\
-\quad\quad Por interfaz de Tabla, agregar el registro a la tabla indicada cuesta $O\big(|L| + log\ n)\big)$ si hay algún campo indexado, y si no, $O(|L|)$. \\
+\Statex \underline{Justificación:} {\\
+\quad\quad Por interfaz de Tabla, agregar el registro a la tabla indicada cuesta $O\big(|L|\ +\ log\ n)\big)$ si hay algún campo indexado, y si no, $O(|L|)$. \\
 \quad\quad Obtener la tabla más accedida a partir de su nombre cuesta $O(Nombre\ mas\ largo\ de\ tabla\ de\ la\ base)$, pero como están acotadas en longitud de nombre eso equivale a $O(1)$. \\
 \quad\quad Las operaciones \& y * para el tipo primitivo puntero cuestan $O(1)$. \\
-        \quad\quad El puntero al nombre de la tabla más accedida se asigna por referencia en O(1). \\
-        \quad\quad VistaDicc exporta complejidad $O(1)$. \\
-        \quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas). Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#tablas(b)\big)$.\\
-\quad\quad Entonces si hay algún campo indexado nos queda $O(|L| * \#Tablas(b) + log\ n)$ y si no hay un campo indexado nos queda $O\big(|L| * \#tablas(b)\big)$        
-        }
-      \end{algorithmic}
+       \quad\quad El puntero al nombre de la tabla más accedida se asigna por referencia en $O(1)$. \\
+       \quad\quad VistaDicc exporta complejidad $O(1)$. \\
+               \quad\quad CrearIterador a tablas es $O(1)$. \\
+ 
+       \quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas) dos veces. Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#tablas(b)\big)$.}
+     \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{iBorrar}(\In{cr}{registro}, \In{t}{string}, \Inout{e}{estr})}
