@@ -507,9 +507,6 @@
 \end{algorithm}
 
 
-
-\end{algorithm}
-
 \begin{algorithm}[H]{\textbf{iBorrar}(\In{cr}{registro}, \In{t}{string}, \Inout{e}{estr})}
   \begin{algorithmic}
     \State $tabla \gets Obtener(t, e.nombreATabla)$    \Comment $O(1)$
@@ -1028,7 +1025,7 @@
 	\State $res \gets Vacio()$								\Comment $O(1)$
 	\State $ $
 	\comentario{Por si hay algún campo indexado para facilitar búsqueda}
-	\While{$ HaySiguiente(it) \land ¬termine $}	\Comment $O(#regs*..) = O(1*..)$ 
+	\While{$ HaySiguiente(it) \land ¬termine $}	\Comment $O(\#regs*..) = O(1*..)$ 
 		\If{$ Def?(Siguiente(it), crit)$}					\Comment $O(1)$
 			\State $campoIndice \gets Siguiente(it)$			\Comment $O(1)$
 			\State $valorCampo \gets Obtener(campoIndice, crit)$	\Comment $O(1)$
@@ -1037,7 +1034,7 @@
 			\State $ $	\Comment Campo string $\implies O(|L|)  $
 			\State $ $
 			\State $itAux \gets CrearIt(coincis)$ 			\Comment $O(1)$
-			\While{$ HaySiguiente(itAux) $}					\Comment $O(#coincis*...)$
+			\While{$ HaySiguiente(itAux) $}					\Comment $O(\#coincis*...)$
 				\If{$ coincidenTodosCrit(crit, Siguiente(itAux)) $} \Comment $O(L)$
 					\State $AgregarRapido(res, Siguiente(itAux))$ \Comment $O(L)$
 				\EndIf
@@ -1075,7 +1072,7 @@
     \quad\quad
     }
     
-    \Statex \underline{Justificación:} {Su campoIndice es clave entonces $#coincis = 1$, de no serlo está acotada por $n$. \\
+    \Statex \underline{Justificación:} {Su campoIndice es clave entonces $\#coincis = 1$, de no serlo está acotada por $n$. \\
     Los registros tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.
     Operaciones def? y obtener en registros (con campos acotados por enunciado) es $O(1)$}
   \end{algorithmic}
