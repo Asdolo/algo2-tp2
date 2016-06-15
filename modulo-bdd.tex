@@ -162,16 +162,12 @@
 
   \Rep[estr][e]{}
 
-<<<<<<< HEAD
+
   \noindent\tab\tab\bigpar {\textbf{1)} 
     $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\yluego$ 
     nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$ \\
     $s$ $\in$ $e$.tablas)} $\land$ \\
 
-=======
-  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\ssi$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
-    $\big($esta?($s$, $e$.tablas) $\land$ sinRepetidos($e$.tablas)$\big)$} $\land$\\
->>>>>>> f4c8557bfab2483cedf8199b11946af8d4db5e5f
     \noindent\tab\tab\bigpar{\textbf{2)} $e$.tablaMasAccedida $\in$ claves($e$.nombreATabla) $\yluego$ $\big(\forall$ $n$ : string, $n$ $\in$ claves($e$.nombreATabla)$\big)$\\
     cantAccesos$\big($obtener($n$, $e$.nombreATabla)$\big)$ $\le$ cantAccesos$\big($obtener(*$e$.tablaMasAccedida, $e$.nombreATabla)$\big)$}$\land$\\
 
@@ -423,6 +419,7 @@
  
        \quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas) dos veces. Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#tablas(b)\big)$.}
      \end{algorithmic}
+
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{iBorrar}(\In{cr}{registro}, \In{t}{string}, \Inout{e}{estr})}
@@ -464,15 +461,7 @@
   \end{algorithmic}
 \end{algorithm}
 
-<<<<<<< HEAD
 
-
-
-=======
-
-
-
->>>>>>> f4c8557bfab2483cedf8199b11946af8d4db5e5f
 
 \begin{algorithm}[H]{\textbf{iCombinarRegistros}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}) $\to$ $res$ : conj(registro)}
 \begin{algorithmic}
@@ -521,6 +510,100 @@
 
 
 
+=======
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iBorrar}(\In{cr}{registro}, \In{t}{string}, \Inout{e}{estr})}
+  \begin{algorithmic}
+    \State $tabla \gets Obtener(t, e.nombreATabla)$    \Comment $O(1)$
+    \State $BorrarRegistro(cr, tabla)$ \Comment $Campo\ indexado\ \implies\ O(log\ n + L)\ /\ Campo\ no\ indexado \implies O(n * |L|)$
+    \State $tabMax \gets Obtener\big(*(e.tablaMasAccedida), e.nombreATabla\big)$    \Comment $O(1)$
+    \If{$CantidadDeAccesos(tabla) > CantidadDeAccesos(tabMax)$}       \Comment $O(1)$
+      \State $e.tablaMasAccedida \gets \&t$                \Comment $O(1)$
+    \EndIf
+    \State $iter \gets VistaDicc\big(Obtener(t, e.hayJoin)\big)$   \Comment $O(1)$
+    \While{$HaySiguiente?(iter)$}          \Comment $O(\#tablas * ...)$
+      \State $AgregarAtras\big(<cr, false>, (Siguiente(iter).significado).cambiosT1\big)$\\         \Comment $O\big(copy(r)\big) = O(\#campos * dato\ mas\ costoso) = O(L)$
+      \State $Avanzar(iter)$           \Comment $O(1)$
+    \EndWhile
+    \State $iter \gets CrearIt\big(e.tablas)\big)$   \Comment $O(1)$
+    \While{$HaySiguiente?(iter)$}          \Comment $O(\#tablas * ...)$
+      \If{$Def?\big(t, Obtener(siguiente(iter), e.hayJoin)\big)$}       \Comment $O(1)$
+        \State $cambios \gets Obtener\big(t, Obtener(siguiente(iter), e.hayJoin)\big)$                \Comment $O(1)$
+        \State $agregarAtras\big(<r,false>, (cambios.significado).cambiosT2\big)$                \Comment $O(L)$
+      \EndIf
+      \State $Avanzar(iter)$           \Comment $O(1)$
+    \EndWhile
+
+
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+    \quad\quad Campo indexado $\implies$ $O\big(log\ n\ +\ |L|\ + \#tablas * |L|\big)$ = $O\big(log\ n\ +\ |L| * (\#tablas + 1)\big)$ = $O\big(log\ n\ +\ |L| * \#tablas\big)$ \\
+    \quad\quad Campo no indexado $\implies$ $O\big(n * |L| + \#tablas * |L|\big)$ = $O\big(|L| * (n + \#tablas)\big)$
+    }
+    \Statex \underline{Justificación:} {\\
+    \quad\quad Obtener la tabla más accedida a partir de su nombre cuesta $O(Nombre\ mas\ largo\ de\ tabla\ de\ la\ base)$, pero como están acotadas en longitud de nombre, eso equivale a $O(1)$. \\
+    \quad\quad Las operaciones \& y * para el tipo primitivo puntero cuestan $O(1)$. \\
+    \quad\quad El puntero al nombre de la tabla más accedida se asigna por referencia en $O(1)$.\\
+    \quad\quad VistaDicc exporta complejidad $O(1)$. \\
+    \quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas). Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#Tablas(b)\big)$. \\
+    \quad\quad BorrarRegistro exporta complejidad distinta dependiendo de si hay índice sobre el campo criterio y se suma al resto diferenciando cada caso.
+    }
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+\begin{algorithm}[H]{\textbf{iCombinarRegistros}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}) $\to$ $res$ : conj(registro)}
+\begin{algorithmic}
+   \State $tabla1 \gets Obtener(t_1, e.nombreATabla) $ \Comment $O(1)$
+   \State $tabla2 \gets Obtener(t_2, e.nombreATabla) $ \Comment $O(1)$
+   \If{$Pertenece?\big(Indices(tabla1), c\big)$}  \Comment $O(2 * |max\ nombre\ de\ campo|) = O(1)$
+     \State $tablaIt \gets tabla2$  \Comment $O(1)$
+     \State $tablaBusq \gets tabla1$  \Comment $O(1)$
+   \Else
+     \State $tablaIt \gets tabla1$    \Comment $O(1)$
+     \State $tablaBusq \gets tabla2$   \Comment $O(1)$
+   \EndIf
+   \State $res \gets Vacio()$    \Comment $O(1)$
+   \State $it \gets CrearIt\big(Registros(tablaIt)\big)$   \Comment $O(1)$
+   \While{$HaySiguiente(it)$}  \Comment $O(n * ...)$
+     \State $d \gets Obtener\big(c, Siguiente(it)\big)$     \Comment $O\big(|max\ nombre\ de\ campo|\ +\ L\big) = O(L)$
+      \State $coincis \gets Buscar(c, d, tablaBusq)$  \Comment $c\ campo\ string:\ Si\ esta\ indexado\ \implies\ O(|L|),\ si\ no\ O\big(m * |L|\big)$
+     \State $ $ \Comment $c\ campo\ nat:\ Si\ esta\ indexado\ \implies\ O\big(log\ m\ +\ |L|\big),\ si\ no\ esta\ indexado\ \implies\ O\big(m * |L|\big)$
+     \If{$\NOT Vacia?(coincis)$} \Comment $O(1)$
+       \If{$nombre(tablaBusq) = t_1$} \Comment $O(1)$
+         \State $regMergeado \gets Merge\big(Prim(coincis), Siguiente(it)\big)$ \Comment $O(L)$
+       \Else
+         \State $regMergeado \gets Merge\big(Siguiente(it), Prim(coincis)\big)$ \Comment $O(L)$
+       \EndIf
+     \EndIf
+     \State $AgregarRapido(regMergeado, res)$ \Comment $O(1)$
+     \State $Avanzar(it)$ \Comment $O(1)$
+   \EndWhile
+ 
+   \medskip
+   \Statex \underline{Complejidad:} {\\
+   \quad\quad $O(n * buscar\ +\ L)$ = \\
+   \quad\quad Si $c$ está indexado en alguna de las tablas y es tipo string $\implies$ $O(n * |L|)$ = $O\big((n+m) * |L|\big)$ \\
+   \quad\quad Si $c$ está indexado y es nat $\implies$ $O\big(n * (log\ m\ +\ |L|)\big)$ = $O\big((n*m)(log(m)\ +\ |L|)\big)$ \\
+   \quad\quad Si no está indexado $\implies$ $O(n * m * |L|)$ \\
+   \\
+   \quad\quad Siendo $|L|$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (varían en base a criterio de búsqueda indexado o no).\\
+   \quad\quad Esta indeterminación se puede salvar considerando que las cantidades de registros de las tablas (que ahora sí serían n y m) pueden ser tomadas como $O\big(max(n,m)\big)$ = $O(n+m)$.\\
+   \quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección.}
+   \Statex \underline{Justificación:} {\\
+  \quad\quad Siempre se itera linealmente una tabla, y se realizan búsquedas sobre la otra (complejidad variable exportada por buscar de tabla, según campo indexado o no).}
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+>>>>>>> f4c8557bfab2483cedf8199b11946af8d4db5e5f
 \begin{algorithm}[H]{\textbf{iGenerarVistaJoin}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{e}{estr}) $\to$ $res$ : itConj(registro)}
  \begin{algorithmic}
    \comentario{Creo en el diccionario hayJoin de t1 la otra tabla}
@@ -1007,4 +1090,3 @@
 
 
 \end{Algoritmos}
-

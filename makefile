@@ -17,3 +17,4 @@ clean:
 	@rm ./*.log 2>/dev/null || true
 	@rm ./*.out 2>/dev/null || true
 	@rm ./*.toc 2>/dev/null || true
+	@rm ./*.gz 2>/dev/null || true
