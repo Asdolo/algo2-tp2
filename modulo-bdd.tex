@@ -91,6 +91,13 @@
   [res no es modificable, se itera sólo a modo de vista del conjunto.]
 
 
+  \InterfazFuncion{BusquedaCriterio}{\In{criterio}{registro}, \In{t}{String},\In{b}{base}}{conj(registro)}
+  [$t$ $\in$ tablas($b$) $\land$ $\big($campos($criterio$) $\subset$ campos(dameTabla($t$, $b$))$\big)$]  
+  {$res$ $\igobs$ buscar($r$, $t$, $b$)}
+  [depende de la disposición de índices en $t$ y si son claves o no (consultar complejidad y justificación debajo del algoritmo).]
+  [devuelve por copia una lista de todos los registros de $t$ que coinciden en todos los campos con el registro $criterio$.]
+
+
   \InterfazFuncion{CoincidenTodosCrit}{\In{crit}{registro}, \In{r}{registro}}{bool}
   [campos($crit$) $\subset$ campos($r$)]
   {$res$ $\igobs$ coincidenTodos$\big(crit$, campos($crit$), $r\big)$}
@@ -785,6 +792,63 @@
     }
   \end{algorithmic}
 \end{algorithm}
+
+
+
+
+\begin{algorithm}[H]{\textbf{iBusquedaCriterio}(\In{criterio}{Registro}, \In{t}{string}, \In{b}{estr}) $\to$ $res$ : conj(registro)}
+ \begin{algorithmic}
+    \State $tabla \gets Obtener(t, b.nombreATabla)$         \Comment $O(1)$
+    \State $it \gets CrearIt(Indices(tabla))$               \Comment $O(1)$
+    \State $termine \gets false$                                \Comment $O(1)$
+    \State $res \gets Vacio()$                              \Comment $O(1)$
+    \State $ $
+    \comentario{Por si hay algún campo indexado para facilitar búsqueda}
+    \While{$HaySiguiente(it)\ \AND \NOT termine$}    \Comment $O(\#regs * ...) = O(1 * ...)$
+        \If{$Def?\big(Siguiente(it), crit\big)$}                   \Comment $O(1)$
+            \State $campoIndice \gets Siguiente(it)$            \Comment $O(1)$
+            \State $valorCampo \gets Obtener(campoIndice, crit)$    \Comment $O(1)$
+            \State $coincis \gets Buscar(campoIndice, valorCampo, tabla)$ \Comment $Campo\ nat\ \implies\ O\big(log\ n + |L|\big)\ promedio$
+            \State $ $  \Comment $Campo\ string\ \implies\ O(|L|)$
+            \State $ $
+            \State $itAux \gets CrearIt(coincis)$           \Comment $O(1)$
+            \While{$HaySiguiente(itAux)$}                 \Comment $O(\#coincis * ...)$
+                \If{$CoincidenTodosCrit\big(crit, Siguiente(itAux)\big)$} \Comment $O(L)$
+                    \State $AgregarRapido\big(res, Siguiente(itAux)\big)$ \Comment $O(L)$
+                \EndIf
+                \State $Avanzar(itAux)$ \Comment $O(1)$
+            \EndWhile  
+            \State $termine \gets true$  \Comment $O(1)$
+            \State $Avanzar(it)$ \Comment $O(1)$
+        \EndIf 
+    \EndWhile      
+    \State $ $
+    \comentario{No había índices -> todos los registros contra crit}    
+    \State $ $
+    \If {$\NOT termine $} \Comment $O(1)$
+        \State $itRegs \gets CrearIt\big(Registros(tabla)\big)$ \Comment $O(1)$
+        \While{$HaySiguiente(itRegs)$}   \Comment $O(n * ...)$
+            \If{$ coincidenTodosCrit\big(crit, Siguiente(itRegs)\big) $} \Comment $O(L)$
+                \State $AgregarRapido\big(res, Siguiente(itRegs)\big)$ \Comment $O(L)$
+            \EndIf
+            \State $Avanzar(itRegs)$  \Comment $O(1)$
+        \EndWhile
+    \EndIf
+   
+   \Statex \underline{Complejidad:} {\\
+   \quad\quad campoIndice nat $\implies$ $O\big(log\ n\ +\ |L|\ +\ n * |L|\big)$ = $O\big(log\ n\ +\ n * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
+ 
+    \quad\quad campoIndice string $\implies$ $O\big(|L|\ +\ n * |L|\big)$ = $O(n * |L|)$. $O(|L|)$ si además es clave.\\
+    \quad\quad Sin campoIndice $\implies$ $O(n * |L|)$\\       
+    \quad\quad Donde $L$ es la longitud de dato string más largo de $t$ y $n$ su cantidad de registros.}
+   
+   \Statex \underline{Justificación:} {\\
+   \quad\quad Su campoIndice es clave, entonces \#coincis = 1, de no serlo está acotada por $n$. \\
+   \quad\quad Los registros tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.\\
+   \quad\quad Operaciones Def? y Obtener en registros (con campos acotados por enunciado) es $O(1)$.}
+ \end{algorithmic}
+\end{algorithm}
+
 
 
 
