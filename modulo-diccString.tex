@@ -16,20 +16,26 @@
 
   \textbf{géneros}: \TipoVariable{diccString(significado)}.
 
+  \textbf{servicios exportados}: \tadNombre{Todos los de la interfaz}
+
+  \textbf{servicios usados}\hangindent=2\parindent : Lista, itLista, Conjunto Lineal (cátedra) \\
+
+  \textbf{}
+
   \Titulo{Operaciones básicas de diccString}
 
   \InterfazFuncion{Vacío}{}{diccString(significado)}
-  [true]  
+  [true]
   {$res$ $\igobs$ vacio}
   [$O(1)$]
   [genera un DiccionarioString vacío.]
-  
+
   \InterfazFuncion{Definir}{\In{clave}{string}, \In{significado}{significado}, \Inout{dicc}{diccString(significado)}}{}
   [$\neg$def?($clave$,$dicc$) $\land$ $dicc_0$ = $dicc$]
   {$dicc$ $\igobs$ definir($clave$, $significado$, $dicc_0$)}
   [$O\big(max\{long(clave), copy(significado)\}\big)$]
   [define la clave ingresada en el diccionario.]
-  
+
   \InterfazFuncion{Def?}{\In{clave}{string}, \In{dicc}{diccString(significado)}}{bool}
   [true]
   {$res$ $\igobs$ def?($clave$, $dicc$)}
@@ -43,11 +49,11 @@
   [devuelve el significado correspondiente a la clave ingresada.]
   [se genera alias entre $res$ y el significado en el diccionario si el tipo significado no es primitivo. $res$ no es modificable.]
 
-  \InterfazFuncion{Claves}{\In{dicc}{diccString(significado)}}{itConjunto(string)}
+  \InterfazFuncion{Claves}{\In{dicc}{diccString(significado)}}{conj(string)}
   [true]
   {$res$ $\igobs$ claves($dicc$)}
   [$O\big(\#claves(dicc) * M\big)$, donde $M$ es la longitud del mayor string clave.]
-  [devuelve un iterador al conjunto de las claves del diccionario ingresado.]
+  [devuelve por copia el conjunto de las claves del diccionario ingresado.]
 
   \InterfazFuncion{Borrar}{\In{clave}{string}, \Inout{dicc}{diccString(significado)}}{}
   [def?($clave$, $dicc$) $\land$ $dicc_0$ = $dicc$]
@@ -55,7 +61,7 @@
   [$O\big(long(clave)\big)$]
   [borra la clave del diccionario.]
 
-  \InterfazFuncion{VistaDicc}{\Inout{dicc}{diccString(significado)}}{itBi\big(tupla( Clave: string, significado: significado)\big)}
+  \InterfazFuncion{VistaDicc}{\Inout{dicc}{diccString(significado)}}{itLista\big(tupla( Clave: string, significado: significado)\big)}
   [true]
   {alias\big($dicc$ $\igobs$ secuADicc\big(secuSuby($res$)\big)\big)}
   [$O(1)$]
@@ -71,21 +77,22 @@
 
   \InterfazFuncion{Min}{\In{dicc}{diccString(significado)}}{string}
   [\#claves($e$) > 0]
-  {alias($res$ $\igobs$ $m$) | $\big(\forall$ $n$ $\in$ claves($d$)$\big)$ ($m$ $\le$ $n$)}
+  {alias($res$ $\igobs$ $m$) | $\big(\forall$ $n$ $\in$ claves($dicc$)$\big)$ ($m$ $\le$ $n$) $\land$ ($m$ $\in$ claves($dicc$))}
   [$O\big(long\big(|min(claves(dicc))|\big)\big)$]
-  [Devuelve la clave mínima del diccionario. La clave mínima es utilizando el orden de la funcion ORD y no utilizando orden lexicografico.]
+  [Devuelve la clave mínima del diccionario según orden lexicográfico.]
+  [res no es modificable]
 
   \InterfazFuncion{Max}{\In{dicc}{diccString(significado)}}{string}
   [\#claves($e$) > 0]
-  {alias($res$ $\igobs$ $m$) | $\big(\forall$ $n$ $\in$ claves($d$)$\big)$ ($m$ $\ge$ $n$)}
-  [$O\big(long\big(|min(claves(dicc))|\big)\big)$]
-  [Devuelve la clave máxima del diccionario. La clave máxima es utilizando el orden de la funcion ORD y no utilizando orden lexicografico.]
-
+  {alias($res$ $\igobs$ $m$) | $\big(\forall$ $n$ $\in$ claves($dicc$)$\big)$ ($m$ $\ge$ $n$) $\land$ ($m$ $\in$ claves($dicc$))}
+  [$O\big(long\big(|max(claves(dicc))|\big)\big)$]
+  [Devuelve la clave máxima del diccionario según orden lexicográfico.]
+  [res no es modificable]
 
 \end{Interfaz}
 
 \begin{Representacion}
-  
+
   \Titulo{Representación de diccString}
 
   \begin{Estructura}{diccString(significado)}[estrDiccString]
@@ -102,28 +109,28 @@
   \end{Estructura}
 
   \Rep[estrDiccString][e]{\\
-  1) Un valor está en la lista si y solo si hay un nodo en $e$.trie que apunta a un iterador cuyo siguiente es ese valor. \\
+  1) Un significado está en la lista de valores si y sólo si hay un nodo en $e$.trie que apunta a un iterador cuyo siguiente es ese valor. \\
   2) La clave de ese valor corresponde al string formado concatenando los valores char del índice de cada hijo que se recorre, dicho recorrido es único (p.e: $"Alas"$ solamente está definido si el nodo correspondiente al recorrido A$\to$L$\to$A$\to$S apunta a un valor no nulo). Por lo tanto, el primer nodo no puede apuntar a un valor válido. \\
   3) cantHijos es igual a la cantidad de punteros no nulos en hijos. \\
   4) No existen dos nodos en la estructura recursiva que compartan alguno de sus hijos.\\
 
 
   }
-	
-  ~
- 
-  \Abs[estrDiccString]{diccString(significado)}[e]{d}{($\forall$ $c$ : string) def?($c$, $d$) $\ssi$ esClave?($c$, $e$.valores) $\yluego$ obtener($c$, $d$) $\igobs$ significado($c$, $e$.valores)}
 
-  
+  ~
+
+  \Abs[estrDiccString]{diccString(significado)}[e]{d}{($\forall$ $c$ : string) def?($c$, $d$) $\ssi$ esClave?($c$, $e$.valores) $\yluego$ def?($c$, $d$) $\impluego$ obtener($c$, $d$) $\igobs$ significado($c$, $e$.valores)}
+
+
 
   \tadOperacion{esClave?}{string/s, secu$\big($tupla(string$\text{,}\alpha)\big)$/xs}{bool}{Rep($e$)}
   \tadAxioma{esClave?($s$, $xs$)}{$\neg$vacia?($xs$) $\yluego$ $\big(\Pi_1$(prim($xs$)) \ $\igobs$ $s$ $\lor$ esClave?($s$, fin($xs$))$\big)$}
 
   ~
 
-  \tadOperacion{significado}{string/s, secu$\big($tupla(string$\text{,}\alpha)\big)$/xs}{$\alpha$}{Rep($e$) $\yluego$ esClave?($s$, $xs$)}
+  \tadOperacion{significado}{string/s, secu$\big($tupla(string$\text{,}\alpha)\big)$/xs}{$\alpha$}{esClave?($s$, $xs$)}
   \tadAxioma{significado($s$, $xs$)}{\IF $\Pi_1$(prim($xs$)) $\igobs$ $s$ THEN
-  $\Pi_2$(prim($xs$)) 
+  $\Pi_2$(prim($xs$))
 ELSE
   significado$\big(s$, fin($xs$)$\big)$
 FI}
@@ -135,10 +142,10 @@ FI}
 \begin{Algoritmos}
 
 \medskip
-	
+
  \Titulo{Algoritmos de diccString}
   	\medskip
-  
+
 \begin{algorithm}[H]{\textbf{iVacio}() $\to$ $res$ : estrDiccString}
       \begin{algorithmic}
        \State $res.valores \gets Vacia()$         \Comment $O(1)$
@@ -241,12 +248,12 @@ FI}
       \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iClaves}(\In{e}{estrDiccString}) $\to$ $res$ : itConj(string)}
+\begin{algorithm}[H]{\textbf{iClaves}(\In{e}{estrDiccString}) $\to$ $res$ : Conj(string)}
       \begin{algorithmic}
-        \State $itLista \gets CrearIt(e.valores)$     \Comment $O(1)$
-        \State $aux \gets Vacio()$ \comentariorandom{aux : conj(string)} \Comment $O(1)$
+        \State $it \gets CrearIt(e.valores)$     \Comment $O(1)$
+        \State $res \gets Vacio()$                     \Comment $O(1)$
         \While{$HaySiguiente?(it)$} \Comment $O\big(long(e.valores) * ...\big)$
-          \State $res \gets AgregarRapido(aux, Siguiente(it).clave)$ \Comment $O\big(copy(clave)\big)$
+          \State $AgregarRapido(aux, Siguiente(it).clave)$ \Comment $O\big(copy(clave)\big)$
           \State $Avanzar(it)$ \Comment $O(1)$
         \EndWhile
 
@@ -361,6 +368,7 @@ FI}
           \comentario{Quiero que mientras haya hijos se meta en el índice más grande}
           \If{$(actual \to cantHijos) = 0$} \Comment $O(1)$
             \State $res \gets Siguiente\big(*(actual \to valor)\big).clave$ \Comment $O(1)$
+            \State $temine \gets true $
           \Else
             \State $i \gets 255$ \Comment $O(1)$
             \State $seguir \gets true$ \Comment $O(1)$
@@ -389,5 +397,3 @@ FI}
 \end{algorithm}
 
 \end{Algoritmos}
-
-
