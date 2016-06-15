@@ -445,36 +445,43 @@
       \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iBorrar}(\In{cr}{registro}, \In{t}{tabla}, \Inout{e}{estr})}
-      \begin{algorithmic}
-        \State $BorrarRegistro(cr, t)$ \Comment $Campo\ indexado \implies O(log\ n + L)\ /\
-                                                Campo\ no\ indexado \implies O(n * |L|)$
-              
-        \State $tabMax \gets e.nombreATabla\big(*(e.tablaMasAccedida)\big)$    \Comment $O(1)$
-        \If{$CantidadDeAccesos(t) > CantidadDeAccesos(tabMax)$}       \Comment $O(1)$
-          \State $e.tablaMasAccedida \gets \&Nombre(t)$                \Comment $O(1)$
-        \EndIf
-        \State $iter \gets VistaDicc\big(Obtener(Nombre(t), e.hayJoin)\big)$   \Comment $O(1)$
-        \While $HaySiguiente?(iter)$          \Comment $O(\#tablas * |L|)$
-            \State $AgregarAtras(<cr, false>, Siguiente(iter).significado.cambios)$\\         \Comment $O(copy(r)) = O(\#campos * dato\ mas\ costoso) = O(L)$
-            \State $Avanzar(iter)$           \Comment $O(1)$
-        \EndWhile
+\begin{algorithm}[H]{\textbf{iBorrar}(\In{cr}{registro}, \In{t}{string}, \Inout{e}{estr})}
+  \begin{algorithmic}
+    \State $tabla \gets Obtener(t, e.nombreATabla)$    \Comment $O(1)$
+    \State $BorrarRegistro(cr, tabla)$ \Comment $Campo\ indexado\ \implies\ O(log\ n + L)\ /\ Campo\ no\ indexado \implies O(n * |L|)$
+    \State $tabMax \gets Obtener\big(*(e.tablaMasAccedida), e.nombreATabla\big)$    \Comment $O(1)$
+    \If{$CantidadDeAccesos(tabla) > CantidadDeAccesos(tabMax)$}       \Comment $O(1)$
+      \State $e.tablaMasAccedida \gets \&t$                \Comment $O(1)$
+    \EndIf
+    \State $iter \gets VistaDicc\big(Obtener(t, e.hayJoin)\big)$   \Comment $O(1)$
+    \While{$HaySiguiente?(iter)$}          \Comment $O(\#tablas * ...)$
+      \State $AgregarAtras\big(<cr, false>, (Siguiente(iter).significado).cambiosT1\big)$\\         \Comment $O\big(copy(r)\big) = O(\#campos * dato\ mas\ costoso) = O(L)$
+      \State $Avanzar(iter)$           \Comment $O(1)$
+    \EndWhile
+    \State $iter \gets CrearIt\big(e.tablas)\big)$   \Comment $O(1)$
+    \While{$HaySiguiente?(iter)$}          \Comment $O(\#tablas * ...)$
+      \If{$Def?\big(t, Obtener(siguiente(iter), e.hayJoin)\big)$}       \Comment $O(1)$
+        \State $cambios \gets Obtener\big(t, Obtener(siguiente(iter), e.hayJoin)\big)$                \Comment $O(1)$
+        \State $agregarAtras\big(<r,false>, (cambios.significado).cambiosT2\big)$                \Comment $O(L)$
+      \EndIf
+      \State $Avanzar(iter)$           \Comment $O(1)$
+    \EndWhile
 
 
-        \medskip
-        \Statex \underline{Complejidad:} {\\
-\quad\quad Campo indexado $\implies$ $O\big(log\ n\ +\ |L|\ + \#tablas * |L|\big)$ = $O\big(log\ n\ +\ |L| * (\#tablas + 1)\big)$ = $O\big(log\ n\ +\ |L| * \#tablas\big)$ \\
-\quad\quad Campo no indexado $\implies$ $O\big(n * |L| + \#tablas * |L|\big)$ = $O\big(|L| * (n + \#tablas)\big)$
-}
-        \Statex \underline{Justificación:} {\\
-\quad\quad Obtener la tabla más accedida a partir de su nombre cuesta $O(Nombre\ mas\ largo\ de\ tabla\ de\ la\ base)$, pero como están acotadas en longitud de nombre, eso equivale a $O(1)$. \\
-\quad\quad Las operaciones \& y * para el tipo primitivo puntero cuestan $O(1)$. \\
-\quad\quad El puntero al nombre de la tabla más accedida se asigna por referencia en $O(1)$.\\
-\quad\quad VistaDicc exporta complejidad $O(1)$. \\
-\quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas). Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#Tablas(b)\big)$. \\
-\quad\quad BorrarRegistro exporta complejidad distinta dependiendo de si hay índice sobre el campo criterio y se suma al resto diferenciando cada caso.
-}
-      \end{algorithmic}
+    \medskip
+    \Statex \underline{Complejidad:} {\\
+    \quad\quad Campo indexado $\implies$ $O\big(log\ n\ +\ |L|\ + \#tablas * |L|\big)$ = $O\big(log\ n\ +\ |L| * (\#tablas + 1)\big)$ = $O\big(log\ n\ +\ |L| * \#tablas\big)$ \\
+    \quad\quad Campo no indexado $\implies$ $O\big(n * |L| + \#tablas * |L|\big)$ = $O\big(|L| * (n + \#tablas)\big)$
+    }
+    \Statex \underline{Justificación:} {\\
+    \quad\quad Obtener la tabla más accedida a partir de su nombre cuesta $O(Nombre\ mas\ largo\ de\ tabla\ de\ la\ base)$, pero como están acotadas en longitud de nombre, eso equivale a $O(1)$. \\
+    \quad\quad Las operaciones \& y * para el tipo primitivo puntero cuestan $O(1)$. \\
+    \quad\quad El puntero al nombre de la tabla más accedida se asigna por referencia en $O(1)$.\\
+    \quad\quad VistaDicc exporta complejidad $O(1)$. \\
+    \quad\quad En el peor caso se agrega por copia el registro a la lista de cambios de todas las demás tablas (asumiendo que tiene joins con todas). Eso equivale a $O(\#campos * dato\ mas\ costoso\ de\ copiar)$ por cada inserción, pero como los registros tienen cantidad de campos acotados, se reduce la complejidad a $O(L)$. Por lo tanto el ciclo cuesta $O\big(L * \#Tablas(b)\big)$. \\
+    \quad\quad BorrarRegistro exporta complejidad distinta dependiendo de si hay índice sobre el campo criterio y se suma al resto diferenciando cada caso.
+    }
+  \end{algorithmic}
 \end{algorithm}
 
 

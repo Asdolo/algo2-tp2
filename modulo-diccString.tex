@@ -1,34 +1,34 @@
-\section{M√≥dulo DiccionarioString(significado)}
+\section{MÛdulo DiccionarioString(significado)}
 
 \begin{Interfaz}
 
-  \textbf{par√°metros formales}\hangindent=2\parindent\\
-  \parbox{1.7cm}{\textbf{g√©neros}} significado\\
-  \parbox[t]{1.7cm}{\textbf{funci√≥n}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+  \textbf{par·metros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{gÈneros}} significado\\
+  \parbox[t]{1.7cm}{\textbf{funciÛn}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
     \InterfazFuncion{Copiar}{\In{sig}{significado}}{significado}
     [true]
     {$res$ $\igobs$ $sig$}
     [$O\big(copy(sig)\big)$]
-    [vuelve una copia del par√°metro.]
+    [vuelve una copia del par·metro.]
   }
 
   \textbf{se explica con}: \tadNombre{Diccionario Extendido(String, Significado)}.
 
-  \textbf{g√©neros}: \TipoVariable{diccString(significado)}.
+  \textbf{gÈneros}: \TipoVariable{diccString(significado)}.
 
   \textbf{servicios exportados}: \tadNombre{Todos los de la interfaz}
 
-  \textbf{servicios usados}\hangindent=2\parindent : Lista, itLista, Conjunto Lineal (c√°tedra) \\
+  \textbf{servicios usados}\hangindent=2\parindent : Lista, itLista, Conjunto Lineal (c·tedra) \\
 
   \textbf{}
 
-  \Titulo{Operaciones b√°sicas de diccString}
+  \Titulo{Operaciones b·sicas de diccString}
 
-  \InterfazFuncion{Vac√≠o}{}{diccString(significado)}
+  \InterfazFuncion{VacÌo}{}{diccString(significado)}
   [true]
   {$res$ $\igobs$ vacio}
   [$O(1)$]
-  [genera un DiccionarioString vac√≠o.]
+  [genera un DiccionarioString vacÌo.]
 
   \InterfazFuncion{Definir}{\In{clave}{string}, \In{significado}{significado}, \Inout{dicc}{diccString(significado)}}{}
   [$\neg$def?($clave$,$dicc$) $\land$ $dicc_0$ = $dicc$]
@@ -40,7 +40,7 @@
   [true]
   {$res$ $\igobs$ def?($clave$, $dicc$)}
   [$O\big(long(clave)\big)$]
-  [devuelve \texttt{true} si la clave est√° definida en el diccionario.]
+  [devuelve \texttt{true} si la clave est· definida en el diccionario.]
 
   \InterfazFuncion{Obtener}{\In{clave}{string}, \In{dicc}{diccString(significado)}}{significado}
   [def?($clave$, $dicc$)]
@@ -72,28 +72,28 @@
   \InterfazFuncion{Copiar}{\In{dicc}{diccString(significado)}}{diccString(significado)}
   [true]
   {$res$ $\igobs$ $dicc$}
-  [$O\big(\#claves(dicc) * max\{k, s\}\big)$, donde $k$ es la longitud m√°xima de cualquier clave en $dicc$ y $s$ el m√°ximo costo de copiar un significado de $dicc$ de dicho tipo.]
+  [$O\big(\#claves(dicc) * max\{k, s\}\big)$, donde $k$ es la longitud m·xima de cualquier clave en $dicc$ y $s$ el m·ximo costo de copiar un significado de $dicc$ de dicho tipo.]
   [devuelve una copia sin aliasing del diccionario de entrada.]
 
   \InterfazFuncion{Min}{\In{dicc}{diccString(significado)}}{string}
   [\#claves($e$) > 0]
   {alias($res$ $\igobs$ $m$) | $\big(\forall$ $n$ $\in$ claves($dicc$)$\big)$ ($m$ $\le$ $n$) $\land$ ($m$ $\in$ claves($dicc$))}
   [$O\big(long\big(|min(claves(dicc))|\big)\big)$]
-  [Devuelve la clave m√≠nima del diccionario seg√∫n orden lexicogr√°fico.]
+  [Devuelve la clave mÌnima del diccionario seg˙n orden lexicogr·fico.]
   [res no es modificable]
 
   \InterfazFuncion{Max}{\In{dicc}{diccString(significado)}}{string}
   [\#claves($e$) > 0]
   {alias($res$ $\igobs$ $m$) | $\big(\forall$ $n$ $\in$ claves($dicc$)$\big)$ ($m$ $\ge$ $n$) $\land$ ($m$ $\in$ claves($dicc$))}
   [$O\big(long\big(|max(claves(dicc))|\big)\big)$]
-  [Devuelve la clave m√°xima del diccionario seg√∫n orden lexicogr√°fico.]
+  [Devuelve la clave m·xima del diccionario seg˙n orden lexicogr·fico.]
   [res no es modificable]
 
 \end{Interfaz}
 
 \begin{Representacion}
 
-  \Titulo{Representaci√≥n de diccString}
+  \Titulo{RepresentaciÛn de diccString}
 
   \begin{Estructura}{diccString(significado)}[estrDiccString]
 
@@ -109,8 +109,8 @@
   \end{Estructura}
 
   \Rep[estrDiccString][e]{\\
-  1) Un significado est√° en la lista de valores si y s√≥lo si hay un nodo en $e$.trie que apunta a un iterador cuyo siguiente es ese valor. \\
-  2) La clave de ese valor corresponde al string formado concatenando los valores char del √≠ndice de cada hijo que se recorre, dicho recorrido es √∫nico (p.e: $"Alas"$ solamente est√° definido si el nodo correspondiente al recorrido A$\to$L$\to$A$\to$S apunta a un valor no nulo). Por lo tanto, el primer nodo no puede apuntar a un valor v√°lido. \\
+  1) Un significado est· en la lista de valores si y sÛlo si hay un nodo en $e$.trie que apunta a un iterador cuyo siguiente es ese valor. \\
+  2) La clave de ese valor corresponde al string formado concatenando los valores char del Ìndice de cada hijo que se recorre, dicho recorrido es ˙nico (p.e: $"Alas"$ solamente est· definido si el nodo correspondiente al recorrido A$\to$L$\to$A$\to$S apunta a un valor no nulo). Por lo tanto, el primer nodo no puede apuntar a un valor v·lido. \\
   3) cantHijos es igual a la cantidad de punteros no nulos en hijos. \\
   4) No existen dos nodos en la estructura recursiva que compartan alguno de sus hijos.\\
 
@@ -153,7 +153,7 @@ FI}
 
       \medskip
       \Statex \underline{Complejidad:} {$O(1)$}
-      \Statex \underline{Justificaci√≥n:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+      \Statex \underline{JustificaciÛn:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
 
       \end{algorithmic}
 \end{algorithm}
@@ -167,7 +167,7 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O(1)$}
-        \Statex \underline{Justificaci√≥n:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
+        \Statex \underline{JustificaciÛn:} {Todas las funciones llamadas tienen complejidad $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -194,8 +194,8 @@ FI}
         \medskip
         \Statex \underline{Complejidad:} {$O\big(Longitud(clave)\big)$ + $O\big(copy(clave)\big)$ + $O\big(copy(significado)\big)$ \\
         \somequad = $O\big(max\{Longitud(clave), copy(significado)\}\big)$}
-        \Statex \underline{Justificaci√≥n:} {\\
-\quad\quad Para definir creamos una tupla y copiamos la clave y el significado, por lo tanto tenemos en complejidad la copia del m√°s grande de los dos, es decir, $O\big(copy(clave)\big)$ + $O\big(copy(significado)\big)$ = $O(L)$ + $O\big(copy(significado)\big)$. \\
+        \Statex \underline{JustificaciÛn:} {\\
+\quad\quad Para definir creamos una tupla y copiamos la clave y el significado, por lo tanto tenemos en complejidad la copia del m·s grande de los dos, es decir, $O\big(copy(clave)\big)$ + $O\big(copy(significado)\big)$ = $O(L)$ + $O\big(copy(significado)\big)$. \\
 \quad\quad Luego se hace un ciclo que se realiza $L$ veces y hace operaciones $O(1)$. \\
 \quad\quad Por lo tanto la complejidad queda $O(L)$ + $O\big(copy(significado)\big)$ + $O(L)$. Por ser sumas queda la mayor de ellas, es decir $max\{2*O(L), O\big(copy(significado)\big)\}$ = $O\big(max\{L, copy(significado)\}\big)$ \\
 \quad\quad $L$: Longitud de la clave.
@@ -230,7 +230,7 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(long(clave)\big)$}
-        \Statex \underline{Justificaci√≥n:} {El ciclo itera a lo sumo long($clave$) veces.}
+        \Statex \underline{JustificaciÛn:} {El ciclo itera a lo sumo long($clave$) veces.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -244,7 +244,7 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(long(clave)\big)$}
-        \Statex \underline{Justificaci√≥n:} {El ciclo itera a lo sumo long($clave$) veces.}
+        \Statex \underline{JustificaciÛn:} {El ciclo itera a lo sumo long($clave$) veces.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -259,7 +259,7 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(long(e.valores) * M\big)$, donde $M$ es la longitud del mayor string clave en $e$.valores.}
-        \Statex \underline{Justificaci√≥n:} {El ciclo itera toda la lista copiando la clave de cada elemento. Se acota el costo de copiado de todos los elementos por el del copiado de mayor longitud.}
+        \Statex \underline{JustificaciÛn:} {El ciclo itera toda la lista copiando la clave de cada elemento. Se acota el costo de copiado de todos los elementos por el del copiado de mayor longitud.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -269,7 +269,7 @@ FI}
         \State $listo \gets false$ \Comment $O(1)$
 
         \For{$i \gets 0 \ \TO Longitud(clave) - 1$}     \Comment $O\big(long(clave) * ...\big)$
-          \State $temp \gets \big(actual \to hijos\big[ord(clave[i])\big]\big)$ \comentariorandom{guardamos a d√≥nde apunta} \Comment $O(1)$
+          \State $temp \gets \big(actual \to hijos\big[ord(clave[i])\big]\big)$ \comentariorandom{guardamos a dÛnde apunta} \Comment $O(1)$
           \If{$\big(actual \to hijos\big[ord(clave[i])\big]\big) \to cantHijos = 0$} \Comment $O(1)$
             \State $\big(actual \to hijos\big[ord(clave[i])\big]\big) \gets NULL$ \Comment $O(1)$
           \EndIf
@@ -279,7 +279,7 @@ FI}
         \State $EliminarSiguiente\big(*(actual \to valor)\big)$ \Comment $O(1)$
         \State $ $
 
-        \comentario{crea un iterador uniendo la lista antes del elemento m√°s la lista despu√©s del elemento}
+        \comentario{crea un iterador uniendo la lista antes del elemento m·s la lista despuÈs del elemento}
         \State $(actual \to valor) \gets NULL$ \Comment $O(1)$
         \State $actual \gets \&e.trie$ \Comment $O(1)$
 
@@ -296,7 +296,7 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(long(clave)\big)$}
-        \Statex \underline{Justificaci√≥n:} {Ambos ciclos iteran a lo sumo long($clave$) veces.}
+        \Statex \underline{JustificaciÛn:} {Ambos ciclos iteran a lo sumo long($clave$) veces.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -307,7 +307,7 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O(1)$}
-        \Statex \underline{Justificaci√≥n:} {El algoritmo tiene una √∫nica llamada a una funci√≥n con costo $O(1)$.}
+        \Statex \underline{JustificaciÛn:} {El algoritmo tiene una ˙nica llamada a una funciÛn con costo $O(1)$.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -322,8 +322,8 @@ FI}
         \EndWhile
 
         \medskip
-        \Statex \underline{Complejidad:} {$O\big(long(e.valores) * max\{K, S\}\big)$, donde $K$ es la longitud m√°xima de cualquier clave en $e$ y $S$ el m√°ximo costo de copiar un significado de $e$ de dicho tipo.}
-        \Statex \underline{Justificaci√≥n:} {El ciclo itera toda la lista definiendo cada clave en un nuevo diccionario.}
+        \Statex \underline{Complejidad:} {$O\big(long(e.valores) * max\{K, S\}\big)$, donde $K$ es la longitud m·xima de cualquier clave en $e$ y $S$ el m·ximo costo de copiar un significado de $e$ de dicho tipo.}
+        \Statex \underline{JustificaciÛn:} {El ciclo itera toda la lista definiendo cada clave en un nuevo diccionario.}
       \end{algorithmic}
 \end{algorithm}
 
@@ -348,12 +348,12 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(long\big(|min(claves(e))|\big)\big)$}
-        \Statex \underline{Justificaci√≥n:} {\\
-\quad\quad En el algoritmo hay un ciclo principal (while) y un ciclo interno (for) y luego fuera de los ciclos operaciones $O(1)$. El ciclo del while itera hasta que encuentra la primer palabra completa recorriendo desde el nodo del trie buscando siempre desde el primer char hasta el √∫ltimo. \\
+        \Statex \underline{JustificaciÛn:} {\\
+\quad\quad En el algoritmo hay un ciclo principal (while) y un ciclo interno (for) y luego fuera de los ciclos operaciones $O(1)$. El ciclo del while itera hasta que encuentra la primer palabra completa recorriendo desde el nodo del trie buscando siempre desde el primer char hasta el ˙ltimo. \\
 \quad\quad Entonces iteramos $L$ veces, por lo tanto tenemos $O(L)$. Pero dentro del while hay un ciclo interno(for) que itera siempre 255 veces, por lo tanto tenemos de complejidad $O(L*255)$. La constante se puede sacar y queda $O(L)$. \\
 \quad\quad Todas las operaciones internas de los ciclos son $O(1)$.\\
 \\
-\quad\quad $L$: Longitud de la clave m√≠nima del diccionario.
+\quad\quad $L$: Longitud de la clave mÌnima del diccionario.
 
         }
       \end{algorithmic}
@@ -365,7 +365,7 @@ FI}
         \State $termine \gets false$ \Comment $O(1)$
 
         \While{$\NOT termine$} \Comment $O(L * ...)$
-          \comentario{Quiero que mientras haya hijos se meta en el √≠ndice m√°s grande}
+          \comentario{Quiero que mientras haya hijos se meta en el Ìndice m·s grande}
           \If{$(actual \to cantHijos) = 0$} \Comment $O(1)$
             \State $res \gets Siguiente\big(*(actual \to valor)\big).clave$ \Comment $O(1)$
             \State $termine \gets true $   \Comment $O(1)$
@@ -386,12 +386,12 @@ FI}
 
         \medskip
         \Statex \underline{Complejidad:} {$O\big(long\big(|min(claves(e))|\big)\big)$}
-        \Statex \underline{Justificaci√≥n:} {\\
-\quad\quad En el algoritmo hay un ciclo principal (while)  y un ciclo interno (for) y luego fuera de los ciclos operaciones $O(1)$.El ciclo del while itera hasta que encuentra la primer palabra completa recorriendo desde el nodo del trie buscando siempre desde el √∫ltimo char hasta el primero. \\
+        \Statex \underline{JustificaciÛn:} {\\
+\quad\quad En el algoritmo hay un ciclo principal (while)  y un ciclo interno (for) y luego fuera de los ciclos operaciones $O(1)$.El ciclo del while itera hasta que encuentra la primer palabra completa recorriendo desde el nodo del trie buscando siempre desde el ˙ltimo char hasta el primero. \\
 \quad\quad Entonces iteramos L veces por lo tanto tenemos $O(L)$. Pero dentro del while hay un ciclo interno(for) que itera siempre 255 veces, por lo tanto tenemos de complejidad $O(L*255)$. La constante se puede sacar y queda $O(L)$.\\
 \quad\quad Todas las operaciones internas de los ciclos son $O(1)$.\\
 \\
-\quad\quad $L$: Longitud de la clave m√°xima del diccionario.
+\quad\quad $L$: Longitud de la clave m·xima del diccionario.
         }
       \end{algorithmic}
 \end{algorithm}
