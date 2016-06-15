@@ -451,11 +451,11 @@
     \State $res.registros \gets Vacio()$                \Comment $O(1)$
     \State $res.nombre \gets Copiar(nombre)$            \Comment $O(|nombre|) = O(1)$
     \State $res.campos \gets Vacio()$                   \Comment $O(1))$
-    \State $ iter \gets VistaDicc(columnas)  $          \Comment $O(1)$
-    \While{$ HaySiguiente(iter) $}                      \Comment $O(\#campos(columnas)*..)=O(1*..)$
-      \State $ Definir(Siguiente(iter).clave, Nat?(Siguiente(iter).significado, res.campos)) $
-      \State $ $                                        \Comment $O(|$max nombre de campo$|)=O(1)$
-      \State $ Avanzar(iter) $                          \Comment $O(1)$
+    \State $iter \gets VistaDicc(columnas)  $           \Comment $O(1)$
+    \While{$HaySiguiente(iter)$}                        \Comment $O\big(\#campos(columnas) * ...\big) = O(1 * ...)$
+      \State $Definir\big(Siguiente(iter).clave, Nat?(Siguiente(iter).significado, res.campos)\big)$
+      \State $ $                                        \Comment $O\big(|max\ nombre\ de\ campo|\big) = O(1)$
+      \State $Avanzar(iter) $                          \Comment $O(1)$
     \EndWhile
     \State $res.claves \gets Copiar(claves)$            \Comment $O(\#claves * L)$
     \State $res.campoIndexadoNat \gets Vacio()$         \Comment $O(1)$
@@ -466,8 +466,8 @@
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {\\
 \quad\quad Todas las asignaciones que no usen copias son $O(1)$. Copiar el nombre es cte. porque, por enunciado los nombres de las tablas son acotados. \\
-\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre más largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos también son acotados y también la cantidad de campos por tabla (es decir \#claves <\ $n$, para algún $n$ natural).
-Vale lo mismo para definir las columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave más larga del diccionario (los significados de tipo bool para Nat? se consultan y copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
+\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre más largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos también son acotados y también la cantidad de campos por tabla (es decir \#claves <\ $n$, para algún $n$ natural).\\
+\quad\quad Vale lo mismo para definir las columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave más larga del diccionario (los significados de tipo bool para Nat? se consultan y copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
   }
   \end{algorithmic}
 \end{algorithm}
