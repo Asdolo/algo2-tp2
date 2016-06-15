@@ -44,7 +44,7 @@
   {$res$ $\igobs$ indices($t$)}
   [$O(1)$]
   [devuelve el conjunto de campos con índice de la tabla indicada.]
-  [No hay aliasing, se devuelve por copia]
+  [no hay aliasing, se devuelve por copia.]
 
   \InterfazFuncion{Campos}{\In{t}{tabla}}{itBi(campo)}
   [true]
@@ -150,7 +150,7 @@
   \noindent\tab 3) Los significados de indicesString e indicesNat pertenecen a registros. \\
   \noindent\tab 4) Todos los registros estan indexados. \\
   \noindent\tab 5) Claves esta entre los campos y no es vacio. \\
-  \noindent\tab 6) Todos los valores de los registros son menores o iguales al maximo y mayor o iguales al minimo para cada campo indexado. \\
+  \noindent\tab 6) Todos los valores de los registros son menores o iguales al máximo y mayor o iguales al mínimo para cada campo indexado. \\
   \noindent\tab 7) Para cada campo indexado, hay un registro cuyo valor en ese campo es el maximo y un registro cuyo valor es el minimo. \\
   \noindent\tab 8) Si un campo es clave no puede haber dos registros con mismo dato en ese campo. \\
   \noindent\tab 9) El tipo de dato en registro corresponde al tipo de dato en campos y las claves de los registros son los campos de la tabla. \\
@@ -159,7 +159,7 @@
   \noindent\tab 12) Tamaño de las listas 'campoIndexado...' es menor o igual a 1. \\
   \noindent\tab 13) El bool 'vacio?' de las tuplas de campoIndexado valen true si y solo si sus respectivos diccionarios están vacíos. \\
   \noindent\tab 14) Si no hay un campoIndexado de cierto tipo, el diccionario correspodiente, esta vacío.\\
-  \noindent\tab 15) No hay dos registros con mismo valor para un campo clave \\
+  \noindent\tab 15) No hay dos registros con mismo valor para un campo clave. \\
 
   \Rep[estrTabla][e]{}
     \noindent\tab\tab\textbf{1)} $\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
@@ -227,8 +227,8 @@
     \noindent\tab\tab $\big($prim($e$.campoIndexadoString)$\big)$.vacio? $\ssi$ $\big(\#$claves($e$.indicesString) $\igobs$ 0$\big)$\\
     \noindent\tab\tab\textbf{14)} $e$.campoIndexadoNat $\igobs$ <> $\implies$ claves($e$.indicesNat) $\igobs$ $\emptyset$ $\land$ \\
     \noindent\tab\tab $e$.campoIndexadoString $\igobs$ <> $\implies$ claves($e$.indicesString) $\igobs$ $\emptyset$ \\
-    \noindent\tab\tab\textbf{15)} ($\forall $ $r_1$, $r_2$: registro, \{$r_1$, $r_2$\} $\subset$ $ e$.registros) \\
-    \noindent\tab\tab $\neg$ ($\exists $ $c $: campo, $c $ $\in $ $e$.claves) \ obtener($c$,$r_1$) $\igobs$ obtener($c$,$r_2$)
+    \noindent\tab\tab\textbf{15)} ($\forall $ $r_1$, $r_2$ : registro, \{$r_1$, $r_2$\} $\subset$ $e$.registros) \\
+    \noindent\tab\tab $\neg$ ($\exists$ $c$ : campo, $c$ $\in$ $e$.claves)\ $\big($obtener($c$, $r_1$) $\igobs$ obtener($c$, $r_2$)$\big)$
     \\
 
 \medskip
@@ -352,10 +352,10 @@
           \Else
             \comentario{comparamos por valorNat porque es O(1) vs comparar por dato}
             \If{$ValorNat(dato) = ValorNat\big(Primero(e.campoIndexadoNat).max\big)$} \Comment $O(1)$
-                \State $Primero(e.campoIndexadoNat).max \gets DatoNat\big(\Pi_1\big(Max(e.indicesNat)\big)\big)$ \Comment $O(Log(n))$
+                \State $Primero(e.campoIndexadoNat).max \gets DatoNat\big(\Pi_1\big(Max(e.indicesNat)\big)\big)$ \Comment $O(log\ n)$
             \EndIf
             \If{$ValorNat(dato) = ValorNat\big(Primero(e.campoIndexadoNat).min\big)$} \Comment $O(1)$
-                \State $Primero(e.campoIndexadoNat).min \gets DatoNat\big(\Pi_1\big(Min(e.indicesNat)\big)\big)$ \Comment $O(Log(n))$
+                \State $Primero(e.campoIndexadoNat).min \gets DatoNat\big(\Pi_1\big(Min(e.indicesNat)\big)\big)$ \Comment $O(log\ n)$
             \EndIf
           \EndIf
 
@@ -395,32 +395,32 @@
         \State $iter \gets CrearIt(e.registros)$                  \Comment $O(1)$
         \While{$HaySiguiente(iter)$}                              \Comment $O(n * ...)$
           \If{$Obtener\big(clave, Siguiente(iter)\big) = dato$}   \Comment $O(|L|)$
-          \comentario [Borro de los índices, si hay]
-            \If{$ \neg Vacia(e.campoIndexadoNat)$}    \Comment $O(1)$
-              \State $ regi \gets Siguiente(iter) $ \Comment $O(1)$
-              \State $ valorIndex \gets valorNat(Obtener(Primero(e.campoIndexadoNat)).nombre, regi) $ \Comment $O(1)$
-              \State $ conjIters \gets Obtener(valorIndex, e.indicesNat) $                          \Comment $O(log(n))$
-              \State $ itDeIters \gets CrearIt(conjIters) $                                         \Comment $O(1)$
-              \While{$ HaySiguiente(itDeIters) $}                                                   \Comment $O(n*..)$
-                \comentario [Si apunto al registro que quiero borrar, actualizo el índice]
-                \If{$ Siguiente(Siguiente(itDeIters)) = regi $}                                     \Comment $O(1)$
-                  \State $ EliminarSiguiente(itDeIters) $                                           \Comment $O(1)$
+          \comentario{Borro de los índices, si hay}
+            \If{$\NOT Vacia?(e.campoIndexadoNat)$}    \Comment $O(1)$
+              \State $regi \gets Siguiente(iter) $ \Comment $O(1)$
+              \State $valorIndex \gets ValorNat\big(Obtener(Primero(e.campoIndexadoNat)).nombre, regi\big) $ \Comment $O(1)$
+              \State $conjIters \gets Obtener(valorIndex, e.indicesNat)$                          \Comment $O(log\ n)$
+              \State $itDeIters \gets CrearIt(conjIters)$                                         \Comment $O(1)$
+              \While{$HaySiguiente(itDeIters) $}                                                   \Comment $O(n * ...)$
+                \comentario{Si apunto al registro que quiero borrar, actualizo el índice}
+                \If{$Siguiente\big(Siguiente(itDeIters)\big) = regi$}                                     \Comment $O(1)$
+                  \State $EliminarSiguiente(itDeIters)$                                           \Comment $O(1)$
                 \EndIf
               \EndWhile
 
-            \Elsif{$ \neg Vacia(e.campoIndexadoString) $}                                  \Comment $O(1)$
-              \State $ regi \gets Siguiente(iter) $                       \Comment $O(1)$
-              \State $ valorIndex \gets valorStr(Obtener(Primero(e.campoIndexadoString)).nombre, regi) $  \Comment $O(L)$
-              \State $ conjIters \gets Obtener(valorIndex, e.indicesString) $                             \Comment $O(L)$
-              \State $ itDeIters \gets CrearIt(conjIters) $                                           \Comment $O(1)$
-              \While{$ HaySiguiente(itDeIters) $}                                         \Comment $O(n*..)$
-                \comentario [Si apunto al registro que quiero borrar, actualizo el índice]
-                \If{$ Siguiente(Siguiente(itDeIters)) = regi $}                     \Comment $O(1)$
-                  \State $ EliminarSiguiente(itDeIters) $                           \Comment $O(1)$
+            \ElsIf{$\NOT Vacia?(e.campoIndexadoString)$}                                  \Comment $O(1)$
+              \State $regi \gets Siguiente(iter)$                       \Comment $O(1)$
+              \State $valorIndex \gets ValorStr\big(Obtener(Primero(e.campoIndexadoString)\big).nombre, regi)$  \Comment $O(L)$
+              \State $conjIters \gets Obtener(valorIndex, e.indicesString)$                             \Comment $O(L)$
+              \State $itDeIters \gets CrearIt(conjIters)$                                           \Comment $O(1)$
+              \While{$HaySiguiente(itDeIters)$}                                         \Comment $O(n * ...)$
+                \comentario{Si apunto al registro que quiero borrar, actualizo el índice}
+                \If{$Siguiente\big(Siguiente(itDeIters)\big) = regi$}                     \Comment $O(1)$
+                  \State $EliminarSiguiente(itDeIters)$                           \Comment $O(1)$
                 \EndIf
               \EndWhile
             \EndIf
-            \comentario [Ahora sí lo borro del conj]
+            \comentario{Ahora sí lo borro del conj}
             \State $EliminarSiguiente(iter)$                      \Comment $O(1)$
           \EndIf
           \State $Avanzar(iter)$                                  \Comment $O(1)$
@@ -431,10 +431,9 @@
 
       \medskip
       \Statex \underline{Complejidad:} {\\
-\quad\quad Criterio sobre campo indexado $\implies$ $O(log n + L)$. \\
+\quad\quad Criterio sobre campo indexado $\implies$ $O(log\ n + L)$. \\
 \quad\quad Criterio sobre campo no indexado $\implies$ $O(n*|L|)$. \\
-\textcolor{red}{LAN: COMPLETAR CON LA COMPLEJIDAD/JUSTIFIACION POSTA!!!!!!!!!!!!!!!}
-
+\textcolor{red}{LAN: COMPLETAR CON LA COMPLEJIDAD/JUSTIFIACION POSTA!!!!!!!!!!!!!!!}. \\
 \quad\quad Siendo $n$ la cantidad total de registros de la tabla y $L$ el valor string más largo de todos los datos comparados.}
 
       \Statex \underline{Justificación:} {\\
@@ -452,11 +451,11 @@
     \State $res.registros \gets Vacio()$                \Comment $O(1)$
     \State $res.nombre \gets Copiar(nombre)$            \Comment $O(|nombre|) = O(1)$
     \State $res.campos \gets Vacio()$                   \Comment $O(1))$
-    \State $ iter \gets VistaDicc(columnas)  $          \Comment $O(1)$
-    \While{$ HaySiguiente(iter) $}                      \Comment $O(\#campos(columnas)*..)=O(1*..)$
-      \State $ Definir(Siguiente(iter).clave, Nat?(Siguiente(iter).significado, res.campos)) $
-      \State $ $                                        \Comment $O(|$max nombre de campo$|)=O(1)$
-      \State $ Avanzar(iter) $                          \Comment $O(1)$
+    \State $iter \gets VistaDicc(columnas)  $           \Comment $O(1)$
+    \While{$HaySiguiente(iter)$}                        \Comment $O\big(\#campos(columnas) * ...\big) = O(1 * ...)$
+      \State $Definir\big(Siguiente(iter).clave, Nat?(Siguiente(iter).significado, res.campos)\big)$
+      \State $ $                                        \Comment $O\big(|max\ nombre\ de\ campo|\big) = O(1)$
+      \State $Avanzar(iter) $                          \Comment $O(1)$
     \EndWhile
     \State $res.claves \gets Copiar(claves)$            \Comment $O(\#claves * L)$
     \State $res.campoIndexadoNat \gets Vacio()$         \Comment $O(1)$
@@ -467,8 +466,8 @@
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {\\
 \quad\quad Todas las asignaciones que no usen copias son $O(1)$. Copiar el nombre es cte. porque, por enunciado los nombres de las tablas son acotados. \\
-\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre más largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos también son acotados y también la cantidad de campos por tabla (es decir \#claves <\ $n$, para algún $n$ natural).
-Vale lo mismo para definir las columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave más larga del diccionario (los significados de tipo bool para Nat? se consultan y copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
+\quad\quad Copiar claves tiene complejidad $O(\#claves * L)$, donde $L$ es el nombre más largo de cualquier clave, que se reduce a $O(1)$ porque por enunciado los nombres de los campos también son acotados y también la cantidad de campos por tabla (es decir \#claves <\ $n$, para algún $n$ natural).\\
+\quad\quad Vale lo mismo para definir las columnas, que pasa de ser $O(\#claves(columnas) * M)$ siendo $M$ el nombre de la clave más larga del diccionario (los significados de tipo bool para Nat? se consultan y copian en $O(1)$) a ser $O(1)$ por los factores ya mencionados.
   }
   \end{algorithmic}
 \end{algorithm}
