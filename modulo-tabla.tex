@@ -92,9 +92,10 @@
   [\#campos($criterio$) $\igobs$ 1 $\yluego$ dameUno$\big($campos($criterio$)$\big)$ $\in$ claves($t$) $\land$ $t_0$ = $t$]
   {$t$ $\igobs$ borrarRegistro($criterio$, $t_0$)}
   [\\
-  \tab Criterio sobre campo indexado $\implies$ $O(log\ n\ +\ L)$. \\
-  \tab Criterio sobre campo no indexado $\implies$ $O(n * |L|)$. \\
-  \tab Donde $n$ es la cantidad total de registros de la tabla y $L$ el valor string más largo de todos los datos comparados.]
+  \tab Criterio sobre campo indexado nat $\implies$ $O(log\ n + |L|)$. \\
+  \tab Criterio sobre campo indexado str $\implies$ $O(|L|)$. \\
+  \tab Criterio sobre campo no indexado $\implies$ $O(n + |L|)$. \\
+  \tab Siendo $n$ la cantidad total de registros de la tabla y $L$ el valor string más largo de todos los datos comparados.]
   [borra un registro de la tabla.]
 
   \InterfazFuncion{Indexar}{\In{c}{campo}, \Inout{t}{tabla}}{}
@@ -339,7 +340,7 @@
       \State $ $
       \comentario{Si el criterio es un índice tenemos que recorrer el conjunto de iteradores a registros con un iterador borrando todos, si no hay que recorrer registros linealmente}
 
-      \If{$\big(Primero(e.campoIndexadoNat)\big).nombre = clave$} \Comment $O(|L|)$
+      \If{$\big(Primero(e.campoIndexadoNat)\big).nombre = clave$} \Comment $O(1)$
         \If{$Def?(ValorNat(dato), e.indicesNat)$}                 \Comment $O(log\ n) \ promedio$
           \State $iterador \gets CrearIt\big(Obtener(ValorNat(dato), e.indicesNat)\big)$                           \Comment $O(log\ n) \ promedio$
           \comentario{es clave, por lo tanto es el único en el conjunto, lo borro de e.registros:}
@@ -360,7 +361,7 @@
           \EndIf
 
         \EndIf
-      \ElsIf{$\big(Primero(e.campoIndexadoString)\big).nombre = clave$}  \Comment $O(|L|)$
+      \ElsIf{$\big(Primero(e.campoIndexadoString)\big).nombre = clave$}  \Comment $O(1)$
         \If{$Def?\big(ValorString(dato), e.indicesString\big)$}   \Comment $O(|L|)$
           \State $iterador \gets CrearIt\big(Obtener(ValorStr(dato), e.indicesString)\big)$ \Comment $O(|L|)$
           \State $EliminarSiguiente\big(Siguiente(iterador)\big)$ \Comment $O(1)$
@@ -394,7 +395,7 @@
 
         \State $iter \gets CrearIt(e.registros)$                  \Comment $O(1)$
         \While{$HaySiguiente(iter)$}                              \Comment $O(n * ...)$
-          \If{$Obtener\big(clave, Siguiente(iter)\big) = dato$}   \Comment $O(|L|)$
+          \If{$Obtener\big(clave, Siguiente(iter)\big) = dato$}   \Comment $O(max\ dato) = O(|L|)$
           \comentario{Borro de los índices, si hay}
             \If{$\NOT Vacia?(e.campoIndexadoNat)$}    \Comment $O(1)$
               \State $regi \gets Siguiente(iter) $ \Comment $O(1)$
@@ -408,7 +409,7 @@
                 \EndIf
               \EndWhile
 
-            \ElsIf{$\NOT Vacia?(e.campoIndexadoString)$}                                  \Comment $O(1)$
+            \ElsIf{$\NOT Vacia?(e.campoIndexadoString)$}                \Comment $O(1)$
               \State $regi \gets Siguiente(iter)$                       \Comment $O(1)$
               \State $valorIndex \gets ValorStr\big(Obtener(Primero(e.campoIndexadoString)\big).nombre, regi)$  \Comment $O(L)$
               \State $conjIters \gets Obtener(valorIndex, e.indicesString)$                             \Comment $O(L)$
@@ -431,15 +432,17 @@
 
       \medskip
       \Statex \underline{Complejidad:} {\\
-\quad\quad Criterio sobre campo indexado $\implies$ $O(log\ n + L)$. \\
-\quad\quad Criterio sobre campo no indexado $\implies$ $O(n*|L|)$. \\
-\textcolor{red}{LAN: COMPLETAR CON LA COMPLEJIDAD/JUSTIFIACION POSTA!!!!!!!!!!!!!!!}. \\
+\quad\quad Criterio sobre campo indexado nat $\implies$ $O(log\ n + |L|)$. \\
+\quad\quad Criterio sobre campo indexado str $\implies$ $O(|L|)$. \\
+\quad\quad Criterio sobre campo no indexado $\implies$ $O(n + log\ n + |L|) = O(n + |L|)$. \\
 \quad\quad Siendo $n$ la cantidad total de registros de la tabla y $L$ el valor string más largo de todos los datos comparados.}
-
+\\
+\quad\quad
       \Statex \underline{Justificación:} {\\
-\quad\quad En peor caso sobre campo indexado recorre el diccNat o el diccString para encontrar el iterador (el conjunto significado tiene longitud 1 por ser un campo clave) al conjunto y eliminarlo. Buscar en diccNat en promedio es $O(log\ n)$ dado que se inserta con probabilidad uniforme. Buscar en diccString es $O(L)$ en el peor caso. \\
-\quad\quad Se agrega el costo de actualizar el máximo, que es $O(log\ n)$ para índice nat y $O(L\ +\ L)$ = $O(L)$ (por comparar con máximo y mínimo actual y luego buscar máximo y mínimo respectivamente) para índice string, la inserción es por referencia aún así. Por lo tanto el máximo y mínimo se actualiza en $O(log\ n\ +\ L)$. \\
-\quad\quad En el peor caso sobre campo no indexado debe recorrer todo el conjunto de registros de la tabla preguntando si el dato de cada registro coincide con el criterio para eliminarlo.}
+\quad\quad Si criterio está indexado solamente hay que eliminar con el iterador resultante de buscar por criterio en índices (es clave por enunciado, por lo tanto es el único en el conjunto) y actualizar, en caso de que no haya quedado vacío el diccionario, max/min en $O(log\ n)$ si es nat, $O(L)$ si es string \\
+\quad\quad Si bien en peor caso estaríamos recorriendo linealmente todos los registros, consultando sus datos para cada campo indice y recorriendo el conjunto de ese índice (que en peor caso contiene a todos los registros) y eso es orden cuadrático en $n$. En realidad este peor caso no ocurre porque el criterio es clave y solamente se va a recorrer una única vez el conjunto de iteradores del índice (y no en todas como peor caso), accediendo una única vez al cuerpo del if.
+Por lo tanto pasa de orden cuadrático en la cantidad de registros parar el peor caso a ser lineal en ellos.
+      }
       \end{algorithmic}
 \end{algorithm}
 
