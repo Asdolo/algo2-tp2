@@ -162,11 +162,16 @@
 
   \Rep[estr][e]{}
 
+<<<<<<< HEAD
   \noindent\tab\tab\bigpar {\textbf{1)} 
     $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\yluego$ 
     nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$ \\
     $s$ $\in$ $e$.tablas)} $\land$ \\
 
+=======
+  \noindent\tab\tab\bigpar {\textbf{1)} $\big(\forall$ $s$ : string$\big)$ $\Big(s$ $\in$ claves($e$.nombreATabla) $\ssi$ nombre$\big($obtener($s$, $e$.nombreATabla)$\big)$ $\igobs$ $s\Big)$ $\ssi$\\
+    $\big($esta?($s$, $e$.tablas) $\land$ sinRepetidos($e$.tablas)$\big)$} $\land$\\
+>>>>>>> f4c8557bfab2483cedf8199b11946af8d4db5e5f
     \noindent\tab\tab\bigpar{\textbf{2)} $e$.tablaMasAccedida $\in$ claves($e$.nombreATabla) $\yluego$ $\big(\forall$ $n$ : string, $n$ $\in$ claves($e$.nombreATabla)$\big)$\\
     cantAccesos$\big($obtener($n$, $e$.nombreATabla)$\big)$ $\le$ cantAccesos$\big($obtener(*$e$.tablaMasAccedida, $e$.nombreATabla)$\big)$}$\land$\\
 
@@ -459,9 +464,15 @@
   \end{algorithmic}
 \end{algorithm}
 
+<<<<<<< HEAD
 
 
 
+=======
+
+
+
+>>>>>>> f4c8557bfab2483cedf8199b11946af8d4db5e5f
 
 \begin{algorithm}[H]{\textbf{iCombinarRegistros}(\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}) $\to$ $res$ : conj(registro)}
 \begin{algorithmic}
@@ -932,9 +943,6 @@
 \end{algorithm}
 
 
-\end{Algoritmos}
-
-
 
 \begin{algorithm}[H]{\textbf{iBusquedaCriterio}(\In{criterio}{Registro}, \In{t}{string}, \In{b}{estr}) $\to$ $res$ : conj(registro)}
   \begin{algorithmic}
@@ -999,3 +1007,4 @@
 
 
 \end{Algoritmos}
+
