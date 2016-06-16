@@ -164,8 +164,8 @@
 
   \Rep[estrTabla][e]{}
     \noindent\tab\tab\textbf{1)} $\big(\neg$vacia?($e$.campoIndexadoString)$\big)$ $\implies$\\
-    \noindent\tab\tab\bigpar{$\big(\forall$ $c$ : string, $c$ $\in$ claves($e$.indicesString)$\big)$
-    $\big(\forall$ $r$ : itConj(registro), $r$ $\in$ obtener($c$, $e$.indicesString)$\big)$\\
+    \noindent\tab\tab\bigpar{$\big(\forall$ $c$ : string) ($c$ $\in$ claves($e$.indicesString)$\big)$ $\impluego$
+    $\big(\forall$ $r$ : itConj(registro)) ($r$ $\in$ obtener($c$, $e$.indicesString)$\big)$ $\impluego$ \\
     $\Big($valorStr$\big($obtener$\big($campoIndexString, siguiente($r$)$\big)\big)$ = $c\Big)$
     }\\
     \noindent\tab\tab\textbf{2)} $\big(\neg$vacia?($e$.campoIndexadoNat)$\big)$ $\implies$\\
