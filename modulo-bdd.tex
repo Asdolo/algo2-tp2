@@ -24,7 +24,7 @@
   [$O(1)$]
   [devuelve un iterador al conjunto de campos claves de la tabla indicada.]
 
-  \InterfazFuncion{InsertarEntrada}{\In{r}{registro}, \In{t}{tabla}, \Inout{b}{base}}{}
+  \InterfazFuncion{InsertarEntrada}{\In{r}{registro}, \Inout{s}{string}, \Inout{b}{base}}{}
   [$t$ $\in$ tablas($b$) $\yluego$ puedoInsertar?($r$, $t$) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ insertarEntrada($r$, $t$, $b_0$)}
   [$O\big(log\ n + |L| * \#tablas(b)\big)$, donde $L$ es el dato string más largo de $r$ y $n$ es la cantidad de registros en la tabla.]
@@ -49,7 +49,7 @@
   [unión de todos los registros (en caso de que ambas tablas tengan campos con mismo nombre no claves, desempata para $t_1$).]
 
 
-  \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itBi(registro)}
+  \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itConj(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$)$\big)$}
   [\\
@@ -96,7 +96,7 @@
   [$O(L)$, donde $L$ es el dato string más largo de $r_1$.]
   [devuelve la unión de dos registros, pero sin campos repetidos.]
 
-  \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itBi(registro)}
+  \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itConj(registro)}
   [hayJoin?($t_1$, $t_2$, $b$)]
   {alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
   [\\
