@@ -262,7 +262,6 @@
                     \State $i \gets i+1$ \Comment $O(1)$
 
       \EndWhile
-      \State $res \gets (e_1.valorStr \le e_2.valorStr)$ \Comment $O\big(min\{|e_1.valorStr|, |e_2.valorStr|\}\big)$
     \EndIf
 
     \medskip
@@ -291,7 +290,7 @@
 
 \begin{algorithm}[H]{\textbf{iCopiar}(\In{e}{estrDato}) $\to$ $res$ : estrDato}
       \begin{algorithmic}
-        \State $res \gets \big\langle e.nat?, e.valorStr, e.valorNat \big\rangle$         \Comment $O(1) + O(|e.valorStr|) + O(1)$
+        \State $res \gets \big\langle e.nat?, copiar(e.valorStr), e.valorNat \big\rangle$         \Comment $O(1) + O(|e.valorStr|) + O(1)$
       \medskip
       \Statex \underline{Complejidad:} {$O(|e.valorStr|)$}
       \Statex \underline{Justificación:} {La complejidad del algoritmo es la complejidad de copiar un string. La complejidad de copiar un string es $O\big(long(string)\big)$. Si esNat? es true, por invariante, el largo de valorStr está acotado (valorStr = "vacio") y la complejidad es $O(1)$}
