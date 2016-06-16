@@ -128,9 +128,9 @@
 \noindent\tab 3) El significado no es nulo. \\
 \noindent\tab 4) No hay repetidos. \\
 
-  \Rep[estrDiccNat][e]{($e$ $\igobs$ NULL) $\oluego$ $\big($($e$ $\to$ izq $\nigobs$ NULL) $\implies$ ($e$ $\to$ izq $\to$ clave) <\ $e$ $\to$ clave$\big)$\\
-    $\land$ $\big($($e$ $\to$ der $\nigobs$ NULL) $\implies$ ($e$ $\to$ der $\to$ clave) >\ $e$ $\to$ clave$\big)$\\
-    $\land$ Rep($e$ $\to$ izq) $\land$ Rep($e$ $\to$ der) $\land$ ($e$ $\to$ significado $\nigobs$ NULL) $\land$ $\big(\forall$ $n$ : nat, esClave?($n$, $e$)$\big)$ ($n$ $\igobs$ $e$ $\to$ clave) $\implies$ $\big(\neg$esClave?($n$, $e$ $\to$ izq) $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ izq)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ der)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ izq)$\big)$}
+  \Rep[estrDiccNat][e]{($e$ $\igobs$ NULL) $\oluego$ $[\big($($e$ $\to$ izq $\nigobs$ NULL) $\implies$ ($e$ $\to$ izq $\to$ clave) <\ $e$ $\to$ clave$\big)$\\
+    $\land$ $\big($($e$ $\to$ der $\nigobs$ NULL) $\implies$ ($e$ $\to$ der $\to$ clave) >\ $e$ $\to$ clave$\big)]$\\
+    $\land$ [Rep($e$ $\to$ izq) $\land$ Rep($e$ $\to$ der)] $\yluego $ ($e$ $\to$ significado $\nigobs$ NULL) $\land$ $\big(\forall$ $n$ : nat) esClave?($n$, $e$)$\big)\impluego $ ($n$ $\igobs$ $e$ $\to$ clave) $\implies$ $\big(\neg$esClave?($n$, $e$ $\to$ izq) $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ izq)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ der)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ izq)$\big)$}
 	
   ~
  
@@ -173,8 +173,8 @@ FI}
   \noindent\tab 4) No puede haber dos punteros apilados que compartan algún hijo (por lo tanto nunca va a haber hijos apilados para ningún nodo). Tampoco por rep puede pasar que haya loops, por ejemplo: El nodo con clave 15 apunte a su izq al nodo con clave 9 y este a su der al nodo con clave 15 nuevamente. \\
 
 
-  \Rep[iter][i]{$\big(\forall$ $n$ : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ Rep($n$) $\yluego$ \\
-  $\Big($noApilaNulos($i$) $\land$ ordenadaDec($i$) $\land$ $\big(\forall$ $n$ : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ $\neg\big(\exists$ $n'$ : estrDiccNat, $n$ $\nigobs$ $n'$ $\land$ estaEnPila?($n'$, $i$)$\big)$ $\big(\exists$ $x$ : nat, esta?($x$, clavesDe($n$)) $\land$ esta?($x$, clavesDe($n'$))$\big)\Big)$}
+  \Rep[iter][i]{$\big(\forall$ $n$) : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ $\impluego$ Rep($n$) $\yluego$ \\
+  $\Big($noApilaNulos($i$) $\land$ ordenadaDec($i$) $\land$ $\big(\forall$ $n$ : estrDiccNat)(n $\neq$ NULL $\land$ estaEnPila?($n$, $i$) $\impluego $$\big)$ $\neg\big(\exists$ $n'$ : estrDiccNat) ($n'$$\neq$ NULL $\land$ $n$ $\nigobs$ $n'$ $\land$ estaEnPila?($n'$, $i$) $\land $ $\big((\exists$ $x$ : nat) esta?($x$, clavesDe($n$)) $\land$ esta?($x$, clavesDe($n'$))$\big)\Big)$}
   
   ~
 
@@ -315,7 +315,7 @@ FI}
           \State $termine \gets true$ \Comment $O(1)$
           \State $res \gets true$ \Comment $O(1)$
         \Else
-          \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+          \If{$(diccAux \to clave) > n$} \Comment $O(1)$
             \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
           \Else
             \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
@@ -341,11 +341,12 @@ FI}
     \State $diccAux \gets dicc$         \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
     \State $termine \gets false$ \Comment $O(1)$
     \While{$\NOT termine$} \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
-      \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+      \If{$(diccAux \to clave) > n$} \Comment $O(1)$
         \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
       \Else
         \If{$(diccAux \to clave) = n$} \Comment $O(1)$
-          \State $res \gets (diccAux \to significado)$ \comentariocompl{lo pasamos por referencia}{$O(1)$}
+          \State $res \gets *(diccAux \to significado)$ \comentariocompl{lo pasamos por referencia}{$O(1)$}
+          \State $termine \gets true$	$O(1)$ 
         \Else
           \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
         \EndIf
@@ -415,7 +416,7 @@ FI}
       \State $ $
 
       \State $(diccAux \to clave) \gets temp.clave$ \Comment $O(1)$
-      \State $(diccAux \to significado) \gets temp.significado$ \Comment $O(1)$
+      \State $(diccAux \to significado) \gets &temp.significado$ \Comment $O(1)$
       
     \EndIf
 
@@ -436,7 +437,7 @@ FI}
     \While{$\NOT (diccAux \to izq) = NULL$}\\ \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
       \State $diccAux \gets (diccAux \to izq)$ \Comment $O(1)$
     \EndWhile
-    \State $res \gets \big\langle diccAux \to clave, diccAux \to significado\big\rangle$ \Comment $O(1)$
+    \State $res \gets \big\langle diccAux \to clave, *(diccAux \to significado\big)\rangle$ \Comment $O(1)$
      
     \medskip
     \Statex \underline{Complejidad:} {\\
@@ -455,7 +456,7 @@ FI}
     \While{$\NOT (diccAux \to der) = NULL$}\\ \Comment $O\big(\#claves(dicc) * ...\big)\ /\ O\big(log\ \#claves(dicc) * ...\big)\ promedio\ con\ claves\ uniformes$
       \State $diccAux \gets (diccAux \to der)$ \Comment $O(1)$
     \EndWhile
-    \State $res \gets \big\langle diccAux \to clave, diccAux \to significado\big\rangle$ \Comment $O(1)$
+    \State $res \gets \big\langle diccAux \to clave, *(diccAux \to significado\big)\rangle$ \Comment $O(1)$
      
     \medskip
     \Statex \underline{Complejidad:} {\\
@@ -490,10 +491,10 @@ FI}
   \begin{algorithmic}
     \comentario{DFS}
     \State $res \gets Vacia()$ \Comment $O(1)$
-    \State $iterador \gets Copiar(it)$
+    \State $iterador \gets Copiar(it)$ $O(copy(it))$ $\implies$ $O(1)$
     \While{$\NOT EsVacia?(iterador)$} \Comment $O\big(n * copy(significado\ mas\ costoso))$
       \State $prox \gets Desapilar(iterador)$ \Comment $O(1)$
-      \State $AgregarAtras\big(res, \big\langle prox \to clave, prox \to significado\big\rangle\big)$ \Comment $O\big(copy(tupla\langle nat, significado\big\rangle)\big)$
+      \State $AgregarAtras\big(res, \big\langle prox \to clave, *(copiar(prox \to significado)\big)\rangle\big)$ \Comment $O\big(copy(tupla\langle nat, significado\big\rangle)\big)$
       \If{$\NOT prox \to der = NULL$} \Comment $O(1)$
         \State $Apilar(iterador, prox \to der)$ \Comment $O(1)$
       \EndIf
@@ -507,7 +508,7 @@ FI}
     \medskip
     \Statex \underline{Complejidad:} {$O(n*copy(x))$ con $n$ siendo la cantidad de claves del diccionario y $x$ siendo el significado más costoso de copiar.
     }
-    \Statex \underline{Justificación:} {Tiene un ciclo principal y todas las demás operaciones $O(1)$. En el ciclo principal se itera $n$ veces y se copia en cada iteración una tupla<nat, significado>. Como copiar un nat es $O(1)$, nos queda una complejidad de $O\big(n * copy(significado\ mas\ costoso)\big)$}
+    \Statex \underline{Justificación:} {Tiene un ciclo principal , copiar un iterador en O(n) ya que es copiar una pila con todas las claves y todas las demás operaciones $O(1)$. En el ciclo principal se itera $n$ veces y se copia en cada iteración una tupla<nat, significado>. Como copiar un nat es $O(1)$, nos queda una complejidad de $O\big(n * copy(significado\ mas\ costoso)+O(n)\big)$ $\implies$ $O\big(n * copy(significado\ mas\ costoso)$ }
   \end{algorithmic}
 \end{algorithm}
 
@@ -542,7 +543,7 @@ FI}
 
 \begin{algorithm}[H]{\textbf{iActual}(\In{it}{iter}) $\to$ $res$ : tupla\big\langle nat, significado\big\rangle}
   \begin{algorithmic}
-    \State $res \gets \big\langle Tope(it) \to clave, Tope(it) \to significado\big\rangle)$
+    \State $res \gets \big\langle Tope(it) \to clave,*Tope(it) \to significado\big\rangle)$
 
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
