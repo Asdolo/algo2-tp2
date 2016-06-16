@@ -640,7 +640,7 @@
     \State $ite \gets VistaDicc(r_2)$         \Comment $O(1)$
     \While{$HaySiguiente(ite)$} \Comment $O(\#campos * ...) =  O(1 * ...)$
       \If{$\NOT Def?\big(Siguiente(it).clave, res\big)$} \Comment $O(max\ nombre\ de\ campo) = O(1)$
-        \State $Definir\big(Siguiente(it).clave, Siguiente(it).significado, res\big)$ \Comment $O(max\ nombre\ de\ campo\ *\ L) = O(L)$
+        \State $Definir\big(Siguiente(it).clave, Siguiente(it).significado, res\big)$ \Comment $O(max\ nombre\ de\ campo\ +\ L) = O(L)$
       \EndIf
       \State $Avanzar(it)$ \Comment $O(1)$
     \EndWhile
