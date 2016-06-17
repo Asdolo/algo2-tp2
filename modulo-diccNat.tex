@@ -14,7 +14,7 @@
   \textbf{se explica con}: \tadNombre{Diccionario Extendido(Nat, Significado)},\\ \tadNombre{Iterador Unidireccional\big(Tupla(Nat, Significado)\big)}.
 
   \textbf{géneros}: \TipoVariable{diccNat(significado)}, \TipoVariable{itDiccNat(significado)}.
-  
+
    \textbf{servicios exportados}: \tadNombre{Todos los de la interfaz}
 
   \textbf{servicios usados}\hangindent=2\parindent : Pila\\
@@ -22,18 +22,18 @@
   \Titulo{Operaciones básicas de diccNat}
 
   \InterfazFuncion{Vacío}{}{diccNat(significado)}
-  [true]  
+  [true]
   {$res$ $\igobs$ vacio}
   [$O(1)$]
   [genera un DiccionarioNat vacío.]
-  
+
   \InterfazFuncion{Definir}{\In{clave}{nat}, \In{significado}{significado}, \Inout{dicc}{diccNat(significado)}}{}
   [$\neg$def?($clave$,$dicc$) $\land$ $dicc_0$ = $dicc$]
   {$dicc$ $\igobs$ definir($clave$, $significado$, $dicc_0$)}
   [$O\big(\#claves(dicc)\big)$ / $O\big(log\ \#claves(dicc)\big)$ en promedio asumiendo distribución uniforme de claves.]
   [define la clave ingresada en el diccionario.]
   [se genera aliasing con significado]
-  
+
   \InterfazFuncion{Def?}{\In{clave}{nat}, \In{dicc}{diccNat(significado)}}{bool}
   [true]
   {$res$ $\igobs$ def?($clave$, $dicc$)}
@@ -105,7 +105,7 @@
 \end{Interfaz}
 
 \begin{Representacion}
-  
+
   \Titulo{Representación de diccNat}
 
   \begin{Estructura}{diccNat(significado)}[estrDiccNat]
@@ -122,7 +122,7 @@
   \end{Estructura}
 
   \noindent\textbf{Invariante de representación}
-  
+
   \noindent\tab 1) Hijo izq menor estricto e hijo derecho mayor estricto. \\
 \noindent\tab 2) Rep recursivo en sus hijos. \\
 \noindent\tab 3) El significado no es nulo. \\
@@ -130,10 +130,17 @@
 
   \Rep[estrDiccNat][e]{($e$ $\igobs$ NULL) $\oluego$ $[\big($($e$ $\to$ izq $\nigobs$ NULL) $\implies$ ($e$ $\to$ izq $\to$ clave) <\ $e$ $\to$ clave$\big)$\\
     $\land$ $\big($($e$ $\to$ der $\nigobs$ NULL) $\implies$ ($e$ $\to$ der $\to$ clave) >\ $e$ $\to$ clave$\big)]$\\
-    $\land$ [Rep($e$ $\to$ izq) $\land$ Rep($e$ $\to$ der)] $\yluego $ ($e$ $\to$ significado $\nigobs$ NULL) $\land$ $\big(\forall$ $n$ : nat) esClave?($n$, $e$)$\big)\impluego $ ($n$ $\igobs$ $e$ $\to$ clave) $\implies$ $\big(\neg$esClave?($n$, $e$ $\to$ izq) $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ izq)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ der)$\big)$ $\land$ $\big(e$ $\nigobs$ NULL $\yluego$ esClave?($n$, $e$ $\to$ der)$\big)$ $\implies$ $\big(n$ $\nigobs$ $e$ $\to$ clave $\land$ $\neg$esClave?($n$, $e$ $\to$ izq)$\big)$}
-	
+    $\land$ $\big($($e$ $\to$ significado) $\nigobs$ NULL$\big)$ $\land$ sinRepetidos($e$, $<>$)}
+
   ~
- 
+  \\
+
+  \tadOperacion{sinRepetidos}{estrDiccNat/e, secu/s}{bool}{}
+    \tadAxioma{sinRepetidos($e$, $s$)}{($e$ $\igobs$ NULL) $\oluego$ $\big($ ($e$ $\to$ clave $\notin$ $s$) $\yluego$ $\big($ sinRepetidos($e$ $\to$ der, ($e$ $\to$ clave)$\argumento$$s$) $\land$ sinRepetidos($e$ $\to$ izq, ($e$ $\to$ clave)$\argumento$$s$) $\big)$ $\big)$}
+
+  ~
+  \\
+
   \Abs[estrDiccNat]{diccNat(significado)}[e]{d}{($\forall$ $c$ : nat) $\big($def?($c$, $d$) $\igobs$ esClave?($c$, $e$)$\big)$ $\land$ $\big($def?($c$, $d$) $\impluego$ obtener($c$, $d$) $\igobs$ suSignificado($c$, $d$)$\big)$}
 
   ~
@@ -146,10 +153,10 @@
   \tadOperacion{suSignificado}{nat/n, estrDiccNat/e}{significado}{Rep($e$) $\yluego$ esClave?($n$, $e$)}
   \tadAxioma{suSignificado($n$, $e$)}
 {\IF ($e$ $\to$ clave) $\igobs$ $c$ THEN
-  *($e$ $\to$ significado) 
+  *($e$ $\to$ significado)
 ELSE
   {\IF ($e$ $\to$ clave) <\ $c$ THEN
-    suSignificado($c$, $e$ $\to$ izq) 
+    suSignificado($c$, $e$ $\to$ izq)
   ELSE
     suSignificado($c$, $e$ $\to$ der)
   FI}
@@ -166,22 +173,21 @@ FI}
   \end{Estructura}
 
   \noindent\textbf{Invariante de representación}
-  
+
   \noindent\tab 1) Vale rep para cada elemento de la pila. \\
   \noindent\tab 2) No hay punteros nulos en la pila. \\
   \noindent\tab 3 La pila está ordenada decrecientemente. \\
   \noindent\tab 4) No puede haber dos punteros apilados que compartan algún hijo (por lo tanto nunca va a haber hijos apilados para ningún nodo). Tampoco por rep puede pasar que haya loops, por ejemplo: El nodo con clave 15 apunte a su izq al nodo con clave 9 y este a su der al nodo con clave 15 nuevamente. \\
 
 
-  \Rep[iter][i]{$\big(\forall$ $n$) : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ $\impluego$ Rep($n$) $\yluego$ \\
-  $\Big($noApilaNulos($i$) $\land$ ordenadaDec($i$) $\land$ $\big(\forall$ $n$ : estrDiccNat)(n $\neq$ NULL $\land$ estaEnPila?($n$, $i$) $\impluego $$\big)$ $\neg\big(\exists$ $n'$ : estrDiccNat) ($n'$$\neq$ NULL $\land$ $n$ $\nigobs$ $n'$ $\land$ estaEnPila?($n'$, $i$) $\land $ $\big((\exists$ $x$ : nat) esta?($x$, clavesDe($n$)) $\land$ esta?($x$, clavesDe($n'$))$\big)\Big)$}
-  
+  \Rep[iter][i]{$\big(\forall$ $n$ : estrDiccNat, estaEnPila?($n$, $i$)$\big)$ Rep($n$) $\yluego$ \\
+    $\Big($noApilaNulos($i$) $\land$ ordenadaDec($i$) $\land$ $\big(\forall$ $n$ : estrDiccNat, $n$ $\nigobs$ NULL $\land$ estaEnPila?($n$, $i$)$\big)$ $\neg\big(\exists$ $n'$ : estrDiccNat, $n$ $\nigobs$ $n'$ $\land$ $n$ $\nigobs$ NULL $\land$ estaEnPila?($n'$, $i$)$\big)$ $\big(\exists$ $x$ : nat, esta?($x$, clavesDe($n$)) $\land$ esta?($x$, clavesDe($n'$))$\big)\Big)$}
   ~
 
 \tadOperacion{noApilaNulos}{iter}{bool}{}
   \tadAxioma{noApilaNulos($i$)}
 {\IF vacia?($i$) THEN
-  true 
+  true
 ELSE
   tope($i$) $\nigobs$ NULL $\land$ noApilaNulos$\big($desapilar($i$)$\big)$
 FI}
@@ -192,7 +198,7 @@ FI}
 \tadOperacion{clavesDe}{estrDiccNat}{secu(nat)}{}
   \tadAxioma{clavesDe($e$)}
 {\IF $e$ $\nigobs$ NULL THEN
-  clavesDe($e$ $\to$ izq) $\&$ $\big($($e$ $\to$ clave) $\argumento$ clavesDe($e$ $\to$ der)$\big)$ 
+  clavesDe($e$ $\to$ izq) $\&$ $\big($($e$ $\to$ clave) $\argumento$ clavesDe($e$ $\to$ der)$\big)$
 ELSE
   <>
 FI}
@@ -207,12 +213,12 @@ FI}
 \tadOperacion{estaEnPila?}{$\alpha$, pila($\alpha$)}{bool}{}
   \tadAxioma{estaEnPila?($e$, $s$)}
 {\IF vacia?($s$) THEN
-  false 
+  false
 ELSE
   tope($s$) $\igobs$ $e$ $\lor$ estaEnPila?$\big(e$, desapilar($s$)$\big)$
 FI}
  ~
- 
+
   \Abs[iter]{itDiccNat(significado)}[i]{it}{Siguientes($it$) $\igobs$ secuDFS($i$)}
 
   ~
@@ -220,16 +226,16 @@ FI}
   \tadOperacion{secuDFS}{iter/i}{secu$\big($tupla(nat, significado)$\big)$}{Rep($i$)}
   \tadAxioma{secuDFS($i$)}
 {\IF vacía?($i$) THEN
-  <> 
+  <>
 ELSE
   {\IF tope($i$) $\to$ der $\nigobs$ NULL $\land$ tope($i$) $\to$ izq $\nigobs$ NULL THEN
-    secuDFS$\Big($apilar$\big($tope($i$) $\to$ izq, apilar$\big($tope($i$) $\to$ der, desapilar($i$)$\big)\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$ 
+    secuDFS$\Big($apilar$\big($tope($i$) $\to$ izq, apilar$\big($tope($i$) $\to$ der, desapilar($i$)$\big)\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$
   ELSE
     {\IF tope($i$) $\to$ der $\nigobs$ NULL THEN
-      secuDFS$\Big($apilar$\big($tope($i$) $\to$ der, desapilar($i$)$\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$ 
+      secuDFS$\Big($apilar$\big($tope($i$) $\to$ der, desapilar($i$)$\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$
     ELSE
       {\IF tope($i$) $\to$ izq $\nigobs$ NULL THEN
-        secuDFS$\Big($apilar$\big($tope($i$) $\to$ izq, desapilar($i$)$\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$> 
+        secuDFS$\Big($apilar$\big($tope($i$) $\to$ izq, desapilar($i$)$\big)\Big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$>
       ELSE
         secuDFS$\big($desapilar($i$)$\big)$ $\circulito$ $\big<$tope($i$) $\to$ clave, *(tope($i$) $\to$ significado)$\big>$>
       FI}
@@ -247,10 +253,10 @@ FI}
 \begin{Algoritmos}
 
 \medskip
-	
+
  \Titulo{Algoritmos de diccNat}
   	\medskip
-  
+
 \begin{algorithm}[H]{\textbf{iVacio}() $\to$ $res$ : estrDiccNat}
       \begin{algorithmic}
        \State $res \gets NULL$         \Comment $O(1)$
@@ -262,7 +268,7 @@ FI}
       \end{algorithmic}
 \end{algorithm}
 
-  
+
 \begin{algorithm}[H]{\textbf{iDefinir}(\In{n}{nat}, \In{s}{significado}, \Inout{dicc}{estrDiccNat})}
   \begin{algorithmic}
     \State $diccAux \gets dicc$         \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
@@ -346,7 +352,7 @@ FI}
       \Else
         \If{$(diccAux \to clave) = n$} \Comment $O(1)$
           \State $res \gets *(diccAux \to significado)$ \comentariocompl{lo pasamos por referencia}{$O(1)$}
-          \State $termine \gets true$	$O(1)$ 
+          \State $termine \gets true$	$O(1)$
         \Else
           \State $diccAux \gets (diccAux \to der)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
         \EndIf
@@ -416,8 +422,8 @@ FI}
       \State $ $
 
       \State $(diccAux \to clave) \gets temp.clave$ \Comment $O(1)$
-      \State $(diccAux \to significado) \gets &temp.significado$ \Comment $O(1)$
-      
+      \State $(diccAux \to significado) \gets \&temp.significado$ \Comment $O(1)$
+
     \EndIf
 
     \medskip
@@ -438,7 +444,7 @@ FI}
       \State $diccAux \gets (diccAux \to izq)$ \Comment $O(1)$
     \EndWhile
     \State $res \gets \big\langle diccAux \to clave, *(diccAux \to significado\big)\rangle$ \Comment $O(1)$
-     
+
     \medskip
     \Statex \underline{Complejidad:} {\\
 \quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
@@ -457,7 +463,7 @@ FI}
       \State $diccAux \gets (diccAux \to der)$ \Comment $O(1)$
     \EndWhile
     \State $res \gets \big\langle diccAux \to clave, *(diccAux \to significado\big)\rangle$ \Comment $O(1)$
-     
+
     \medskip
     \Statex \underline{Complejidad:} {\\
 \quad\quad En el peor caso: $O\big(\#claves(dicc)\big)$ \\
@@ -472,7 +478,7 @@ FI}
 
 \Titulo{Algoritmos del iterador}
     \medskip
-  
+
 \begin{algorithm}[H]{\textbf{iCrearIt}(\In{dicc}{estrDiccNat}) $\to$ $res$ : itDiccNat}
   \begin{algorithmic}
     \State $res \gets Vacia()$ \Comment $O(1)$
@@ -491,7 +497,7 @@ FI}
   \begin{algorithmic}
     \comentario{DFS}
     \State $res \gets Vacia()$ \Comment $O(1)$
-    \State $iterador \gets Copiar(it)$ $O(copy(it))$ $\implies$ $O(1)$
+    \State $iterador \gets Copiar(it)$ \Comment $O(copy(it))$ = $O(n)$
     \While{$\NOT EsVacia?(iterador)$} \Comment $O\big(n * copy(significado\ mas\ costoso))$
       \State $prox \gets Desapilar(iterador)$ \Comment $O(1)$
       \State $AgregarAtras\big(res, \big\langle prox \to clave, *(copiar(prox \to significado)\big)\rangle\big)$ \Comment $O\big(copy(tupla\langle nat, significado\big\rangle)\big)$
@@ -515,7 +521,7 @@ FI}
 \begin{algorithm}[H]{\textbf{iAvanzar}(\Inout{it}{iter})}
   \begin{algorithmic}
     \State $prox \gets Desapilar(it)$ \Comment $O(1)$
-   
+
     \If{$\NOT prox \to der = NULL$} \Comment $O(1)$
       \State $Apilar(it, prox \to der)$ \Comment $O(copy(puntero)) = O(1)\ (al\ menos\ una\ sola\ vez)$
     \EndIf
@@ -533,7 +539,7 @@ FI}
 \begin{algorithm}[H]{\textbf{iHayMas?}(\In{it}{iter}) $\to$ $res$ : bool}
   \begin{algorithmic}
     \State $res \gets \big(\NOT EsVacia?(it)\big)$ \Comment $O(1)$
-    
+
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
     \Statex \underline{Justificación:} {Se llama únicamente a la función EsVacia del módulo Pila del apunte de módulos básicos, que tiene complejidad $O(1)$.}
@@ -543,7 +549,7 @@ FI}
 
 \begin{algorithm}[H]{\textbf{iActual}(\In{it}{iter}) $\to$ $res$ : tupla\big\langle nat, significado\big\rangle}
   \begin{algorithmic}
-    \State $res \gets \big\langle Tope(it) \to clave,*Tope(it) \to significado\big\rangle)$
+    \State $res \gets \big\langle Tope(it) \to clave,*Tope(it) \to significado\big\rangle)$ \Comment $O(1)$
 
     \medskip
     \Statex \underline{Complejidad:} {$O(1)$}
@@ -552,5 +558,3 @@ FI}
 \end{algorithm}
 
 \end{Algoritmos}
-
-
