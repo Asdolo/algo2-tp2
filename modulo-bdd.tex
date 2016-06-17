@@ -6,7 +6,7 @@
 
   \textbf{géneros}: \TipoVariable{base}.
 
-  \textbf{servicios exportados}: \tadNombre{Todos los de la interfaz a excepción de CombinarRegistros, Merge y CoincidenTodosCrit}
+  \textbf{servicios exportados}: Todos los de la interfaz a excepción de  \tadNombre{CombinarRegistros, Merge y CoincidenTodosCrit}
 
   \textbf{servicios usados}\hangindent=2\parindent : Tabla, Dato, DiccionarioString, DiccionarioNat, Lista (cátedra), Conjunto Lineal (cátedra) \\
 
@@ -51,7 +51,7 @@
 
   \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itConj(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
-  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$)$\big)$}
+  {$b$ $\igobs$ generarVistaJoin($t_1$, $t_2$, $c$, $b_0$) $\land$ alias$\big($$res$ $\igobs$ CrearIt(vistaJoin($t_1$, $t_2$, $b$))$\big)$}
   [\\
   \tab $c$ tipo string indexado en $t_1$ ó $t_2$ $\implies$ $O\big((n+m) * L\big)$ \\
   \tab $c$ tipo nat indexado en $t_1$ ó $t_2$ $\implies$ $O\big((n+m) * (log(n+m) + L)\big)$ \\
@@ -98,7 +98,7 @@
 
   \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itConj(registro)}
   [hayJoin?($t_1$, $t_2$, $b$)]
-  {alias(secuAConj(Siguientes($res$)) $\igobs$ vistaJoin($t_1$, $t_2$, $b$))}
+  {alias($res$ $\igobs$ CrearIt(vistaJoin($t_1$, $t_2$, $b$)))}
   [\\
 \tab Join campo nat indexado $\implies$ $O\big(R*\big(|L| + log(n*m)\big)\big)$\\
 \tab Join campo nat no indexado $\implies$ $O\big(R*\big(|L|*(m+n) + log(n+m)\big)\big)$\\
@@ -113,14 +113,17 @@
 
 
   \InterfazFuncion{BusquedaCriterio}{\In{criterio}{registro}, \In{t}{String},\In{b}{base}}{conj(registro)}
-  [$t$ $\in$ tablas($b$) $\land$ $\big($campos($criterio$) $\subset$ campos(dameTabla($t$, $b$))$\big)$]
+  [$t$ $\in$ tablas($b$)]
   {$res$ $\igobs$ buscar($r$, $t$, $b$)}
-  [depende de la disposición de índices en $t$ y si son claves o no (consultar complejidad y justificación debajo del algoritmo).]
+  [\tab  campoIndice nat $\implies$ $O\big(log\ n\ +\ n * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
+  \tab campoIndice string $\implies$ $O\big(|L|\ +\ n * |L|\big)$ = $O(n * |L|)$. $O(|L|)$ si además es clave.\\
+  \tab Sin campoIndice $\implies$ $O(n * |L|)$\\
+  \tab Donde $L$ es la longitud de dato string más largo de $t$ y $n$ su cantidad de registros.]
   [devuelve por copia una lista de todos los registros de $t$ que coinciden en todos los campos con el registro $criterio$.]
 
 
   \InterfazFuncion{CoincidenTodosCrit}{\In{crit}{registro}, \In{r}{registro}}{bool}
-  [campos($crit$) $\subset$ campos($r$)]
+  [campos($crit$) $\subset$ campos($r$) $\land$ ($\exists$ $t$: Tabla, nombre($t$) $\in$ tablas($b$)) $r$ $\in$ registros($t$)]
   {$res$ $\igobs$ coincidenTodos$\big(crit$, campos($crit$), $r\big)$}
   [$O\big(|L|\big)$]
   [determina si el registro comparte los mismos valores para los campos de crit.]
@@ -591,9 +594,9 @@
  \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iTablas}(\In{e}{estr}) $\to$ $res$ : itLista(string)}
+\begin{algorithm}[H]{\textbf{iTablas}(\In{e}{estr}) $\to$ $res$ : itConj(string)}
   \begin{algorithmic}
-    \State $res \gets crearIt(e.tablas)$             \Comment $O(1)$
+    \State $res \gets CrearIt(e.tablas)$             \Comment $O(1)$
 
 
     \medskip
@@ -845,27 +848,37 @@
 \begin{algorithm}[H]{\textbf{iBusquedaCriterio}(\In{criterio}{Registro}, \In{t}{string}, \In{b}{estr}) $\to$ $res$ : conj(registro)}
  \begin{algorithmic}
     \State $tabla \gets Obtener(t, b.nombreATabla)$         \Comment $O(1)$
-    \State $it \gets CrearIt(Indices(tabla))$               \Comment $O(1)$
+
     \State $termine \gets false$                                \Comment $O(1)$
     \State $res \gets Vacio()$                              \Comment $O(1)$
+    \comentario{Si los campos de crit no están contenidos en los de tabla -> devuelvo conj vacio}
+    \State $itCrit \gets VistaDicc(criterio) $  \Comment $O(1)$
+    \While{$HaySiguiente(itCrit)\ \AND \NOT termine $}  \Comment $O(\#campos(t)*..)=O(1)$
+      \State $campoCrit \gets Siguiente(itCrit).clave$ \Comment $O(1)$
+      \If{$\NOT Pertenece?(campoCrit, Registros(tabla))  $} \Comment $O(\#campos(t))=O(1)$
+        \State $termine \gets true $ \Comment $O(1)$
+      \EndIf
+      \State $Avanzar(itCrit) $ \Comment $O(1)$
+    \EndWhile
     \State $ $
+    \State $itIndices \gets CrearIt(Indices(tabla))$               \Comment $O(1)$
     \comentario{Por si hay algún campo indexado para facilitar búsqueda}
-    \While{$HaySiguiente(it)\ \AND \NOT termine$}    \Comment $O(\#regs * ...) = O(1 * ...)$
-        \If{$Def?\big(Siguiente(it), crit\big)$}                   \Comment $O(1)$
-            \State $campoIndice \gets Siguiente(it)$            \Comment $O(1)$
-            \State $valorCampo \gets Obtener(campoIndice, crit)$    \Comment $O(1)$
+    \While{$HaySiguiente(itIndices)\ \AND \NOT termine$}    \Comment $O(\#regs * ...) = O(1 * ...)$
+        \If{$Def?\big(Siguiente(itIndices), crit\big)$}                   \Comment $O(1)$
+            \State $campoIndice \gets Siguiente(itIndices)$            \Comment $O(1)$
+            \State $valorCampo \gets Obtener(campoIndice, crit)$    \Comment $O(|$max nombre de campo$|) = O(1)$
             \State $coincis \gets Buscar(campoIndice, valorCampo, tabla)$ \Comment $Campo\ nat\ \implies\ O\big(log\ n + |L|\big)\ promedio$
             \State $ $  \Comment $Campo\ string\ \implies\ O(|L|)$
             \State $ $
-            \State $itAux \gets CrearIt(coincis)$           \Comment $O(1)$
-            \While{$HaySiguiente(itAux)$}                 \Comment $O(\#coincis * ...)$
-                \If{$CoincidenTodosCrit\big(crit, Siguiente(itAux)\big)$} \Comment $O(L)$
-                    \State $AgregarRapido\big(res, Siguiente(itAux)\big)$ \Comment $O(L)$
+            \State $itCoincis \gets CrearIt(coincis)$           \Comment $O(1)$
+            \While{$HaySiguiente(itCoincis)$}                 \Comment $O(\#coincis * ...)$
+                \If{$CoincidenTodosCrit\big(crit, Siguiente(itCoincis)\big)$} \Comment $O(L)$
+                    \State $AgregarRapido\big(res, Siguiente(itCoincis)\big)$ \Comment $O(L)$
                 \EndIf
-                \State $Avanzar(itAux)$ \Comment $O(1)$
+                \State $Avanzar(itCoincis)$ \Comment $O(1)$
             \EndWhile
             \State $termine \gets true$  \Comment $O(1)$
-            \State $Avanzar(it)$ \Comment $O(1)$
+            \State $Avanzar(itIndices)$ \Comment $O(1)$
         \EndIf
     \EndWhile
     \State $ $
@@ -881,17 +894,29 @@
         \EndWhile
     \EndIf
 
-   \Statex \underline{Complejidad:} {\\
-   \quad\quad campoIndice nat $\implies$ $O\big(log\ n\ +\ |L|\ +\ n * |L|\big)$ = $O\big(log\ n\ +\ n * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
+    \algstore{myalg}
+  \end{algorithmic}
+\end{algorithm}
 
-    \quad\quad campoIndice string $\implies$ $O\big(|L|\ +\ n * |L|\big)$ = $O(n * |L|)$. $O(|L|)$ si además es clave.\\
+\begin{algorithm}
+  \begin{algorithmic}
+    \algrestore{myalg}
+
+
+   \Statex \underline{Complejidad:} {\\
+   \quad\quad campoIndice nat $\implies$ $O\big(log\ n\ +\ |L|\ +\ \#coincis * |L|\big)$ = $O\big(log\ n\ +\ \#coincis * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
+
+    \quad\quad campoIndice string $\implies$ $O\big(|L|\ +\ \#coincis * |L|\big)$ = $O(\#coincis * |L|)$. $O(|L|)$ si además es clave.\\
     \quad\quad Sin campoIndice $\implies$ $O(n * |L|)$\\
-    \quad\quad Donde $L$ es la longitud de dato string más largo de $t$ y $n$ su cantidad de registros.}
+    \quad\quad Donde $L$ es la longitud de dato string más largo de $t$ y $n$ su cantidad de registros.\\}
 
    \Statex \underline{Justificación:} {\\
-   \quad\quad Su campoIndice es clave, entonces \#coincis = 1, de no serlo está acotada por $n$. \\
-   \quad\quad Los registros tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.\\
-   \quad\quad Operaciones Def? y Obtener en registros (con campos acotados por enunciado) es $O(1)$.}
+   \quad\quad Como los campos están acotados en nombre (independientemente de si son o no de tabla), obtener un dato en un registro es $O(1)$. \\
+   \quad\quad Cuando se chequea en campos de criterio que estén definidos en campos(t), la iteración termina cuando o bien todos están o hay alguno que no. Esto significa que nunca se itera más de de \#campos(t) veces.\\
+   \quad\quad Si los campos de criterio están contenidos en los campos de la tabla, implica entonces que los primeros están acotados también en cantidad. \\
+   \quad\quad Su campoIndice es clave, entonces \#coincis = 1, de no serlo está acotada por $n$ (la cantidad de registros de la tabla). \\
+   \quad\quad Los registros de tabla tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.\\
+   \quad\quad Operaciones Def? y Obtener para todos los registros (con nombres campos acotados por enunciado) es $O(1)$.}
  \end{algorithmic}
 \end{algorithm}
 
@@ -905,7 +930,7 @@
    \State $res \gets true$  \Comment $O(1)$
    \While{$HaySiguiente(itCrit) \AND res$}  \Comment $O(\#campos(crit) * ...)$
      \State $tuplaCrit \gets Siguiente(itCrit)$      \Comment $O(1)$
-     \If{$\NOT Obtener(tuplaCrit.clave) = tuplaCrit.significado$}  \Comment $O(L)$
+     \If{$\NOT Obtener(tuplaCrit.clave, r) = tuplaCrit.significado$}  \Comment $O(L)$
        \State $res \gets false$      \Comment $O(1)$
      \EndIf
      \State $Avanzar(itCrit)$         \Comment $O(1)$
@@ -914,7 +939,7 @@
    \Statex \underline{Complejidad:} {$O\big(\#campos(crit) * |L|\big) = O\big(|L|\big)$, donde $L$ valor string más largo en $r$.}
    \Statex \underline{Justificación:} {\\
 \quad\quad En peor caso se compara en todos los campos un dato string de máxima longitud en $r$.\\
-\quad\quad Por enunciado los registros tienen acotadas las cantidades de campos, por lo tanto el costo es el de comparar una cantidad acotada de veces el string más largo.}
+\quad\quad Si bien los registros en sí no tienen cantidades acotadas de campos, en el contexto de uso de la función como auxiliar r se corresponde siempre a un registro de tabla (los cuales sí están acotados en cantidad). Como los campos de criterio están contenidos en los de r, estos también son acotados. Por lo tanto el costo es el de comparar una cantidad acotada de veces el string más largo.}
  \end{algorithmic}
 \end{algorithm}
 
