@@ -6,6 +6,10 @@
 
   \textbf{géneros}: \TipoVariable{tabla}.
 
+  \textbf{servicios exportados}: Todos los de la interfaz.
+
+  \textbf{servicios usados}\hangindent=2\parindent : Dato, DiccionarioString, DiccionarioNat, Lista (cátedra), Conjunto Lineal (cátedra) \\
+
   \Titulo{Operaciones básicas de tabla}
 
   \InterfazFuncion{Nombre}{\In{t}{tabla}}{string}
@@ -22,7 +26,8 @@
   [devuelve un iterador al conjunto de campos claves de la tabla indicada.]
   [se pasa por referencia. No es modificable (const)]
 
-  \InterfazFuncion{Buscar}{\In{c}{campo}, \In{d}{dato}, \In{t}{tabla}}{secu(registro)}
+  \footnote{Es una operación auxiliar tanto para tabla como para BDD, pero no corresponde al buscar de especificación (ver BusquedaCriterio de BDD)}
+  \InterfazFuncion{Buscar}{\In{c}{campo}, \In{d}{dato}, \In{t}{tabla}}{Lista(registro)}
   [$c$ $\in$ campos($t$) $\yluego$ $\big($tipoCampo($c$, $t$) $\igobs$ nat?($d$)$\big)$]
   {($\forall$ $r$ : registro) def?($c$, $r$) $\implies$ $\big($($r$ $\in$ registros($t$) $\land$ obtener($c$, $r$) $\igobs$ $d$) $\ssi$ esta?($r$, $res$)$\big)$}
   [\\
@@ -36,7 +41,7 @@
   \\
   \tab Donde $n$ es la cantidad de registros de la tabla pasada por argumento y |$L$| corresponde a la longitud máxima de cualquier valor string de datos de la tabla.
   ]
-  [Busca en todos los registros de la tabla los que tengan el dato $d$ en el campo $c$, esos registros los devuelve en una secuencia.]
+  [Busca en todos los registros de la tabla los que tengan el dato $d$ en el campo $c$, esos registros los devuelve en una lista.]
   [no hay ya que se copian los registros.]
 
   \InterfazFuncion{Indices}{\In{t}{tabla}}{conj(campo)}

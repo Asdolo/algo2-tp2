@@ -8,7 +8,7 @@
 
   \textbf{servicios exportados}: Todos los de la interfaz a excepción de  \tadNombre{CombinarRegistros, Merge y CoincidenTodosCrit}
 
-  \textbf{servicios usados}\hangindent=2\parindent : Tabla, Dato, DiccionarioString, DiccionarioNat, Lista (cátedra), Conjunto Lineal (cátedra) \\
+  \textbf{servicios usados}\hangindent=2\parindent : Tabla, Dato,  DiccionarioString, DiccionarioNat, Lista (cátedra), Conjunto Lineal (cátedra) \\
 
   \Titulo{Operaciones básicas de base}
 
@@ -24,7 +24,7 @@
   [$O(1)$]
   [devuelve un iterador al conjunto de campos claves de la tabla indicada.]
 
-  \InterfazFuncion{InsertarEntrada}{\In{r}{registro}, \Inout{s}{string}, \Inout{b}{base}}{}
+  \InterfazFuncion{InsertarEntrada}{\In{r}{registro}, \In{s}{string}, \Inout{b}{base}}{}
   [$t$ $\in$ tablas($b$) $\yluego$ puedoInsertar?($r$, $t$) $\land$ $b$ = $b_0$]
   {$b$ $\igobs$ insertarEntrada($r$, $t$, $b_0$)}
   [$O\big(log\ n + |L| * \#tablas(b)\big)$, donde $L$ es el dato string más largo de $r$ y $n$ es la cantidad de registros en la tabla.]
@@ -34,8 +34,8 @@
   [\#campos($cr$) = 1 $\land$ $t$ $\in$ tablas($b$) $\land$ $b$ = $b_0$ $\land$ dameUno$\big($campos($cr$)$\big)$ $\in$ claves$\big($dameTabla($t$, $b$)$\big)$]
   {$b$ $\igobs$ borrar($cr$, $t$, $b_0$)}
   [\\
-\tab Campo indexado $\implies$ $O\big(log\ n + |L| * \#tablas(b)\big)$ \\
-\tab Campo no indexado $\implies$  $O\big(|L| * (n + \#tablas(b))\big)$, donde $L$ es el dato string más largo de $cr$ y $n$ es la cantidad de registros en la tabla.]
+  \tab Campo indexado $\implies$ $O\big(log\ n + |L| * \#tablas(b)\big)$ \\
+  \tab Campo no indexado $\implies$  $O\big(|L| * (n + \#tablas(b))\big)$, donde $L$ es el dato string más largo de $cr$ y $n$ es la cantidad de registros en la tabla.]
   [borra todos los registros que coincidan con el campo del registro $cr$ en la tabla $t$.]
 
 
@@ -43,11 +43,12 @@
   [true]
   {$res$ $\igobs$ combinarRegistros$\big(c$, registros(dameTabla($t_1$)), registros(dameTabla($t_2$))$\big)$}
   [\\
-  \tab Si $c$ está indexado en alguna de las tablas y es tipo string $\implies$ $O\big(n * |L|)\big)$\\
-  \tab Si $c$ está indexado y es nat $\implies$ $O\big(n * (|L|\ +\ log\ m)\big)$\\
-  \tab Si no está indexado $\implies$ $O\big(n * m * |L|)\big)$]
+    \tab Si $c$ está indexado en alguna de las tablas y es tipo string $\implies$ $O\big((n+m) * |L|)\big)$\\
+    \tab Si $c$ está indexado y es nat $\implies$ $O\big((n+m) * (|L|\ +\ log\ (n+m))\big)$\\
+    \tab Si no está indexado $\implies$ $O\big(n * m * |L|)\big)$ \\
+    \tab Donde L es el dato string más largo en ambas tablas, n y m sus respectivas cantidades de registros.]
   [unión de todos los registros (en caso de que ambas tablas tengan campos con mismo nombre no claves, desempata para $t_1$).]
-
+  [no hay aliasing.]
 
   \InterfazFuncion{GenerarVistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{c}{campo}, \Inout{b}{base}}{itConj(registro)}
   [$t_1$ $\nigobs$ $t_2$ $\land$ \{$t1$, $t2$\} $\incluido$ tablas($b$) $\yluego$ $c$ $\in$ claves$\big($dameTabla($t_1$, $b$)$\big)$ $\land$ $c$ $\in$ claves$\big($dameTabla($t_2$, $b$)$\big)$ $\land$ $\neg\big($hayJoin?($t_1$, $t_2$, $b$)$\big)$ $\land$ tipoCampo($c$, $t_1$) = tipoCampo($c$, $t_2$) $\land$ $b$ = $b_0$]
@@ -56,6 +57,7 @@
   \tab $c$ tipo string indexado en $t_1$ ó $t_2$ $\implies$ $O\big((n+m) * L\big)$ \\
   \tab $c$ tipo nat indexado en $t_1$ ó $t_2$ $\implies$ $O\big((n+m) * (log(n+m) + L)\big)$ \\
   \tab $c$ cualquier tipo no indexado $\implies$ $O\big((n+m) * \big(L\ +\ log(n+m)\big)\ +\ L * n * m\big)$ \\
+  \\
   \tab Donde $n$ = \#registros($t_1$), $m$ = \#registros($t_2$) y $L$ el dato string más largo de cualquiera de las dos tablas.]
   [crea un join entre dos tablas de la base de datos y devuelve un iterador no modificable a sus registros.]
   [res no es modificable, se itera sólo a modo de vista del conjunto.]
@@ -71,12 +73,14 @@
   {$res$ $\igobs$ crearIt$\big($tablas($b$)$\big)$}
   [$O(1)$]
   [se obtienen todas las tablas de la base de datos.]
+  [el iterador no es modificable]
 
   \InterfazFuncion{DameTabla}{\In{s}{string}, \In{b}{base}}{tabla}
   [$s$ $\in$ tablas($b$)]
-  {$res$ $\igobs$ dameTabla($s$)}
+  {alias($res$ $\igobs$ dameTabla($s$))}
   [$O(1)$]
   [dado un nombre, devuelve la tabla con ese nombre en la base de datos.]
+  [res no es modificable]
 
   \InterfazFuncion{HayJoin?}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{bool}
   [true]
@@ -94,7 +98,7 @@
   [true]
   {$res$ $\igobs$ copiarCampos$\big($campos($r_2$), $r_1$, $r_2\big)$}
   [$O(L)$, donde $L$ es el dato string más largo de $r_1$.]
-  [devuelve la unión de dos registros, pero sin campos repetidos.]
+  [devuelve la unión por copia de dos registros, pero sin campos repetidos.]
 
   \InterfazFuncion{VistaJoin}{\In{t_1}{string}, \In{t_2}{string}, \In{b}{base}}{itConj(registro)}
   [hayJoin?($t_1$, $t_2$, $b$)]
@@ -115,12 +119,14 @@
   \InterfazFuncion{BusquedaCriterio}{\In{criterio}{registro}, \In{t}{String},\In{b}{base}}{conj(registro)}
   [$t$ $\in$ tablas($b$)]
   {$res$ $\igobs$ buscar($r$, $t$, $b$)}
-  [\tab  campoIndice nat $\implies$ $O\big(log\ n\ +\ n * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
+  [\\
+  \tab  campoIndice nat $\implies$ $O\big(log\ n\ +\ n * |L|\big)$. $O(log\ n\ +\ |L|)$ si además es clave.\\
   \tab campoIndice string $\implies$ $O\big(|L|\ +\ n * |L|\big)$ = $O(n * |L|)$. $O(|L|)$ si además es clave.\\
   \tab Sin campoIndice $\implies$ $O(n * |L|)$\\
+  \\
   \tab Donde $L$ es la longitud de dato string más largo de $t$ y $n$ su cantidad de registros.]
   [devuelve por copia una lista de todos los registros de $t$ que coinciden en todos los campos con el registro $criterio$.]
-
+  \footnote{Las complejidades exportadas para casos no clave están consideradas en el caso particular de que todos los registros tengan los mismos índices (ver algoritmo)}
 
   \InterfazFuncion{CoincidenTodosCrit}{\In{crit}{registro}, \In{r}{registro}}{bool}
   [campos($crit$) $\subset$ campos($r$) $\land$ ($\exists$ $t$: Tabla, nombre($t$) $\in$ tablas($b$)) $r$ $\in$ registros($t$)]
@@ -166,7 +172,7 @@
 \noindent\tab 5) Los significados de una clave en las estructuras relacionadas a los joins son las mismas para cada estructura (son aquellas con las que comparten un join). \\
 \noindent\tab 6) Los registros del join se crean por combinación de sus tablas \\
 \noindent\tab 7) Entre dos tablas solamente puede haber un único join (en una dirección). \\
-\noindent\tab 8) El campo del join también es recíproco y es clave para los dos. \\
+\noindent\tab 8) El campo del join es clave para los dos. \\
 \noindent\tab 9) El campo del join en hayJoin es el que lo define en el diccionario según su tipo (que es el mismo tipo para ambas tablas). \\
 \noindent\tab 10) Los significados de cada diccionario de joins tienen siguiente perteneciente a registros del join para las mismas claves. \\
 \noindent\tab 11) Para cada registro en registros del join hay un iterador en alguno de los dos diccionarios (nat o string) con siguiente en él. \\
@@ -291,7 +297,7 @@
             $\Big(\forall$ $t$ : tupla(registro, bool), esta?$\Big(t$, obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT1$\Big)\Big)$\\
             \bigpar{
               campos$\big(\Pi_1$($t$)$\big)$ $\igobs$ campos$\big($obtener($s_1$, $e$.nombreATabla)$\big)$ $\land$ \\
-              estaAgregado?$\Big(\Pi_1$($t$), obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT2$\Big)$ $\ssi$ \\
+              estaAgregado?$\Big(\Pi_1$($t$), obtener$\big(s_2$, obtener($s_1$, $e$.hayJoin)$\big)$.cambiosT1$\Big)$ $\ssi$ \\
               $\Pi_1$($t$) $\in$ registros$\big($obtener($s_1$, $e$.nombreATabla)$\big)$
             }
           } $\land$ \\
@@ -508,7 +514,7 @@
    \Statex \underline{Complejidad:} {\\
    \quad\quad $O(n * buscar\ +\ L)$ = \\
    \quad\quad Si $c$ está indexado en alguna de las tablas y es tipo string $\implies$ $O(n * |L|)$ = $O\big((n+m) * |L|\big)$ \\
-   \quad\quad Si $c$ está indexado y es nat $\implies$ $O\big(n * (log\ m\ +\ |L|)\big)$ = $O\big((n*m)(log(m)\ +\ |L|)\big)$ \\
+   \quad\quad Si $c$ está indexado y es nat $\implies$ $O\big(n * (log\ m\ +\ |L|)\big)$ = $O\big((n+m)*(log(n+m)\ +\ |L|)\big)$ \\
    \quad\quad Si no está indexado $\implies$ $O(n * m * |L|)$ \\
    \\
    \quad\quad Siendo $|L|$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (varían en base a criterio de búsqueda indexado o no).\\
@@ -533,7 +539,7 @@
    \If{$TipoCampo(c, tabla1)$} \Comment $O(1)$
      \comentario {Defino en el diccionario de joinPorCampoNat de t1 a t2}
      \State $Definir(t_2, Vacio(), Obtener(t_1,e.joinPorCampoNat))$ \Comment $O(1)$
-     \State $regsMergeados \gets CombinarRegistros(t_1, t_2, c)$ \Comment $c\ esta\ indexado\ en\ alguna\ tabla\ \implies\ O\big(n * (log\ m\ +\ |L|)\big)$
+     \State $regsMergeados \gets CombinarRegistros(t_1, t_2, c)$ \Comment $c\ esta\ indexado\ en\ alguna\ tabla\ \implies\ O\big((n+m) * (log(m+n) +\ |L|)\big)$
      \State $ $                                              \Comment $Si\ no\ esta\ indexado\ \implies\ O\big(n * m * |L|\big)$
      \State $it \gets CrearIt(regsMergeados)$                \Comment $O(1)$
      \While{$HaySiguiente(it)$}                            \Comment $O(n * ...)$
@@ -547,7 +553,7 @@
    \Else
      \comentario {Defino en el diccionario de joinPorCampoStr de t1 a t2}
      \State $Definir\big(t_2, Vacio(), Obtener(t_1,e.joinPorCampoString)\big)$ \Comment $O(1)$
-     \State $regsMergeados \gets CombinarRegistros(t_1, t_2, c)$ \Comment $c\ esta\ indexado\ en\ alguna\ tabla\ \implies\ O(n * |L|)$
+     \State $regsMergeados \gets CombinarRegistros(t_1, t_2, c)$ \Comment $c\ esta\ indexado\ en\ alguna\ tabla\ \implies\ O((n+m) * |L|)$
      \State $ $                                             \Comment $Si\ no\ esta\ indexado\ \implies\ O\big(n * m * |L|\big)$
      \State $it \gets CrearIt(regsMergeados)$                \Comment $O(1)$
      \While{$HaySiguiente(it)$}                            \Comment $O(n * ...)$
@@ -563,17 +569,18 @@
 
    \medskip
    \Statex \underline{Complejidad:}{\\
-\quad\quad Si $c$ está indexado en alguna de las dos tablas y es string $\implies$ $O\big(n * L\ +\ n * L\big)$ = $O(n * L)$ = $O\big((n+m) * L\big)$ \\
-\quad\quad Si $c$ está indexado y es nat $\implies$ $O\big(n * (log\ m\ +\ |L|) + n * (log\ n\ +\ L)\big)$ = $O\big(n * (log\ n\ +\ log\ m + L)\big)$ = $O\big(n * (log(n+m)\ +\ log(n+m) + L)\big)$ = $O\big(n * (log(n+m)\ +\ L)\big)$ = $O\big((n+m) * (log(n+m)\ +\ L)\big)$\\
+\quad\quad Si $c$ está indexado en alguna de las dos tablas y es string $\implies$ $O\big((n+m) * L\ +\ n * L\big)$ = $O((n+m) * L)$ \\
+\quad\quad Si $c$ está indexado y es nat $\implies$ $O\big((n+m) * (log\ (n+m) +\ |L|) + n * (log\ n\ +\ L)\big)$ = $O\big((n+m) * (log\ (n+m) + L)\big)$ = $O\big((n+m) * (log(n+m)\ +\ L)\big)$\\
 \quad\quad Si $c$ no está indexado $\implies$ $O\big(n * m * |L| + n * (log\ n + L)\big)$ = $O\big(n * (m * L\ +\ log\ n\ +\ L)\big)$ = $O\big(n * (m * L\ +\ log\ n)\big)$ \\
 \\
-\quad\quad Siendo $L$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (varían en base a criterio de búsqueda indexado o no). \\
-\quad\quad Esta indeterminación se puede salvar considerando que las cantidades de registros de las tablas (que ahora sí serían $n$ y $m$) pueden ser tomadas como $O\big(max(n,m)\big)$ = $O(n+m)$ (quedando complejidades acorde al enunciado).\\
-\quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección. \\
+\quad\quad Siendo $L$ el mayor largo de string entre registros, $n$ y $m$ la cantidad de registros de ambas tablas (t1 y t2 respectivamente) \\
 }
    \Statex \underline{Justificación:}{\\
-\quad\quad Además del costo por combinar registros, se agrega el de iterar todos los registros combinados, el de recorrerlos (como dijimos, están acotados por $n$) realizando inserciones por copia en sus respectivos diccionarios.}
 
+\quad\quad Además del costo por combinar registros, se agrega el de iterar todos los registros combinados, el de recorrerlos (como dijimos, están acotados por $n$) realizando inserciones por copia en sus respectivos diccionarios.
+\quad\quad La cantidad de registros mergeados está acotada tanto por $m$ como por $n$ por ser intersección (en este caso usamos n). \\
+\quad\quad Para el caso no indexado tomamos el peor caso entre nat y string para agregar a conjunto y diccionario. Tomamos para eso $O(n*max(log(n), L)) = O(n*(log(n)+ L)) $
+}
  \end{algorithmic}
 \end{algorithm}
 
@@ -914,7 +921,7 @@
    \quad\quad Como los campos están acotados en nombre (independientemente de si son o no de tabla), obtener un dato en un registro es $O(1)$. \\
    \quad\quad Cuando se chequea en campos de criterio que estén definidos en campos(t), la iteración termina cuando o bien todos están o hay alguno que no. Esto significa que nunca se itera más de de \#campos(t) veces.\\
    \quad\quad Si los campos de criterio están contenidos en los campos de la tabla, implica entonces que los primeros están acotados también en cantidad. \\
-   \quad\quad Su campoIndice es clave, entonces \#coincis = 1, de no serlo está acotada por $n$ (la cantidad de registros de la tabla). \\
+   \quad\quad Si campoIndice es clave, entonces \#coincis = 1, de no serlo está acotada por $n$ (la cantidad de registros de la tabla). \\
    \quad\quad Los registros de tabla tienen cantidad acotada de campos, copiar uno por lo tanto es el costo de sus string más largo.\\
    \quad\quad Operaciones Def? y Obtener para todos los registros (con nombres campos acotados por enunciado) es $O(1)$.}
  \end{algorithmic}

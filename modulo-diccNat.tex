@@ -278,7 +278,7 @@ FI}
         \State $dicc \gets \&\big\langle n, \&s, NULL, NULL\big\rangle$ \Comment $O(1)$
         \State $termine \gets true$ \Comment $O(1)$
       \Else
-        \If{$(diccAux \to clave) < n$} \Comment $O(1)$
+        \If{$(diccAux \to clave) > n$} \Comment $O(1)$
           \If{$\NOT diccAux \to izq = NULL$} \Comment $O(1)$
             \State $diccAux \gets (diccAux \to izq)$ \comentariocompl{Copiamos el PUNTERO}{$O(1)$}
           \Else
